@@ -11,6 +11,7 @@ import glob
 def f(FILEPROC):
      connection=Connection()
      CONNID=random.randint(1,500)
+     HOUR=time.strftime("%H")
      db=connection.wc
      db.loghits.insert({'time':time.strftime("%T"),'date':time.strftime("%D"),'text':"Connection, <"+str(CONNID)+"> started @ "+time.strftime("%T")+" , "+time.strftime("%D")+". Thread starting."})
      RECORDS=0
@@ -22,12 +23,13 @@ def f(FILEPROC):
 			  rec2=line
 		          record=line.strip().split()
 		          HASH=hashlib.sha1(record[1]).hexdigest()
-			  POSTNEW={'_id':HASH,'Hits':int(record[2])}
+			  POSTHOURLY={'id':HASH,'Hits':int(record[2]),'Hour':HOUR}
 		          POSTFIND={'_id': HASH}
 			  POSTDATE=time.strftime("%D_%H")
 		   	  FIELDHITS=POSTDATE+"_hits"
 			  FIELDTRAF=POSTDATE+"_traf"		
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
+			  db.hitshourly.insert(POSTHOURLY)
 #			  db.hitsperiod.update(POSTFIND,{"$set":{str(FIELDHITS):int(record[2])}},upsert=True)
 #			  db.sizeperiod.update(POSTFIND,{'$set':{str(FIELDTRAF):int(record[3])}},upsert=True)
 			 #db.hits.insert(POSTNEW)
