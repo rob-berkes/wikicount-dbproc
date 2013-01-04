@@ -2,16 +2,15 @@
 import os
 import gzip 
 import time 
+from functions import wikicount
 
 FILEBASE="/tmp/staging/pagecounts.tmp"
-HOUR=time.strftime('%H')
-if HOUR=='00':
-	HOUR=22
-elif HOUR=='01':
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=int(HOUR)-1
+if HOUR==-1:
 	HOUR=23
-else: 
-	HOUR=int(HOUR)-2
-HOUR='%02d' % (HOUR,)
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+print HOUR
 FILEPROC2="/tmp/staging/q2_pagecounts.processed."+str(HOUR)
 FILEPROC3="/tmp/staging/q3_pagecounts.processed."+str(HOUR)
 FILEPROC4="/tmp/staging/q4_pagecounts.processed."+str(HOUR)

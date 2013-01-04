@@ -2,8 +2,15 @@
 import glob
 import os 
 import string
+from functions import wikicount
 
-for FILENAME in glob.glob('/tmp/ondeck/q*.fltr'):
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=int(HOUR)-1
+if HOUR==-1:
+	HOUR=23
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+
+for FILENAME in glob.glob('/tmp/ondeck/q*'+str(HOUR)):
 	IFILE=open(FILENAME,'r')
 	OFILENAME=string.replace(FILENAME,'ondeck','action')
 	OFILE=open(OFILENAME,'w')

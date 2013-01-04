@@ -4,12 +4,19 @@ import re
 import os
 import shutil 
 import string
+from functions import wikicount 
 
-for FILENAME in glob.glob('/tmp/staging/q*'):
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=int(HOUR)-1
+if HOUR==-1:
+	HOUR=23
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+
+for FILENAME in glob.glob('/tmp/staging/q*'+str(HOUR)):
 	print FILENAME
 	IFILE=open(FILENAME,"r")
         OUTFILENAME=string.replace(FILENAME,'staging','ondeck')
-	OFILE=open(OUTFILENAME+".fltr","w")
+	OFILE=open(OUTFILENAME,"w")
 	for line in IFILE:
 		record=line.strip().split()
 		TITLE=record[1].decode('unicode_escape')

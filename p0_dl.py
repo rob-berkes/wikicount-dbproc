@@ -8,28 +8,14 @@ import hashlib
 import random
 import re
 import os
+from functions import wikicount
 
 FILEBASE="/tmp/staging/pagecounts.tmp"
 URL="http://dumps.wikimedia.org/other/pagecounts-raw/2012/2012-11/pagecounts-"
 
-d=date.today()
-YEAR=d.year
-MONTH=d.month
-DAY=d.day
-HOUR=time.strftime('%H')
-if HOUR=='01':
-	HOUR=23
-	DAY-=1
-elif HOUR=='00':
-	HOUR=22
-	DAY-=1
-else:
-	HOUR=int(HOUR)-2
-if DAY==0:
-	DAY=30
-HOUR='%02d' % (HOUR,)
-DAY='%02d' % (DAY,)
-MONTH='%02d' % (MONTH,)
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+
 URL="http://dumps.wikimedia.org/other/pagecounts-raw/"+str(YEAR)+"/"+str(YEAR)+"-"+str(MONTH)+"/pagecounts-"
 print HOUR
 URLDATE=str(YEAR)+str(MONTH)+str(DAY)

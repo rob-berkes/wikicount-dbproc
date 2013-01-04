@@ -8,6 +8,13 @@ import random
 import time 
 import glob
 import syslog
+from functions import wikicount
+
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=int(HOUR)-1
+if HOUR==-1:
+	HOUR=23
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
 def f(FILEPROC):
      connection=Connection()
@@ -52,13 +59,13 @@ def f(FILEPROC):
      db.loghits.insert(POSTFINAL)
 
 
-FILEPROC2="/tmp/action/q2_pagecounts.processed."
-FILEPROC3="/tmp/action/q3_pagecounts.processed."
-FILEPROC4="/tmp/action/q4_pagecounts.processed."
-FILEPROC5="/tmp/action/q5_pagecounts.processed."
-FILEPROC6="/tmp/action/q6_pagecounts.processed."
-FILEPROC7="/tmp/action/q7_pagecounts.processed."
-FILEPROC8="/tmp/action/q8_pagecounts.processed."
+FILEPROC2="/tmp/action/q2_pagecounts.processed."+str(HOUR)
+FILEPROC3="/tmp/action/q3_pagecounts.processed."+str(HOUR)
+FILEPROC4="/tmp/action/q4_pagecounts.processed."+str(HOUR)
+FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
+FILEPROC6="/tmp/action/q6_pagecounts.processed."+str(HOUR)
+FILEPROC7="/tmp/action/q7_pagecounts.processed."+str(HOUR)
+FILEPROC8="/tmp/action/q8_pagecounts.processed."+str(HOUR)
 #FILEPROC9="/tmp/action/q9_pagecounts.processed."
 
 
