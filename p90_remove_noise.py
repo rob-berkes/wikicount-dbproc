@@ -17,4 +17,5 @@ HASHES=['8f9e9b397d590520d0938b3a063c1c0b58ba8445','ec15401c608667dbbb08a37856c8
 for item in HASHES:
 	db.hits.remove({'_id':item})
 	db.map.remove({'_id':item})
+	db.hitshourly.remove({'_id':item})
 

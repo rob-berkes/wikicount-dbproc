@@ -7,6 +7,7 @@ import hashlib
 import random
 import time 
 import glob
+import syslog
 
 def f(FILEPROC):
      connection=Connection()
@@ -23,13 +24,13 @@ def f(FILEPROC):
 			  rec2=line
 		          record=line.strip().split()
 		          HASH=hashlib.sha1(record[1]).hexdigest()
-			  POSTHOURLY={'id':HASH,'Hits':int(record[2]),'Hour':HOUR}
+			  POSTHOURLY={'_id':HASH,HOUR:int(record[2])}
 		          POSTFIND={'_id': HASH}
 			  POSTDATE=time.strftime("%D_%H")
 		   	  FIELDHITS=POSTDATE+"_hits"
 			  FIELDTRAF=POSTDATE+"_traf"		
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
-			  db.hitshourly.insert(POSTHOURLY)
+			  db.hitshourly.update(POSTFIND,{"$set":{HOUR:int(record[2])}},upsert=True)
 #			  db.hitsperiod.update(POSTFIND,{"$set":{str(FIELDHITS):int(record[2])}},upsert=True)
 #			  db.sizeperiod.update(POSTFIND,{'$set':{str(FIELDTRAF):int(record[3])}},upsert=True)
 			 #db.hits.insert(POSTNEW)
@@ -39,9 +40,11 @@ def f(FILEPROC):
 #		               POSTOUT={'time':time.strftime("%T"),'text':OUT}
 #		               db.loghits.insert(POSTOUT)
 			except UnicodeDecodeError: 
+			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
 			  pass
      		IFILE2.close()
 	except (NameError,IOError):
+		syslog.syslog("Error encountered! P3_add_to_db.py stopping, NameError or IOError")
 		pass
 
      FINAL=str(CONNID)+" time %s processed a total of %s records." % (time.strftime("%T"),str(RECORDS))
