@@ -31,7 +31,10 @@ def f(FILEPROC):
 	         HASH=hashlib.sha1(record[1]).hexdigest()
 	         POSTFIND={'_id': HASH}
 		 TITLESTRING=record[1].decode('utf-8')
-	         db.map.update(POSTFIND,{ "$inc" : { 'bwidth' : int(record[3]) },"$set":{'title':TITLESTRING} },upsert=True)
+		 if db.map.find(POSTFIND):
+			pass
+		 else:
+	         	db.map.update(POSTFIND, {"$set":{'title':TITLESTRING} },upsert=True)
 	         RECORDS+=1
 	IFILE2.close()
 	os.remove(FILENAME)
