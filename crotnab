@@ -1,11 +1,10 @@
 5 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p0_dl.py"
 45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p1_split.py"
 50 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2_filter.py"
-58 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py"
-
-
 
 0 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p99_remove_twohitters.py"
+
+4 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py"
 5 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
 30 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p4_add_titles.py"
 5 0 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3b_set_to_db.py"
