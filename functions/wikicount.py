@@ -47,3 +47,10 @@ def fnFormatTimes(DAY,MONTH,HOUR):
 	DAY='%02d' % (int(DAY),)
 	MONTH='%02d' % (int(MONTH),)
 	return DAY,MONTH,HOUR
+
+def adjustHour(HOUR):
+	if HOUR==-1:
+		HOUR=23
+	elif HOUR==-2:
+		HOUR=22
+	return HOUR

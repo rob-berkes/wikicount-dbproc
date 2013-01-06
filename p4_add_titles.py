@@ -11,9 +11,8 @@ import os
 from functions import wikicount 
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-1
-if HOUR==-1:
-	HOUR=23
+HOUR=int(HOUR)-2
+HOUR=wikicount.adjustHour(HOUR)
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
 

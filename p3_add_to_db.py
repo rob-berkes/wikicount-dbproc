@@ -1,10 +1,7 @@
 #!/usr/bin/python
 from multiprocessing import Process
-from datetime import date
 from pymongo import Connection
-import gzip
 import hashlib
-import random
 import time 
 import glob
 import syslog
@@ -12,13 +9,11 @@ from functions import wikicount
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=int(HOUR)-2
-if HOUR==-1:
-	HOUR=23
+HOUR=wikicount.adjustHour(HOUR)
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
-def f(FILEPROC):
+def f(FILEPROC,HOUR):
      connection=Connection()
-     HOUR=time.strftime("%H")
      db=connection.wc
      RECORDS=0
      for FILENAME in glob.glob(FILEPROC+"*"):	
@@ -29,7 +24,6 @@ def f(FILEPROC):
 			  rec2=line
 		          record=line.strip().split()
 		          HASH=hashlib.sha1(record[1]).hexdigest()
-			  POSTHOURLY={'_id':HASH,HOUR:int(record[2])}
 		          POSTFIND={'_id': HASH}
 			  POSTDATE=time.strftime("%D_%H")
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
@@ -60,13 +54,13 @@ FILEPROC8="/tmp/action/q8_pagecounts.processed."+str(HOUR)
 
 
 if __name__ == '__main__':
-    p = Process(target=f, args=(FILEPROC2,))
-    q = Process(target=f, args=(FILEPROC3,))
-    r = Process(target=f, args=(FILEPROC4,))
-    s = Process(target=f, args=(FILEPROC5,))
-    t = Process(target=f, args=(FILEPROC6,))
-    u = Process(target=f, args=(FILEPROC7,))
-    v = Process(target=f, args=(FILEPROC8,))
+    p = Process(target=f, args=(FILEPROC2,HOUR))
+    q = Process(target=f, args=(FILEPROC3,HOUR))
+    r = Process(target=f, args=(FILEPROC4,HOUR))
+    s = Process(target=f, args=(FILEPROC5,HOUR))
+    t = Process(target=f, args=(FILEPROC6,HOUR))
+    u = Process(target=f, args=(FILEPROC7,HOUR))
+    v = Process(target=f, args=(FILEPROC8,HOUR))
 #    w = Process(target=f, args=(FILEPROC9,))
     p.daemon=True
     q.daemon=True
