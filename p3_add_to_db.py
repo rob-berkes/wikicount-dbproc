@@ -11,17 +11,15 @@ import syslog
 from functions import wikicount
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-1
+HOUR=int(HOUR)-2
 if HOUR==-1:
 	HOUR=23
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
 def f(FILEPROC):
      connection=Connection()
-     CONNID=random.randint(1,500)
      HOUR=time.strftime("%H")
      db=connection.wc
-     db.loghits.insert({'time':time.strftime("%T"),'date':time.strftime("%D"),'text':"Connection, <"+str(CONNID)+"> started @ "+time.strftime("%T")+" , "+time.strftime("%D")+". Thread starting."})
      RECORDS=0
      for FILENAME in glob.glob(FILEPROC+"*"):	
 	try:
@@ -34,18 +32,9 @@ def f(FILEPROC):
 			  POSTHOURLY={'_id':HASH,HOUR:int(record[2])}
 		          POSTFIND={'_id': HASH}
 			  POSTDATE=time.strftime("%D_%H")
-		   	  FIELDHITS=POSTDATE+"_hits"
-			  FIELDTRAF=POSTDATE+"_traf"		
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
 			  db.hitshourly.update(POSTFIND,{"$set":{HOUR:int(record[2])}},upsert=True)
-#			  db.hitsperiod.update(POSTFIND,{"$set":{str(FIELDHITS):int(record[2])}},upsert=True)
-#			  db.sizeperiod.update(POSTFIND,{'$set':{str(FIELDTRAF):int(record[3])}},upsert=True)
-			 #db.hits.insert(POSTNEW)
 		          RECORDS+=1
-#		          if (RECORDS % 150000) == 0 :
-#		               OUT= str(CONNID)+" proc'd record: %s \n" % (str(RECORDS))
-#		               POSTOUT={'time':time.strftime("%T"),'text':OUT}
-#		               db.loghits.insert(POSTOUT)
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
 			  pass
@@ -53,10 +42,8 @@ def f(FILEPROC):
 	except (NameError,IOError):
 		syslog.syslog("Error encountered! P3_add_to_db.py stopping, NameError or IOError")
 		pass
-
-     FINAL=str(CONNID)+" time %s processed a total of %s records." % (time.strftime("%T"),str(RECORDS))
-     POSTFINAL={'time':time.strftime("%T"),'date':time.strftime("%D"),'text':FINAL}
-     db.loghits.insert(POSTFINAL)
+     FINAL=" time %s processed a total of %s records." % (time.strftime("%T"),str(RECORDS))
+     syslog.syslog(FINAL)
 
 
 FILEPROC2="/tmp/action/q2_pagecounts.processed."+str(HOUR)
