@@ -2,6 +2,8 @@
 from pymongo import Connection
 from datetime import date
 from multiprocessing import Process
+from functions import wikicount
+
 import string
 import urllib2
 RECORDSPERPAGE=100
@@ -74,17 +76,17 @@ def f(RESULTSET,yd,ym):
 
 
 
-		
-ddate=date.today()
-d=ddate.day
-yd=int(d)-1
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+d=DAY		
+yd=int(DAY)-1
 if yd==0:
 	yd=30
-m=ddate.month
-ym=m
+m=MONTH
+ym=MONTH
 if yd==30:
 	ym=int(m)-1
-y=ddate.year
+y=YEAR
+
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
