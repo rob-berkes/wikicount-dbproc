@@ -6,9 +6,23 @@ from operator import itemgetter
 conn=Connection()
 db=conn.wc
 
-ALLRES=db.hitshourly.find({'16':{'$gt':15}}).sort('16',-1).limit(50000)
+DAY,MONTH,YEAR,HOUR,expiretimes = wikicount.fnReturnTimes()
+HOUR=int(HOUR)-1
+if HOUR==-1:
+	HOUR=23
+ALLRES=db.hitshourly.find({str(HOUR):{'$gt':15}}).sort(str(HOUR),-1).limit(50000)
+HOUR2=HOUR-1
+HOUR3=HOUR2-1
+
+if HOUR2==-1:
+	HOUR2=23
+if HOUR3==-1:
+	HOUR3=23
+elif HOUR3==-2:
+	HOUR3=22
 
 hourlies=[]
+
 for item in ALLRES:
 	title,utitle=wikicount.MapQuery_FindName(item['_id'])
 	try:
@@ -33,6 +47,7 @@ for item in ALLRES:
 #	if w['title']:
 #		print w['title'],w['rollavg']
 z=1
+db.threehour.remove()
 for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
 	if z < 101:
 		rec={'place':z,'title':w['title'],'rollavg':w['rollavg']}
