@@ -47,10 +47,16 @@ FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
 FILEPROC6="/tmp/action/q6_pagecounts.processed."+str(HOUR)
 FILEPROC7="/tmp/action/q7_pagecounts.processed."+str(HOUR)
 FILEPROC8="/tmp/action/q8_pagecounts.processed."+str(HOUR)
-#FILEPROC9="/tmp/action/q9_pagecounts.processed."
 
 
 
+#FILEPROC2="/tmp/action/q2_pagecounts.processed.01"
+#FILEPROC3="/tmp/action/q3_pagecounts.processed.01"
+#FILEPROC4="/tmp/action/q4_pagecounts.processed.01"
+#FILEPROC5="/tmp/action/q5_pagecounts.processed.01"
+#FILEPROC6="/tmp/action/q6_pagecounts.processed.01"
+#FILEPROC7="/tmp/action/q7_pagecounts.processed.01"
+#FILEPROC8="/tmp/action/q8_pagecounts.processed.01"
 
 
 if __name__ == '__main__':

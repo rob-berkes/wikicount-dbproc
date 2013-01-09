@@ -10,7 +10,7 @@ if HOUR==-1:
 	HOUR=23
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
-for FILENAME in glob.glob('/tmp/ondeck/q*'+str(HOUR)):
+for FILENAME in glob.glob('/tmp/ondeck/q*'):
 	IFILE=open(FILENAME,'r')
 	OFILENAME=string.replace(FILENAME,'ondeck','action')
 	OFILE=open(OFILENAME,'w')
