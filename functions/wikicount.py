@@ -56,7 +56,7 @@ def adjustHour(HOUR):
 	return HOUR
 
 def minusHour(HOUR):
-	HOUR-=4
+	HOUR-=7
 	if HOUR==-1:
 		HOUR=23
 	elif HOUR==-2:
@@ -65,5 +65,11 @@ def minusHour(HOUR):
 		HOUR=21
 	elif HOUR==-4:
 		HOUR=20
+	elif HOUR==-5:
+		HOUR=19
+	elif HOUR==-6:
+		HOUR=18
+	elif HOUR==-7:
+		HOUR=17
 	return HOUR
 
