@@ -6,7 +6,7 @@ conn=Connection()
 db=conn.wc
 
 def f(OFFSET,OUTTEXT):
-	QUERY=db.hits.find({'Hits':2}).limit(20000).skip(OFFSET)
+	QUERY=db.hits.find({'Hits':{'$lt':6}}).limit(20000).skip(OFFSET)
 	for line in QUERY:
 		db.map.remove({'_id':line['_id']})
 		db.hits.remove({'_id':line['_id']})

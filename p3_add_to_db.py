@@ -8,7 +8,7 @@ import syslog
 from functions import wikicount
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-2
+HOUR=int(HOUR)-3
 HOUR=wikicount.adjustHour(HOUR)
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
@@ -28,9 +28,9 @@ def f(FILEPROC,HOUR):
 			  POSTDATE=time.strftime("%D_%H")
 			  TITLESTRING=record[1].decode('utf-8')
 			  TITLEPOST={'_id':HASH,'title':TITLESTRING}
-		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
+		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) },"$set":{'title':TITLESTRING} },upsert=True)
 			  db.hitshourly.update(POSTFIND,{"$set":{HOUR:int(record[2])}},upsert=True)
-		  	  db.map.update(TITLEPOST,upsert=True)
+		  	  #db.map.update(TITLEPOST,upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
