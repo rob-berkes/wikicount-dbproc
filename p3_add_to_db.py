@@ -6,10 +6,10 @@ import time
 import glob
 import syslog
 from functions import wikicount
+import os
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-3
-HOUR=wikicount.adjustHour(HOUR)
+HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
 def f(FILEPROC,HOUR):
@@ -36,6 +36,7 @@ def f(FILEPROC,HOUR):
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
 			  pass
      		IFILE2.close()
+		os.remove(FILENAME)
 	except (NameError,IOError):
 		syslog.syslog("Error encountered! P3_add_to_db.py stopping, NameError or IOError")
 		pass

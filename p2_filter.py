@@ -7,12 +7,9 @@ import string
 from functions import wikicount 
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-3
-if HOUR==-1:
-	HOUR=23
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
-for FILENAME in glob.glob('/tmp/staging/q*'+str(HOUR)):
+for FILENAME in glob.glob('/tmp/staging/q*'):
 	print FILENAME
 	IFILE=open(FILENAME,"r")
         OUTFILENAME=string.replace(FILENAME,'staging','ondeck')
