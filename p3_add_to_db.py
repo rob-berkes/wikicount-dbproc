@@ -26,8 +26,11 @@ def f(FILEPROC,HOUR):
 		          HASH=hashlib.sha1(record[1]).hexdigest()
 		          POSTFIND={'_id': HASH}
 			  POSTDATE=time.strftime("%D_%H")
+			  TITLESTRING=record[1].decode('utf-8')
+			  TITLEPOST={'_id':HASH,'title':TITLESTRING}
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) } },upsert=True)
 			  db.hitshourly.update(POSTFIND,{"$set":{HOUR:int(record[2])}},upsert=True)
+		  	  db.map.update(TITLEPOST,upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")

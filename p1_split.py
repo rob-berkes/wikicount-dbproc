@@ -6,9 +6,7 @@ from functions import wikicount
 
 FILEBASE="/tmp/staging/pagecounts.tmp"
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=int(HOUR)-1
-if HOUR==-1:
-	HOUR=23
+HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 print HOUR
 FILEPROC2="/tmp/staging/q2_pagecounts.processed."+str(HOUR)
