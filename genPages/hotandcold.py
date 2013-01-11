@@ -69,7 +69,7 @@ def f(RESULTSET,yd,ym):
 	             pass
 	     else:
 		     TRESULT={}
-	             TRESULT=db.hits.find_one({'_id':item['id']})
+	             TRESULT=db.map.find_one({'_id':item['id']})
 	             utitle=urllib2.unquote(item['id'])
 		     try:
 	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'title':TRESULT['title'],'Hits':item['Hits'],'title':utitle,'linktitle':TRESULT['title'].encode('utf-8'),'id':item['id']}
@@ -81,7 +81,7 @@ def f(RESULTSET,yd,ym):
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 d=DAY		
-yd=int(DAY)-5
+yd=int(DAY)-1
 if yd==0:
 	yd=30
 m=MONTH
