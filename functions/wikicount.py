@@ -11,7 +11,7 @@ db=conn.wc
 
 def MapQuery_FindName(id):
         QUERY={'id':id}
-        MAPQ=db.map.find({'_id':id})
+        MAPQ=db.hits.find({'_id':id})
         title=''
         utitle=''
         for name in MAPQ:
@@ -47,6 +47,13 @@ def fnFormatTimes(DAY,MONTH,HOUR):
 	DAY='%02d' % (int(DAY),)
 	MONTH='%02d' % (int(MONTH),)
 	return DAY,MONTH,HOUR
+
+def FormatName(title):
+        title=name['title']
+        s_title=string.replace(title,'_',' ')
+        t_title=s_title.encode('utf-8')
+        utitle=urllib2.unquote(t_title)
+        return title, utitle
 
 def adjustHour(HOUR):
 	if HOUR==-1:

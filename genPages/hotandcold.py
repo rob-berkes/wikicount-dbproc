@@ -14,7 +14,7 @@ def f(RESULTSET,yd,ym):
 		YHITS=db.tophits.find({'d':yd,'m':ym,'y':y,'id':str(item['id'])})
 		for ROW in YHITS:
 			Hits=Hits-ROW['Hits']
-		NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place']}
+		NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place'],'title':item['title']}
 		OUTPUT.append(NEWPOST)
 	for POSTQ in OUTPUT:
 		db.tmpHot.insert(POSTQ)
@@ -30,32 +30,16 @@ def f(RESULTSET,yd,ym):
         title=''
 	db.prodtrend.drop()
         for p in TRENDING_LIST_QUERY:
-                FINDQ={'_id':p['id']}
-                MAPNAME=db.map.find(FINDQ)
-                for name in MAPNAME:
-                        title=name['title']
-                        s_title=string.replace(title,'_',' ')
-                        s_title=string.replace(s_title,'/','')
-                        t_title=s_title.encode('utf-8')
-                        utitle=urllib2.unquote(t_title)
-
-                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title.encode('utf-8'),'d':yd,'m':ym,'y':y,'id':p['id']}
+		title,utitle=wikicount.FormatName(p['title'])
+                rec={'title':title,'place':p['orPlace'],'Hits':p['delta'],'linktitle':utitle,'d':yd,'m':ym,'y':y,'id':p['id']}
 		db.prodtrend.insert(rec) 
         COLD_LIST_QUERY=db.tmpHot.find().sort('delta',1).limit(100)
         send_list=[]
         title=''
 	db.prodcold.remove()
         for p in COLD_LIST_QUERY:
-                FINDQ={'_id':p['id']}
-                MAPNAME=db.map.find(FINDQ)
-                for name in MAPNAME:
-                        title=name['title']
-                        s_title=string.replace(title,'_',' ')
-                        s_title=string.replace(s_title,'/','')
-                        t_title=s_title.encode('utf-8')
-                        utitle=urllib2.unquote(t_title)
-
-                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title.encode('utf-8'),'d':yd,'m':ym,'y':y,'id':p['id']}
+		title,utitle=wikicount.FormatName(p['title'])
+                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['id']}
 		db.prodcold.insert(rec)
 
 	REMOVEQ={'d':d,'m':m,'y':y}
@@ -69,8 +53,8 @@ def f(RESULTSET,yd,ym):
 	             pass
 	     else:
 		     TRESULT={}
-	             TRESULT=db.map.find_one({'_id':item['id']})
-	             utitle=urllib2.unquote(item['id'])
+	             TRESULT=db.hits.find_one({'_id':item['id']})
+		     title, utitle=wikicount.FormatName(TRESULT['title'])
 		     try:
 	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'title':TRESULT['title'],'Hits':item['Hits'],'title':utitle,'linktitle':TRESULT['title'].encode('utf-8'),'id':item['id']}
 	             	db.proddebuts.insert(POSTQ)
