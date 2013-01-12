@@ -49,10 +49,13 @@ def fnFormatTimes(DAY,MONTH,HOUR):
 	return DAY,MONTH,HOUR
 
 def FormatName(title):
-        title=name['title']
         s_title=string.replace(title,'_',' ')
         t_title=s_title.encode('utf-8')
         utitle=urllib2.unquote(t_title)
+#	try:
+#		utitle=utitle.decode('utf-8')
+#	except:
+#		utitle=utitle.encode('utf-8')
         return title, utitle
 
 def adjustHour(HOUR):

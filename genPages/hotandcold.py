@@ -56,7 +56,7 @@ def f(RESULTSET,yd,ym):
 	             TRESULT=db.hits.find_one({'_id':item['id']})
 		     title, utitle=wikicount.FormatName(TRESULT['title'])
 		     try:
-	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'title':TRESULT['title'],'Hits':item['Hits'],'title':utitle,'linktitle':TRESULT['title'].encode('utf-8'),'id':item['id']}
+	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
 	             	db.proddebuts.insert(POSTQ)
 		     except TypeError:
 			pass
