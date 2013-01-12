@@ -5,11 +5,11 @@
 ######0 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p99_remove_twohitters.py"
 
 14 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py"
-15 1-23 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
-15 0 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3b_set_to_db.py"
+15 0-7,9-23 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
+15 8 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3b_set_to_db.py"
 25 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py"
+26 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
 27 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
-33 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/debuts.py"
 37 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/hotandcold.py"
 
 #0 2 * * * /bin/bash -c "mongostat --noheaders > /tmp/test.log"
