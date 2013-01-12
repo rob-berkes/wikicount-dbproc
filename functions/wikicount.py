@@ -27,10 +27,13 @@ def fnReturnTimes():
         YEAR=TODAY.year
         DAY=TODAY.day
         MONTH=TODAY.month
+        HOUR=time.strftime('%H')
         now=datetime.datetime.now()
         half=now+datetime.timedelta(minutes=45)
         stamp=time.mktime(half.timetuple())
         expiretime=format_date_time(stamp)
+	if int(HOUR) < 8:
+		DAY-=1
         if DAY==0:
            DAY=30
            MONTH-=1
@@ -38,7 +41,6 @@ def fnReturnTimes():
            DAY=31
            MONTH=12
            YEAR-=1
-        HOUR=time.strftime('%H')
         return DAY, MONTH, YEAR,HOUR, expiretime
 
 
