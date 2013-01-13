@@ -1,10 +1,16 @@
 from pymongo import Connection
 conn=Connection()
 db=conn.wc
-
-for RES in db.hits.find():
+a=0
+b=0
+k=0
+for RES in db.hitshourly.find():
 	try:
-		if RES['title']:
+		if db.hits.find_one({'_id':RES['_id']}):
 			pass
+		else:
+			db.hitshourly.remove({'_id':RES['_id']})
 	except KeyError:
-		db.hits.remove({'_id':RES['_id']})
+		k+=1
+
+print "matches: "+str(a)+" misses: "+str(b)+" key errs: "+str(k)
