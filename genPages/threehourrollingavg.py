@@ -7,11 +7,7 @@ conn=Connection()
 db=conn.wc
 
 DAY,MONTH,YEAR,HOUR,expiretimes = wikicount.fnReturnTimes()
-HOUR=int(HOUR)-1
-if HOUR==-1:
-	HOUR=23
-print HOUR
-HOUR=1
+HOUR=wikicount.minusHour(int(HOUR))
 HOUR2=HOUR-1
 HOUR3=HOUR2-1
 if HOUR2==-1:
