@@ -41,16 +41,21 @@ def f(RESULTSET,yd,ym):
 		title,utitle=wikicount.FormatName(p['title'])
                 rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['id']}
 		db.prodcold.insert(rec)
+	
 
+
+	RESULTSET.rewind()
 	REMOVEQ={'d':d,'m':m,'y':y}
 	print REMOVEQ
 	db.proddebuts.remove(REMOVEQ)
+	print 'entering debut process'
 	for item in RESULTSET:
 	     YQUERY={'id':item['id']}
 	     if db.tophits.find(YQUERY).count() == 1:
-		     TRESULT={}
-	             TRESULT=db.hits.find_one({'_id':item['id']})
-		     title, utitle=wikicount.FormatName(TRESULT['title'])
+		     print item
+#		     TRESULT={}
+#	             TRESULT=db.hits.find_one({'_id':item['id']})
+		     title, utitle=wikicount.FormatName(item['title'])
 		     try:
 	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
 	             	db.proddebuts.insert(POSTQ)
