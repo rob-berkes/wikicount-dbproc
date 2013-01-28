@@ -47,9 +47,8 @@ def f(RESULTSET,yd,ym):
 	TODAYQUERY={'d':d,'m':m,'y':y,'place':{'$lt':100000}}
 	CHECKLIST=db.tophits.find(TODAYQUERY)
 	for item in CHECKLIST:
-	     YQUERY={'d':yd,'m':m,'y':y,'id':item['id']}
-	     YRESULT=db.tophits.find_one(YQUERY)
-	     if YRESULT:
+	     YQUERY={'id':item['id']}
+	     if db.tophits.find(YQUERY).count() > 1:
 	             pass
 	     else:
 		     TRESULT={}
