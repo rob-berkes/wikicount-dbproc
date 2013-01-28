@@ -43,14 +43,11 @@ def f(RESULTSET,yd,ym):
 		db.prodcold.insert(rec)
 
 	REMOVEQ={'d':d,'m':m,'y':y}
+	print REMOVEQ
 	db.proddebuts.remove(REMOVEQ)
-	TODAYQUERY={'d':d,'m':m,'y':y,'place':{'$lt':100000}}
-	CHECKLIST=db.tophits.find(TODAYQUERY)
-	for item in CHECKLIST:
+	for item in RESULTSET:
 	     YQUERY={'id':item['id']}
-	     if db.tophits.find(YQUERY).count() > 1:
-	             pass
-	     else:
+	     if db.tophits.find(YQUERY).count() == 1:
 		     TRESULT={}
 	             TRESULT=db.hits.find_one({'_id':item['id']})
 		     title, utitle=wikicount.FormatName(TRESULT['title'])
