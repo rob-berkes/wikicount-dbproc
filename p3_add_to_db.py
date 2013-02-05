@@ -29,7 +29,7 @@ def f(FILEPROC,HOUR):
 			  TITLESTRING=record[1].decode('utf-8')
 			  TITLEPOST={'_id':HASH,'title':TITLESTRING}
 		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(record[2]) },"$set":{'title':TITLESTRING} },upsert=True)
-			  db.hitshourly.update(POSTFIND,{"$set":{HOUR:int(record[2])}},upsert=True)
+			  db.hitshourly.update(POSTFIND,{"$inc":{HOUR:int(record[2])}},upsert=True)
 		  	  #db.map.update(TITLEPOST,upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 
