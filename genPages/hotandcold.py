@@ -79,7 +79,7 @@ conn=Connection()
 db=conn.wc
 RECCOUNT=1
 NUMRECS=31250
-db.tmpHot.drop()
+db.tmpHot.remove()
 INSERTSET=[]
 RESULT1=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
 RESULT2=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
