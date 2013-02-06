@@ -53,13 +53,13 @@ FILEPROC8="/tmp/action/q8_pagecounts.processed."+str(HOUR)
 
 
 
-FILEPROC2="/tmp/action/q2_pagecounts.processed.17"
-FILEPROC3="/tmp/action/q3_pagecounts.processed.17"
-FILEPROC4="/tmp/action/q4_pagecounts.processed.17"
-FILEPROC5="/tmp/action/q5_pagecounts.processed.17"
-FILEPROC6="/tmp/action/q6_pagecounts.processed.17"
-FILEPROC7="/tmp/action/q7_pagecounts.processed.17"
-FILEPROC8="/tmp/action/q8_pagecounts.processed.17"
+#FILEPROC2="/tmp/action/q2_pagecounts.processed.17"
+#FILEPROC3="/tmp/action/q3_pagecounts.processed.17"
+#FILEPROC4="/tmp/action/q4_pagecounts.processed.17"
+#FILEPROC5="/tmp/action/q5_pagecounts.processed.17"
+#FILEPROC6="/tmp/action/q6_pagecounts.processed.17"
+#FILEPROC7="/tmp/action/q7_pagecounts.processed.17"
+#FILEPROC8="/tmp/action/q8_pagecounts.processed.17"
 
 
 if __name__ == '__main__':
