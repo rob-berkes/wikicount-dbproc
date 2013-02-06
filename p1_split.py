@@ -34,20 +34,23 @@ RECCOUNT=0
 for line in IFILE:
         record=line.strip().split()
 	RECCOUNT+=1
-	if record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 0:
-		OFILE2.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 1:
-		OFILE3.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 2:
-		OFILE4.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 3:
-		OFILE5.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 4:
-		OFILE6.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 5:
-		OFILE7.write(str(line))
-        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 6:
-		OFILE8.write(str(line))
+	try:
+		if record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 0:
+			OFILE2.write(str(line))
+	 	elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 1:
+			OFILE3.write(str(line))
+	        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 2:
+			OFILE4.write(str(line))
+	        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 3:
+			OFILE5.write(str(line))
+	        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 4:
+			OFILE6.write(str(line))
+	        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 5:
+			OFILE7.write(str(line))
+	        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 6:
+			OFILE8.write(str(line))
+	except ValueError:
+		pass
 #        elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 7:
 #		OFILE8.write(str(line))
  #       elif record[0]=="en" and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 8:
