@@ -29,7 +29,7 @@ OFILE7=open(FILEPROC7,"w")
 OFILE8=open(FILEPROC8,"w")
 #OFILE9=open(FILEPROC9,"w")
 NUMBERLOGFILES=7
-COUNTTHRESHOLD=4
+COUNTTHRESHOLD=3
 RECCOUNT=0
 for line in IFILE:
         record=line.strip().split()
