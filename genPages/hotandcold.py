@@ -46,13 +46,11 @@ def f(RESULTSET,yd,ym):
 
 	RESULTSET.rewind()
 	REMOVEQ={'d':d,'m':m,'y':y}
-	print REMOVEQ
 	db.proddebuts.remove(REMOVEQ)
 	print 'entering debut process'
 	for item in RESULTSET:
 	     YQUERY={'id':item['id']}
 	     if db.tophits.find(YQUERY).count() == 1:
-		     print item
 #		     TRESULT={}
 #	             TRESULT=db.hits.find_one({'_id':item['id']})
 		     title, utitle=wikicount.FormatName(item['title'])

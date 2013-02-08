@@ -3,21 +3,35 @@ from pymongo import Connection
 from datetime import date
 from functions import wikicount
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
 DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-RESULT=db.hitsdaily.find({DAYKEY:{'$exists':True}}).sort(DAYKEY,-1).limit(250000)
+print DAYKEY
 
-db.tophits.remove({'d':DAY,'m':MONTH,'y':YEAR})
+IFILE=open("/home/ec2-user/mongo.csv.sorted","r")
+RESULT=[]
+for line in IFILE:
+	if RECCOUNT < 250001:
+		line=line.strip().split(",")
+		RESULT.append((line[0],line[1]))
+	else:
+		break
+IFILE.close()
+#RESULT=db.hitsdaily.find({DAYKEY:{'$exists':True}}).sort(DAYKEY,-1).limit(250000)
+db.tophits.remove({'d':int(DAY),'m':int(MONTH),'y':int(YEAR)})
+RECCOUNT=1
 for item in RESULT:
-        db.tophits.insert({'id':str(item['_id']),'d':DAY,'m':MONTH,'y':YEAR,'place':RECCOUNT,'Hits':int(item['Hits']),'title':item['title']},safe=True)
-	key=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
-        db.dailytop.update({'_id':str(item['_id'])},
-                           {
-                                '$set':{key:{'Hits':int(item['Hits']),
-                                'Place':RECCOUNT}}
-                           },upsert=True)
-
-        RECCOUNT+=1
+	Q={'_id':item[1]}
+	TREC=db.hits.find(Q)
+	title=''
+	for a in TREC:
+		title=a['title']
+	INSERTREC={'id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
+	db.tophits.insert(INSERTREC,safe=True)
+#	db.tophits.update({
+	RECCOUNT+=1
+	if RECCOUNT > 250000:
+		break
 
