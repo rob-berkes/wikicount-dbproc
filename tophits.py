@@ -6,7 +6,8 @@ DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
-RESULT=db.hits.find().sort('Hits',-1).limit(250000)
+DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
+RESULT=db.hitsdaily.find({DAYKEY:{'$exists':True}}).sort(DAYKEY,-1).limit(250000)
 
 db.tophits.remove({'d':DAY,'m':MONTH,'y':YEAR})
 for item in RESULT:
