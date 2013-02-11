@@ -5,17 +5,17 @@
 ######0 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p99_remove_twohitters.py"
 
 14 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py"
-15 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
-20 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_image_add_to_db.py"
-20 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_category_add_to_db.py"
-25 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py"
-36 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
+#15 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
+#20 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_image_add_to_db.py"
+#20 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_category_add_to_db.py"
+#25 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py"
+#36 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
 
 
-27 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p70_export.py"
-35 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py"
-40 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
-48 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/hotandcold.py"
+#27 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p70_export.py"
+#35 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py"
+#40 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
+#48 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/hotandcold.py"
 
 
 

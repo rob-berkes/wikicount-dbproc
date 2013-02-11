@@ -42,13 +42,13 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      syslog.syslog(FINAL)
 
 
-FILEPROC2="/tmp/image/q2_pagecounts.processed."+str(HOUR)
-FILEPROC3="/tmp/image/q3_pagecounts.processed."+str(HOUR)
-FILEPROC4="/tmp/image/q4_pagecounts.processed."+str(HOUR)
-FILEPROC5="/tmp/image/q5_pagecounts.processed."+str(HOUR)
-FILEPROC6="/tmp/image/q6_pagecounts.processed."+str(HOUR)
-FILEPROC7="/tmp/image/q7_pagecounts.processed."+str(HOUR)
-FILEPROC8="/tmp/image/q8_pagecounts.processed."+str(HOUR)
+FILEPROC2="/tmp/image/q2_pagecounts.processed.*"
+FILEPROC3="/tmp/image/q3_pagecounts.processed.*"
+FILEPROC4="/tmp/image/q4_pagecounts.processed.*"
+FILEPROC5="/tmp/image/q5_pagecounts.processed.*"
+FILEPROC6="/tmp/image/q6_pagecounts.processed.*"
+FILEPROC7="/tmp/image/q7_pagecounts.processed.*"
+FILEPROC8="/tmp/image/q8_pagecounts.processed.*"
 
 
 

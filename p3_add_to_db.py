@@ -43,13 +43,13 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      syslog.syslog(FINAL)
 
 
-FILEPROC2="/tmp/action/q2_pagecounts.processed."+str(HOUR)
-FILEPROC3="/tmp/action/q3_pagecounts.processed."+str(HOUR)
-FILEPROC4="/tmp/action/q4_pagecounts.processed."+str(HOUR)
-FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
-FILEPROC6="/tmp/action/q6_pagecounts.processed."+str(HOUR)
-FILEPROC7="/tmp/action/q7_pagecounts.processed."+str(HOUR)
-FILEPROC8="/tmp/action/q8_pagecounts.processed."+str(HOUR)
+FILEPROC2="/tmp/action/q2_pagecounts.processed.*"
+FILEPROC3="/tmp/action/q3_pagecounts.processed.*"
+FILEPROC4="/tmp/action/q4_pagecounts.processed.*"
+FILEPROC5="/tmp/action/q5_pagecounts.processed.*"
+FILEPROC6="/tmp/action/q6_pagecounts.processed.*"
+FILEPROC7="/tmp/action/q7_pagecounts.processed.*"
+#FILEPROC8="/tmp/action/q8_pagecounts.processed.*"
 
 
 
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR))
     t = Process(target=UpdateHits, args=(FILEPROC6,HOUR,DAY,MONTH,YEAR))
     u = Process(target=UpdateHits, args=(FILEPROC7,HOUR,DAY,MONTH,YEAR))
-    v = Process(target=UpdateHits, args=(FILEPROC8,HOUR,DAY,MONTH,YEAR))
+#    v = Process(target=UpdateHits, args=(FILEPROC8,HOUR,DAY,MONTH,YEAR))
 #    w = Process(target=f, args=(FILEPROC9,))
     p.daemon=True
     q.daemon=True
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     s.daemon=True
     t.daemon=True
     u.daemon=True
-    v.daemon=True
+#    v.daemon=True
 #    w.daemon=True
     p.start()
     q.start()
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     s.start()
     t.start()
     u.start()
-    v.start()
+#    v.start()
 #    w.start()
 
 
@@ -96,6 +96,6 @@ if __name__ == '__main__':
     s.join()
     t.join()
     u.join()
-    v.join()
+#    v.join()
 #    w.join()
 
