@@ -48,7 +48,7 @@ FILEPROC3="/tmp/action/q3_pagecounts.processed.*"
 FILEPROC4="/tmp/action/q4_pagecounts.processed.*"
 FILEPROC5="/tmp/action/q5_pagecounts.processed.*"
 FILEPROC6="/tmp/action/q6_pagecounts.processed.*"
-FILEPROC7="/tmp/action/q7_pagecounts.processed.*"
+#FILEPROC7="/tmp/action/q7_pagecounts.processed.*"
 #FILEPROC8="/tmp/action/q8_pagecounts.processed.*"
 
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR))
     s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR))
     t = Process(target=UpdateHits, args=(FILEPROC6,HOUR,DAY,MONTH,YEAR))
-    u = Process(target=UpdateHits, args=(FILEPROC7,HOUR,DAY,MONTH,YEAR))
+#    u = Process(target=UpdateHits, args=(FILEPROC7,HOUR,DAY,MONTH,YEAR))
 #    v = Process(target=UpdateHits, args=(FILEPROC8,HOUR,DAY,MONTH,YEAR))
 #    w = Process(target=f, args=(FILEPROC9,))
     p.daemon=True
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     r.daemon=True
     s.daemon=True
     t.daemon=True
-    u.daemon=True
+#    u.daemon=True
 #    v.daemon=True
 #    w.daemon=True
     p.start()
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     r.start()
     s.start()
     t.start()
-    u.start()
+#    u.start()
 #    v.start()
 #    w.start()
 
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     r.join()
     s.join()
     t.join()
-    u.join()
+#    u.join()
 #    v.join()
 #    w.join()
 

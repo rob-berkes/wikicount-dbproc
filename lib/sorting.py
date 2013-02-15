@@ -111,8 +111,8 @@ def QuickSortMPListArray(A,conn,NumProcs):
 		greater=[]
 		pv=A.pop(0)
 		print 'Partition Value: '+str(pv[0])
-		lesser=[x for x in A if x[0] > pv[0]]
-	        greater=[x for x in A if x[0] < pv[0]]
+		lesser=[x for x in A if int(x[0]) > int(pv[0])]
+	        greater=[x for x in A if int(x[0]) < int(pv[0])]
 		pv=[x for x in A if x[0] == pv[0]]
 		Procs=int(NumProcs)-1
 		pConnLeft,cConnLeft=Pipe()
