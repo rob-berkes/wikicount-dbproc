@@ -24,7 +24,7 @@ db.tophits.remove({'d':int(DAY),'m':int(MONTH),'y':int(YEAR)})
 RECCOUNT=1
 for item in RESULT:
 	Q={'_id':item[1]}
-	TREC=db.hits.find(Q)
+	TREC=db.hitsdaily.find(Q)
 	title=''
 	for a in TREC:
 		title=a['title']

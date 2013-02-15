@@ -51,8 +51,6 @@ def f(RESULTSET,yd,ym):
 	for item in RESULTSET:
 	     YQUERY={'id':item['id']}
 	     if db.tophits.find(YQUERY).count() == 1:
-#		     TRESULT={}
-#	             TRESULT=db.hits.find_one({'_id':item['id']})
 		     title, utitle=wikicount.FormatName(item['title'])
 		     try:
 	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}

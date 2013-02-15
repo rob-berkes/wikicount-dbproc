@@ -26,9 +26,16 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 		          HASH=hashlib.sha1(line[1]).hexdigest()
 		          POSTFIND={'_id': HASH}
 			  TITLESTRING=line[1].decode('utf-8')
-		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) },"$set":{'title':TITLESTRING} },upsert=True)
+#		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) } },upsert=True)
 			  db.hitshourly.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
-			  db.hitsdaily.update(POSTFIND,{"$inc":{DAYKEY: int(line[2])}},upsert=True)
+			  db.hitsdaily.update(POSTFIND,
+					{"$inc":
+						{DAYKEY: int(line[2])}
+					,
+					"$set":
+						{'title':TITLESTRING}
+					}	
+					,upsert=True)
 		  	  #db.map.update(TITLEPOST,upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 

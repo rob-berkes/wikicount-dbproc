@@ -11,7 +11,7 @@ db=conn.wc
 
 def MapQuery_FindName(id):
         QUERY={'id':id}
-        MAPQ=db.hits.find({'_id':id})
+        MAPQ=db.hitsdaily.find({'_id':id})
         title=''
         utitle=''
         for name in MAPQ:

@@ -26,7 +26,7 @@ TypeErrors=0
 KeyErrors=0
 for item in ALLRES:
 	try:
-		QUERYtitle=db.hits.find_one({'_id':item['_id']})
+		QUERYtitle=db.hitsdaily.find_one({'_id':item['_id']})
 		atitle=QUERYtitle['title']
 		title,utitle=wikicount.FormatName(atitle)
 		try:
