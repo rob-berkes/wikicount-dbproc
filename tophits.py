@@ -4,7 +4,10 @@ from datetime import date
 from functions import wikicount
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-HOUR=wikicount.minusHour(HOUR)
+MONTHNAME=wikicount.fnGetMonthName()
+HOUR=wikicount.minusHour(int(HOUR))
+COLLECTIONNAME="tophits"+str(YEAR)+str(MONTHNAME)
+print COLLECTIONNAME
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
@@ -17,22 +20,28 @@ for line in IFILE:
 	if RECCOUNT < 250001:
 		line=line.strip().split(",")
 		RESULT.append((line[0],line[1]))
+		RECCOUNT+=1
 	else:
 		break
 IFILE.close()
 #RESULT=db.hitsdaily.find({DAYKEY:{'$exists':True}}).sort(DAYKEY,-1).limit(250000)
-db.tophits.remove({'d':int(DAY),'m':int(MONTH),'y':int(YEAR)})
+
+#db.tophits.remove({'d':int(DAY),'m':int(MONTH),'y':int(YEAR)})
 RECCOUNT=1
 for item in RESULT:
 	Q={'_id':item[1]}
 	TREC=db.hitsdaily.find(Q)
 	title=''
-	for a in TREC:
-		title=a['title']
-	INSERTREC={'id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
-	db.tophits.insert(INSERTREC,safe=True)
-#	db.tophits.update({
+	try:
+		for a in TREC:
+			title=a['title']
+			INSERTREC={'id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
+			insert=db[COLLECTIONNAME].insert(INSERTREC,safe=True)
+			insert
+#			db.tophits.insert(INSERTREC,safe=True)
+		#	db.tophits.update({
+	except KeyError:
+		pass
 	RECCOUNT+=1
 	if RECCOUNT > 250000:
 		break
-

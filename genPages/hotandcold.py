@@ -7,11 +7,13 @@ from functions import wikicount
 import string
 import urllib2
 RECORDSPERPAGE=100
-def f(RESULTSET,yd,ym):
+def f(RESULTSET,yd,ym,COLLECTIONNAME):
 	OUTPUT=[]
+	thCN='tophits'+COLLECTIONNAME
+	dbCN='proddebuts'+COLLECTIONNAME
 	for item in RESULTSET:
 		Hits=int(item['Hits'])
-		YHITS=db.tophits.find({'d':yd,'m':ym,'y':y,'id':str(item['id'])})
+		YHITS=db[thCN].find({'d':yd,'m':ym,'y':y,'id':str(item['id'])})
 		for ROW in YHITS:
 			Hits=Hits-ROW['Hits']
 		NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place'],'title':item['title']}
@@ -47,21 +49,25 @@ def f(RESULTSET,yd,ym):
 	RESULTSET.rewind()
 	REMOVEQ={'d':d,'m':m,'y':y}
 	db.proddebuts.remove(REMOVEQ)
+	debutCount=1
 	print 'entering debut process'
 	for item in RESULTSET:
 	     YQUERY={'id':item['id']}
-	     if db.tophits.find(YQUERY).count() == 1:
+	     if db[thCN].find(YQUERY).count() == 1 and debutCount<150:
 		     title, utitle=wikicount.FormatName(item['title'])
 		     try:
 	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
-	             	db.proddebuts.insert(POSTQ)
+	             	db[dbCN].insert(POSTQ)
+			debutCount+=1
 		     except TypeError:
 			pass
 
 	return
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=wikicount.minusHour(HOUR)
+HOUR=wikicount.minusHour(int(HOUR))
+MONTHNAME=wikicount.fnGetMonthName()
+COLLECTIONNAME=str(YEAR)+MONTHNAME
 d=DAY		
 yd=int(DAY)-1
 if yd==0:
@@ -78,23 +84,23 @@ RECCOUNT=1
 NUMRECS=31250
 db.tmpHot.remove()
 INSERTSET=[]
-RESULT1=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
-RESULT2=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
-RESULT3=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db.tophits.find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
+RESULT1=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
+RESULT2=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
+RESULT3=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
+RESULT5=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
+RESULT6=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
+RESULT7=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
+RESULT8=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
 
-p = Process(target=f, args=(RESULT1,yd,m))
-q = Process(target=f, args=(RESULT2,yd,m))
-r = Process(target=f, args=(RESULT3,yd,m))
-s = Process(target=f, args=(RESULT4,yd,m))
-t = Process(target=f, args=(RESULT5,yd,m))
-u = Process(target=f, args=(RESULT6,yd,m))
-v = Process(target=f, args=(RESULT7,yd,m))
-x = Process(target=f, args=(RESULT8,yd,m))
+p = Process(target=f, args=(RESULT1,yd,m,COLLECTIONNAME))
+q = Process(target=f, args=(RESULT2,yd,m,COLLECTIONNAME))
+r = Process(target=f, args=(RESULT3,yd,m,COLLECTIONNAME))
+s = Process(target=f, args=(RESULT4,yd,m,COLLECTIONNAME))
+t = Process(target=f, args=(RESULT5,yd,m,COLLECTIONNAME))
+u = Process(target=f, args=(RESULT6,yd,m,COLLECTIONNAME))
+v = Process(target=f, args=(RESULT7,yd,m,COLLECTIONNAME))
+x = Process(target=f, args=(RESULT8,yd,m,COLLECTIONNAME))
 
 p.start()
 q.start()

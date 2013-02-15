@@ -21,6 +21,8 @@ def MapQuery_FindName(id):
                         utitle=urllib2.unquote(t_title)
         return title, utitle
 
+def fnGetMonthName():
+	return datetime.datetime.now().strftime("%B")
 
 def fnReturnTimes():
         TODAY=date.today()
