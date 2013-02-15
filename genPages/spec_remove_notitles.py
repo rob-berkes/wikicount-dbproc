@@ -6,7 +6,7 @@ b=0
 k=0
 for RES in db.hitshourly.find():
 	try:
-		if db.hits.find_one({'_id':RES['_id']}):
+		if db.hitsdaily.find_one({'_id':RES['_id']}):
 			pass
 		else:
 			db.hitshourly.remove({'_id':RES['_id']})

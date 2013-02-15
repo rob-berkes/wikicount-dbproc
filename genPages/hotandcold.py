@@ -61,6 +61,7 @@ def f(RESULTSET,yd,ym):
 	return
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=wikicount.minusHour(HOUR)
 d=DAY		
 yd=int(DAY)-1
 if yd==0:

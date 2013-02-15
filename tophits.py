@@ -4,6 +4,7 @@ from datetime import date
 from functions import wikicount
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+HOUR=wikicount.minusHour(HOUR)
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
