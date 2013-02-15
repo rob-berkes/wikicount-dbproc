@@ -7,7 +7,7 @@ from functions import wikicount
 import string
 import urllib2
 RECORDSPERPAGE=100
-def f(RESULTSET,yd,ym,COLLECTIONNAME):
+def f(RESULTSET,yd,ym,COLLECTIONNAME,NUMRECS,SKIPNUM):
 	OUTPUT=[]
 	thCN='tophits'+COLLECTIONNAME
 	dbCN='proddebuts'+COLLECTIONNAME
@@ -27,10 +27,9 @@ def f(RESULTSET,yd,ym,COLLECTIONNAME):
         MONTH=TODAY.month
         YEAR=TODAY.year
 #       FQUERY={'d':int(DAY),'m':int(MONTH),'y':int(YEAR)}
-        TRENDING_LIST_QUERY=db.tmpHot.find().sort('delta',-1).limit(100)
+        TRENDING_LIST_QUERY=db.tmpHot.find().sort('delta',-1).limit(NUMRECS).skip(NUMRECS*SKIPNUM)
         send_list=[]
         title=''
-	db.prodtrend.drop()
         for p in TRENDING_LIST_QUERY:
 		title,utitle=wikicount.FormatName(p['title'])
                 rec={'title':title,'place':p['orPlace'],'Hits':p['delta'],'linktitle':utitle,'d':yd,'m':ym,'y':y,'id':p['id']}
@@ -38,7 +37,6 @@ def f(RESULTSET,yd,ym,COLLECTIONNAME):
         COLD_LIST_QUERY=db.tmpHot.find().sort('delta',1).limit(100)
         send_list=[]
         title=''
-	db.prodcold.remove()
         for p in COLD_LIST_QUERY:
 		title,utitle=wikicount.FormatName(p['title'])
                 rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['id']}
@@ -47,8 +45,6 @@ def f(RESULTSET,yd,ym,COLLECTIONNAME):
 
 
 	RESULTSET.rewind()
-	REMOVEQ={'d':d,'m':m,'y':y}
-	db.proddebuts.remove(REMOVEQ)
 	debutCount=1
 	print 'entering debut process'
 	for item in RESULTSET:
@@ -83,24 +79,29 @@ db=conn.wc
 RECCOUNT=1
 NUMRECS=31250
 db.tmpHot.remove()
+db['tmpHot'].create_index('delta')
+db.prodtrend.drop()
+db.prodcold.remove()
+REMOVEQ={'d':d,'m':m,'y':y}
+db.proddebuts.remove(REMOVEQ)
 INSERTSET=[]
-RESULT1=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
-RESULT2=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
-RESULT3=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db[COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
+RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
+RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
+RESULT3=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
+RESULT5=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
+RESULT6=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
+RESULT7=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
+RESULT8=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
 
-p = Process(target=f, args=(RESULT1,yd,m,COLLECTIONNAME))
-q = Process(target=f, args=(RESULT2,yd,m,COLLECTIONNAME))
-r = Process(target=f, args=(RESULT3,yd,m,COLLECTIONNAME))
-s = Process(target=f, args=(RESULT4,yd,m,COLLECTIONNAME))
-t = Process(target=f, args=(RESULT5,yd,m,COLLECTIONNAME))
-u = Process(target=f, args=(RESULT6,yd,m,COLLECTIONNAME))
-v = Process(target=f, args=(RESULT7,yd,m,COLLECTIONNAME))
-x = Process(target=f, args=(RESULT8,yd,m,COLLECTIONNAME))
+p = Process(target=f, args=(RESULT1,yd,m,COLLECTIONNAME,NUMRECS,0))
+q = Process(target=f, args=(RESULT2,yd,m,COLLECTIONNAME,NUMRECS,1))
+r = Process(target=f, args=(RESULT3,yd,m,COLLECTIONNAME,NUMRECS,2))
+s = Process(target=f, args=(RESULT4,yd,m,COLLECTIONNAME,NUMRECS,3))
+t = Process(target=f, args=(RESULT5,yd,m,COLLECTIONNAME,NUMRECS,4))
+u = Process(target=f, args=(RESULT6,yd,m,COLLECTIONNAME,NUMRECS,5))
+v = Process(target=f, args=(RESULT7,yd,m,COLLECTIONNAME,NUMRECS,6))
+x = Process(target=f, args=(RESULT8,yd,m,COLLECTIONNAME,NUMRECS,7))
 
 p.start()
 q.start()
