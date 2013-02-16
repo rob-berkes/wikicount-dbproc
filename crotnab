@@ -1,3 +1,4 @@
+1 0 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/d0_dailystuff.py
 5 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p0_dl.py"
 8 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p1_split.py"
 12 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2_filter.py"
@@ -14,7 +15,7 @@
 35 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py"
 
 
-40 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
+40 2-23 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
 45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
 50 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/hotandcold.py"
 
