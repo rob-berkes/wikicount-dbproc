@@ -80,11 +80,29 @@ RECCOUNT=1
 NUMRECS=31250
 db.tmpHot.remove()
 db['tmpHot'].create_index('delta')
-db.prodtrend.drop()
+db.prodtrend.remove()
 db.prodcold.remove()
 REMOVEQ={'d':d,'m':m,'y':y}
 db.proddebuts.remove(REMOVEQ)
 INSERTSET=[]
+SYEAR='%02d' % (int(YEAR),)
+SDAY='%02d' % (int(DAY),)
+SMONTH='%02d' % (int(MONTH),)
+
+DAYSTR=str(YEAR)+"_"+str(SMONTH)+"_"+str(SDAY)
+CAT_TRENDING_LIST_QUERY=db.categorydaily.find().sort(DAYSTR,-1).limit(100)
+send_list=[]
+title=''
+MTITLE=''
+db.prodcattrend.drop()
+for p in CAT_TRENDING_LIST_QUERY:
+	MQUERY={"_id":str(p['_id'])}
+	for row in db.category.find(MQUERY):
+		MTITLE=str(row['title'])
+	title,utitle=wikicount.FormatName(MTITLE)
+        rec={'title':title,'place':p[DAYSTR],'Hits':p[DAYSTR],'linktitle':utitle,'d':yd,'m':ym,'y':y,'id':p['_id']}
+	db.prodcattrend.insert(rec)
+
 RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
 RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
 RESULT3=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)

@@ -20,7 +20,7 @@ elif HOUR3==-2:
 HOUR='%02d' % (HOUR,)
 HOUR2='%02d' % (HOUR2,)
 HOUR3='%02d' % (HOUR3,)
-ALLRES=db.hitshourlydaily.find({str(HOUR):{'$exists':true}}).sort(str(HOUR),-1).limit(50000)
+ALLRES=db.hitshourlydaily.find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(50000)
 hourlies=[]
 TypeErrors=0
 KeyErrors=0
