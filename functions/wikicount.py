@@ -20,7 +20,22 @@ def MapQuery_FindName(id):
                         t_title=s_title.encode('utf-8')
                         utitle=urllib2.unquote(t_title)
         return title, utitle
-
+def fnGetStatusMsg(COLLCHECK):
+	RECORD=db.logSystem.find_one({table:COLLCHECK})
+	
+	return RECORD['status']
+def fnSetStatusMsg(COLLCHECK,msgNum):
+	QREC={'table':COLLCHECK}
+	if msgNum==0:
+		REC={'table':COLLCHECK,'mesg':'NOT Ready'}
+		db.logSystem.remove(QREC)
+		db.logSystem.insert(REC)
+	elif msgNum==1:
+		REC={'table':COLLCHECK,'mesg':'Ready'}
+		db.logSystem.remove(QREC)
+		db.logSystem.insert(REC)
+		
+	return
 def fnGetMonthName():
 	return datetime.datetime.now().strftime("%B")
 

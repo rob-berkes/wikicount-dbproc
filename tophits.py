@@ -2,17 +2,17 @@
 from pymongo import Connection
 from datetime import date
 from functions import wikicount
+import time 
+
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 MONTHNAME=wikicount.fnGetMonthName()
 HOUR=wikicount.minusHour(int(HOUR))
 COLLECTIONNAME="tophits"+str(YEAR)+str(MONTHNAME)
-print COLLECTIONNAME
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
 DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-print DAYKEY
 
 IFILE=open("/home/ec2-user/mongo.csv.sorted","r")
 RESULT=[]

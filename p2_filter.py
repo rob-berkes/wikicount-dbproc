@@ -37,7 +37,7 @@ for FILENAME in glob.glob('/tmp/staging/q*'):
 		ptnPhp=re.search(".php",record[1])
 		if ptnCategory:
 			CATFILE.write(line)
-		if ptnImage:
+		if ptnImage or ptnFile:
 			IMGFILE.write(line)
 		if  not ptnImage and not ptnPhp and not ptnTalk and not ptnUser and not ptnWiki and not ptnSpecial and not ptnUTalk and not ptnTemplate and not ptnWTalk and not ptnFile and not ptnCategory and not ptnCTalk and not ptnSTalk:
 			OFILE.write(line)

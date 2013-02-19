@@ -1,0 +1,2 @@
+db.tophitCNAME.ensureIndex({'d':1,'m':1,'y':1})
+db.tophitCNAME.ensureIndex({'id':1})
