@@ -27,14 +27,20 @@ def fnGetStatusMsg(COLLCHECK):
 def fnSetStatusMsg(COLLCHECK,msgNum):
 	QREC={'table':COLLCHECK}
 	if msgNum==0:
-		REC={'table':COLLCHECK,'mesg':'NOT Ready'}
+		REC={'table':COLLCHECK,'mesg':'NOT Done'}
 		db.logSystem.remove(QREC)
 		db.logSystem.insert(REC)
 	elif msgNum==1:
-		REC={'table':COLLCHECK,'mesg':'Ready'}
+		REC={'table':COLLCHECK,'mesg':'Done'}
 		db.logSystem.remove(QREC)
 		db.logSystem.insert(REC)
 		
+	return
+def fnWaitForStatus(COLLCHECK):
+	QREC={'table':COLLCHECK}
+	REC=db.logSystem.find_one(QREC)
+	if REC['mesg'] == 'NOT Done':
+		time.sleep(5)
 	return
 def fnGetMonthName():
 	return datetime.datetime.now().strftime("%B")

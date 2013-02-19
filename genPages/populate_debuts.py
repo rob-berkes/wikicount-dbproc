@@ -28,6 +28,7 @@ DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
 COLLECTIONNAME=str(YEAR)+MONTHNAME
+wikicount.fnSetStatusMsg('populate_debuts',0)
 d=DAY
 yd=int(DAY)-1
 if yd==0:
@@ -82,3 +83,4 @@ t.join()
 u.join()
 v.join()
 x.join() 
+wikicount.fnSetStatusMsg('populate_debuts',1)

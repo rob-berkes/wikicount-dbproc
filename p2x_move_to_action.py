@@ -3,7 +3,7 @@ import glob
 import os 
 import string
 from functions import wikicount
-
+wikicount.fnSetStatusMsg('p2x_move_to_action',0)
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=int(HOUR)-2
 if HOUR==-1:
@@ -19,4 +19,5 @@ for FILENAME in glob.glob('/tmp/ondeck/q*'):
 	IFILE.close()
 	OFILE.close() 
 	os.remove(FILENAME)
+wikicount.fnSetStatusMsg('p2x_move_to_action',1)
 

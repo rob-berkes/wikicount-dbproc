@@ -55,6 +55,7 @@ FILEPROC8="/tmp/image/q8_pagecounts.processed.*"
 
 
 if __name__ == '__main__':
+    wikicount.fnSetStatusMsg('p3_image_add',0)
     p = Process(target=UpdateHits, args=(FILEPROC2,HOUR,DAY,MONTH,YEAR))
     q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR))
     r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR))
@@ -91,3 +92,4 @@ if __name__ == '__main__':
     v.join()
 #    w.join()
 
+    wikicount.fnSetStatusMsg('p3_image_add',1)

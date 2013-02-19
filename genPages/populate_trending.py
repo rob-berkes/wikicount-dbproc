@@ -35,7 +35,7 @@ db=conn.wc
 RECCOUNT=1
 NUMRECS=31250
 debutCount=0
-
+wikicount.fnSetStatusMsg('populate_trending',0)
 db.prodtrend.remove()
 RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
 RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
@@ -72,3 +72,4 @@ t.join()
 u.join()
 v.join()
 x.join() 
+wikicount.fnSetStatusMsg('populate_trending',1)

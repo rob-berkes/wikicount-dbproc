@@ -40,6 +40,7 @@ db=conn.wc
 RECCOUNT=1
 NUMRECS=31250
 debutCount=0
+wikicount.fnSetStatusMsg('prepop_fillTmpHot',0)
 
 db.tmpHot.remove()
 RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
@@ -77,3 +78,4 @@ t.join()
 u.join()
 v.join()
 x.join() 
+wikicount.fnSetStatusMsg('prepop_fillTmpHot',1)

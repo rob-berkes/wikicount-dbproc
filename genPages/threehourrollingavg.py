@@ -20,6 +20,7 @@ elif HOUR3==-2:
 HOUR='%02d' % (HOUR,)
 HOUR2='%02d' % (HOUR2,)
 HOUR3='%02d' % (HOUR3,)
+wikicount.fnSetStatusMsg('threehrrollingavg',0)
 ALLRES=db.hitshourlydaily.find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(50000)
 hourlies=[]
 TypeErrors=0
@@ -60,3 +61,4 @@ for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
 		rec={'place':z,'title':w['title'],'rollavg':w['rollavg'],'id':w['id']}
 		db.threehour.insert(rec)
 		z+=1
+wikicount.fnSetStatusMsg('threehrrollingavg',1)

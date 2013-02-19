@@ -8,7 +8,7 @@ from functions import wikicount
 
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-
+wikicount.fnSetStatusMsg('p2_filter',0)
 for FILENAME in glob.glob('/tmp/staging/q*'):
 	print FILENAME
 	IFILE=open(FILENAME,"r")
@@ -46,3 +46,4 @@ for FILENAME in glob.glob('/tmp/staging/q*'):
 	CATFILE.close()
 	os.remove(FILENAME)
 
+wikicount.fnSetStatusMsg('p2_filter',1)

@@ -7,6 +7,7 @@ import os
 import string 
 if __name__ == '__main__' :
 	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+	wikicount.fnSetStatusMsg('sortMongoHD',0)
 	os.system("sed -i 1d /home/ec2-user/mongo.csv")
 	sys.setrecursionlimit(2000)
 	n=7  #number partitions to break into
@@ -35,3 +36,4 @@ if __name__ == '__main__' :
 		OFILE.write(str(a[0])+','+a[1])
 	OFILE.close()
 	print 'all done!'
+	wikicount.fnSetStatusMsg('sortMongoHD',1)

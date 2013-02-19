@@ -8,7 +8,7 @@ FILEBASE="/tmp/staging/pagecounts.tmp"
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-print HOUR
+wikicount.fnSetStatusMsg('p1_split',0)
 FILEPROC2="/tmp/staging/q2_pagecounts.processed."+str(HOUR)
 FILEPROC3="/tmp/staging/q3_pagecounts.processed."+str(HOUR)
 FILEPROC4="/tmp/staging/q4_pagecounts.processed."+str(HOUR)
@@ -66,3 +66,4 @@ OFILE6.close()
 
 os.remove(FILEBASE)
 
+wikicount.fnSetStatusMsg('p1_split',1)

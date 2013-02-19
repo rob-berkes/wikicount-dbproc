@@ -14,6 +14,8 @@ db=conn.wc
 RECCOUNT=1
 DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
 
+
+wikicount.fnSetStatusMsg('tophits',0)
 IFILE=open("/home/ec2-user/mongo.csv.sorted","r")
 RESULT=[]
 for line in IFILE:
@@ -43,3 +45,4 @@ for item in RESULT:
 	RECCOUNT+=1
 	if RECCOUNT > 250000:
 		break
+wikicount.fnSetStatusMsg('tophits',1)
