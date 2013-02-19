@@ -8,18 +8,10 @@ db=conn.wc
 
 DAY,MONTH,YEAR,HOUR,expiretimes = wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
-HOUR2=HOUR-1
-HOUR3=HOUR2-1
-if HOUR2==-1:
-	HOUR2=23
-if HOUR3==-1:
-	HOUR3=23
-elif HOUR3==-2:
-	HOUR3=22
-
-HOUR='%02d' % (HOUR,)
-HOUR2='%02d' % (HOUR2,)
-HOUR3='%02d' % (HOUR3,)
+HOUR,HOUR2,HOUR3=wikicount.fnReturnLastThreeHours(HOUR)
+HOUR=wikicount.fnStrFmtDate(HOUR)
+HOUR2=wikicount.fnStrFmtDate(HOUR2)
+HOUR3=wikicount.fnStrFmtDate(HOUR3)
 wikicount.fnSetStatusMsg('threehrrollingavg',0)
 ALLRES=db.hitshourlydaily.find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(50000)
 hourlies=[]

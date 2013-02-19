@@ -72,6 +72,11 @@ def fnFormatTimes(DAY,MONTH,HOUR):
 	DAY='%02d' % (int(DAY),)
 	MONTH='%02d' % (int(MONTH),)
 	return DAY,MONTH,HOUR
+def fnReturnTimeString(DAY,MONTH,YEAR):
+	YEAR='%02d' % (int(YEAR),)
+	DAY='%02d' % (int(DAY),)
+	MONTH='%02d' % (int(MONTH),)
+	return str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
 
 def FormatName(title):
         s_title=string.replace(title,'_',' ')
@@ -91,7 +96,7 @@ def adjustHour(HOUR):
 	return HOUR
 
 def minusHour(HOUR):
-	HOUR-=7
+	#HOUR-=7
 	if HOUR==-1:
 		HOUR=23
 	elif HOUR==-2:
@@ -108,3 +113,16 @@ def minusHour(HOUR):
 		HOUR=17
 	return HOUR
 
+def fnReturnLastThreeHours(HOUR):
+	a=HOUR-1
+	b=HOUR-2
+	if a==-1:
+		a=23
+	if b==-1:
+		b=23
+	elif b==-2:
+		b=22
+	return HOUR,a,b
+def fnStrFmtDate(DVAR):
+	NEWVAR='%02d' % (DVAR,)	
+	return NEWVAR
