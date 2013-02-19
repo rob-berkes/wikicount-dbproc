@@ -11,15 +11,6 @@ def f(RESULTSET,yd,ym,COLLECTIONNAME,NUMRECS,SKIPNUM):
 	OUTPUT=[]
 	thCN='tophits'+COLLECTIONNAME
 	dbCN='proddebuts'+COLLECTIONNAME
-	for item in RESULTSET:
-		Hits=int(item['Hits'])
-		YHITS=db[thCN].find({'d':yd,'m':ym,'y':y,'id':str(item['id'])})
-		for ROW in YHITS:
-			Hits=Hits-ROW['Hits']
-		NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place'],'title':item['title']}
-		OUTPUT.append(NEWPOST)
-	for POSTQ in OUTPUT:
-		db.tmpHot.insert(POSTQ)
 
 
 	TODAY=date.today()
@@ -27,36 +18,7 @@ def f(RESULTSET,yd,ym,COLLECTIONNAME,NUMRECS,SKIPNUM):
         MONTH=TODAY.month
         YEAR=TODAY.year
 #       FQUERY={'d':int(DAY),'m':int(MONTH),'y':int(YEAR)}
-        TRENDING_LIST_QUERY=db.tmpHot.find().sort('delta',-1).limit(NUMRECS).skip(NUMRECS*SKIPNUM)
-        send_list=[]
-        title=''
-        for p in TRENDING_LIST_QUERY:
-		title,utitle=wikicount.FormatName(p['title'])
-                rec={'title':title,'place':p['orPlace'],'Hits':p['delta'],'linktitle':utitle,'d':yd,'m':ym,'y':y,'id':p['id']}
-		db.prodtrend.insert(rec) 
-        COLD_LIST_QUERY=db.tmpHot.find().sort('delta',1).limit(100)
-        send_list=[]
-        title=''
-        for p in COLD_LIST_QUERY:
-		title,utitle=wikicount.FormatName(p['title'])
-                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['id']}
-		db.prodcold.insert(rec)
 	
-
-
-	RESULTSET.rewind()
-	debutCount=1
-	print 'entering debut process'
-	for item in RESULTSET:
-	     YQUERY={'id':item['id']}
-	     if db[thCN].find(YQUERY).count() == 1 and debutCount<150:
-		     title, utitle=wikicount.FormatName(item['title'])
-		     try:
-	             	POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
-	             	db[dbCN].insert(POSTQ)
-			debutCount+=1
-		     except TypeError:
-			pass
 
 	return
 

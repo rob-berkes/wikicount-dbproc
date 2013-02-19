@@ -2,9 +2,6 @@
 5 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p0_dl.py"
 8 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p1_split.py"
 12 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2_filter.py"
-
-######0 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p99_remove_twohitters.py"
-
 14 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py"
 15 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py"
 
@@ -13,11 +10,13 @@
 33 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p70_export.py"
 35 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py"
 35 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py"
-
-
+40 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
 40 2-23 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
-45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
-50 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/hotandcold.py"
 
+45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/genPages/prepop_filltmpHot.py"
+
+50 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_trending.py"
+51 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_debuts.py"
+52 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_cold.py"
 
 

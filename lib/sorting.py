@@ -131,6 +131,41 @@ def QuickSortMPListArray(A,conn,NumProcs):
 		leftProc.join()
 		rightProc.join()
         return
+def QuickSortMPWikiList(A,conn,NumProcs,SORTVAR):
+	print str(len(A))+' starting mplarray'
+        if len(A)<=1 :
+		print 'single num reached'
+		conn.send(A)
+		conn.close()
+	elif int(NumProcs)<1:
+		print 'proc limit reached, smp qs'
+		conn.send(QuickSortListArray(A))
+		conn.close()
+        else:
+		lesser=[]
+		greater=[]
+		pv=A.pop(0)
+		print 'Partition Value: '+str(pv[0])
+		lesser=[x for x in A if int(x[0]) > int(pv[0])]
+	        greater=[x for x in A if int(x[0]) < int(pv[0])]
+		pv=[x for x in A if x[0] == pv[0]]
+		Procs=int(NumProcs)-1
+		pConnLeft,cConnLeft=Pipe()
+		leftProc=Process(target=QuickSortMPListArray,args=(lesser,cConnLeft,Procs))
+		pConnRight,cConnRight=Pipe()
+		rightProc=Process(target=QuickSortMPListArray,args=(greater,cConnRight,Procs))
+		
+
+		leftProc.start()
+		rightProc.start()
+		print 'mplarray send'
+		conn.send(pConnLeft.recv()+pv+pConnRight.recv())
+#		conn.send(pConnLeft.recv()+[PivotValue]+pConnRight.recv())
+		conn.close()
+	
+		leftProc.join()
+		rightProc.join()
+	return
 def QuickSortStub(A,conn,NumProcs):
 
 	return
