@@ -55,7 +55,7 @@ FILEPROC8="/tmp/category/q8_pagecounts.processed.*"
 
 
 if __name__ == '__main__':
-    wikicount.fnSetStatusTime('p3_category_add',0)
+    wikicount.fnSetStatusMsg('p3_category_add',0)
     p = Process(target=UpdateHits, args=(FILEPROC2,HOUR,DAY,MONTH,YEAR))
     q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR))
     r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR))
@@ -91,5 +91,5 @@ if __name__ == '__main__':
     u.join()
     v.join()
 #    w.join()
-    wikicount.fnSetStatusTime('p3_category_add',1)
+    wikicount.fnSetStatusMsg('p3_category_add',1)
 

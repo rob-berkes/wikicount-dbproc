@@ -20,6 +20,16 @@ def MapQuery_FindName(id):
                         t_title=s_title.encode('utf-8')
                         utitle=urllib2.unquote(t_title)
         return title, utitle
+def MapQuery_FindCategory(id):
+        QUERY={'id':id}
+        MAPQ=db.category.find_one({'_id':id})
+        title=''
+        utitle=''
+        title=MAPQ['title']
+        s_title=string.replace(title,'_',' ')
+        t_title=s_title.encode('utf-8')
+        utitle=urllib2.unquote(t_title)
+        return title, utitle
 def fnGetStatusMsg(COLLCHECK):
 	RECORD=db.logSystem.find_one({table:COLLCHECK})
 	
@@ -96,7 +106,7 @@ def adjustHour(HOUR):
 	return HOUR
 
 def minusHour(HOUR):
-	#HOUR-=7
+	HOUR-=7
 	if HOUR==-1:
 		HOUR=23
 	elif HOUR==-2:
