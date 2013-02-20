@@ -30,6 +30,16 @@ def MapQuery_FindCategory(id):
         t_title=s_title.encode('utf-8')
         utitle=urllib2.unquote(t_title)
         return title, utitle
+def MapQuery_FindImageName(id):
+        QUERY={'id':id}
+        MAPQ=db.image.find_one({'_id':id})
+        title=''
+        utitle=''
+        title=MAPQ['title']
+        s_title=string.replace(title,'_',' ')
+        t_title=s_title.encode('utf-8')
+        utitle=urllib2.unquote(t_title)
+        return title, utitle
 def fnGetStatusMsg(COLLCHECK):
 	RECORD=db.logSystem.find_one({table:COLLCHECK})
 	
