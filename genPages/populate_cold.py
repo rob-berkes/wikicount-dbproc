@@ -7,13 +7,12 @@ import string
 import urllib2
 RECORDSPERPAGE=100
 
-def cold(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
-	thCN='tophits'+COLLECTIONNAME
+def cold(d,m):
   	COLD_LIST_QUERY=db.tmpHot.find().sort('delta',1).limit(100)
         title=''
         for p in COLD_LIST_QUERY:
                 title,utitle=wikicount.FormatName(p['title'])
-                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['id']}
+                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':d,'m':m,'y':y,'id':p['id']}
                 db.prodcold.insert(rec)
 	
         return
@@ -40,25 +39,12 @@ NUMRECS=62500
 debutCount=0
 wikicount.fnSetStatusMsg('populate_cold',0)
 db.prodcold.remove()
-RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
-RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
-RESULT3=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
 
-p = Process(target=cold, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
-q = Process(target=cold, args=(RESULT2,d,m,COLLECTIONNAME,NUMRECS,1))
-r = Process(target=cold, args=(RESULT3,d,m,COLLECTIONNAME,NUMRECS,2))
-s = Process(target=cold, args=(RESULT4,d,m,COLLECTIONNAME,NUMRECS,3))
+p = Process(target=cold, args=(d,m))
 
 p.start()
-q.start()
-r.start()
-s.start()
 
 p.join()
-q.join()
-r.join()
-s.join()
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_cold: runtime is '+str(RUNTIME)+' seconds.')

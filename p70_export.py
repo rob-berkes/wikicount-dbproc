@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from functions import wikicount 
 import os
 import syslog
