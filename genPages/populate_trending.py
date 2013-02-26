@@ -2,7 +2,7 @@ from pymongo import Connection
 from datetime import date
 from multiprocessing import Process
 from functions import wikicount
-
+import syslog
 import string
 import urllib2
 RECORDSPERPAGE=100
@@ -12,10 +12,13 @@ def cold(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
         title=''
         for p in TRENDING_LIST_QUERY:
                 title,utitle=wikicount.FormatName(p['title'])
-                rec={'title':title,'place':p['orPlace'],'Hits':p['delta'],'linktitle':utitle,'d':yd,'m':ym,'y':y,'id':p['id']}
+                rec={'title':title,'place':p['orPlace'],'Hits':p['delta'],'linktitle':utitle,'d':d,'m':m,'y':y,'id':p['id']}
                 db.prodtrend.insert(rec)
 
         return
+
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('populate_trending.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -71,5 +74,7 @@ s.join()
 t.join()
 u.join()
 v.join()
-x.join() 
+x.join()
+RUNTIME=fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('populate_trending.py: runtime is '+str(RUNTIME)+' seconds.') 
 wikicount.fnSetStatusMsg('populate_trending',1)

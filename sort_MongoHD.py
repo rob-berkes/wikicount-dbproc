@@ -1,11 +1,14 @@
 from lib import sorting 
 from functions import wikicount
 from multiprocessing import Process,Pipe,Queue
+import syslog
 import random
 import sys
 import os
 import string 
 if __name__ == '__main__' :
+	STARTTIME=wikicount.fnStartTimer()
+	syslog.syslog('sortMongoHD.csv: starting...')
 	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 	wikicount.fnSetStatusMsg('sortMongoHD',0)
 	os.system("sed -i 1d /home/ec2-user/mongo.csv")
@@ -36,4 +39,6 @@ if __name__ == '__main__' :
 		OFILE.write(str(a[0])+','+a[1])
 	OFILE.close()
 	print 'all done!'
+	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
 	wikicount.fnSetStatusMsg('sortMongoHD',1)

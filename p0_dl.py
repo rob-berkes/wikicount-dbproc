@@ -2,6 +2,7 @@
 import urllib2
 import os
 from functions import wikicount
+from time import time
 import syslog
 
 FILEBASE="/tmp/staging/pagecounts.tmp"
@@ -19,11 +20,15 @@ URL+=URLSUFFIX
 
 print URL
 #Now with URL, download file
+a=time()
 syslog.syslog("[p0-dl.py] - starting download"+str(URL))
 COUNTFILE=urllib2.urlopen(URL)
 OFILE=open(FILEBASE,"w")
 OFILE.write(COUNTFILE.read())
 OFILE.close()
-syslog.syslog("[p0-dl.py] - finished download"+str(URL))
+b=time()
+c=b-a
+d=round(c,3)
+syslog.syslog("[p0-dl.py] - finished download "+str(URL)+" in "+str(d)+" seconds.")
 
 wikicount.fnSetStatusMsg('p0_dl',1)

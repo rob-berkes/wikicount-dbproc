@@ -8,6 +8,8 @@ import syslog
 from functions import wikicount
 import os
 
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('p3_category_add: starting....')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
@@ -91,5 +93,7 @@ if __name__ == '__main__':
     u.join()
     v.join()
 #    w.join()
+    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+    syslog.syslog('p3_category_add: runtime '+str(RUNTIME)+' seconds.')
     wikicount.fnSetStatusMsg('p3_category_add',1)
 

@@ -2,7 +2,7 @@ from pymongo import Connection
 from datetime import date
 from multiprocessing import Process
 from functions import wikicount
-
+import syslog
 import string
 import urllib2
 RECORDSPERPAGE=100
@@ -21,6 +21,8 @@ def tmpHot(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
 
 	
         return
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('prepop_filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -40,6 +42,7 @@ db=conn.wc
 RECCOUNT=1
 NUMRECS=31250
 debutCount=0
+
 wikicount.fnSetStatusMsg('prepop_fillTmpHot',0)
 
 db.tmpHot.remove()
@@ -78,4 +81,6 @@ t.join()
 u.join()
 v.join()
 x.join() 
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('prepop_fillTmpHot',1)

@@ -2,7 +2,7 @@ from pymongo import Connection
 from datetime import date
 from multiprocessing import Process
 from functions import wikicount
-
+import syslog
 import string
 import urllib2
 RECORDSPERPAGE=100
@@ -24,6 +24,8 @@ def debuts(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
                         pass
 
         return
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog=('populate_debuts.py:  starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -83,4 +85,6 @@ t.join()
 u.join()
 v.join()
 x.join() 
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)i
+syslog.syslog('populate_debuts: runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('populate_debuts',1)

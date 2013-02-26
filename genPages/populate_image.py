@@ -2,7 +2,7 @@ from pymongo import Connection
 from datetime import date
 from multiprocessing import Process
 from functions import wikicount
-
+import syslog
 import string
 import urllib2
 RECORDSPERPAGE=100
@@ -18,6 +18,8 @@ def image(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
                 db.prodimagetrend.insert(rec)
 	
         return
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('populate_image: starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -46,4 +48,6 @@ p = Process(target=image, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
 p.start()
 
 p.join()
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('populate_image:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('populate_image',1)

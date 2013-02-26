@@ -2,8 +2,11 @@
 from pymongo import Connection
 from datetime import date
 from functions import wikicount
+import syslog
 import time 
 
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('tophits.py:  starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 MONTHNAME=wikicount.fnGetMonthName()
@@ -45,4 +48,7 @@ for item in RESULT:
 	RECCOUNT+=1
 	if RECCOUNT > 250000:
 		break
+
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('tophits',1)

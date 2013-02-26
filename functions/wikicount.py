@@ -44,6 +44,13 @@ def fnGetStatusMsg(COLLCHECK):
 	RECORD=db.logSystem.find_one({table:COLLCHECK})
 	
 	return RECORD['status']
+def fnStartTimer():
+	return time.time()
+def fnEndTimerCalcRuntime(a):
+	b=time.time()
+	c=b-a
+	d=round(c,3)
+	return d
 def fnSetStatusMsg(COLLCHECK,msgNum):
 	QREC={'table':COLLCHECK}
 	if msgNum==0:

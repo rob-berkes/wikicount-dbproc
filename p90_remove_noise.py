@@ -1,6 +1,10 @@
 #/usr/bin/python
 from pymongo import Connection 
+import syslog
+from functions import wikicount
 
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('p90_remove: Starting....')
 conn=Connection()
 db=conn.wc
 
@@ -17,4 +21,6 @@ HASHES=['8f9e9b397d590520d0938b3a063c1c0b58ba8445','ec15401c608667dbbb08a37856c8
 for item in HASHES:
 	db.hitsdaily.remove({'_id':item})
 	db.hitshourly.remove({'_id':item})
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('p90_remove: runtime '+str(RUNTIME)+' seconds.')
 

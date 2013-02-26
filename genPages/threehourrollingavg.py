@@ -3,9 +3,10 @@ from functions import wikicount
 from numpy import sqrt,mean,array
 from operator import itemgetter
 import syslog
+
+STARTTIME=wikicount.fnStartTimer()
 conn=Connection()
 db=conn.wc
-
 DAY,MONTH,YEAR,HOUR,expiretimes = wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 HOUR,HOUR2,HOUR3=wikicount.fnReturnLastThreeHours(HOUR)
@@ -53,4 +54,6 @@ for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
 		rec={'place':z,'title':w['title'],'rollavg':w['rollavg'],'id':w['id']}
 		db.threehour.insert(rec)
 		z+=1
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+syslog.syslog('threehourrollingavg.py :  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('threehrrollingavg',1)

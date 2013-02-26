@@ -4,11 +4,15 @@ import re
 import os
 import shutil 
 import string
-from functions import wikicount 
-
+from functions import wikicount
+from time import time
+import syslog
+ 
+a=time()
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 wikicount.fnSetStatusMsg('p2_filter',0)
+syslog.syslog('p2_filter.py: starting....')
 for FILENAME in glob.glob('/tmp/staging/q*'):
 	print FILENAME
 	IFILE=open(FILENAME,"r")
@@ -46,4 +50,8 @@ for FILENAME in glob.glob('/tmp/staging/q*'):
 	CATFILE.close()
 	os.remove(FILENAME)
 
+b=time()
+c=b-a
+d=round(c,3)
+syslog.syslog("p2_filter.py: runtime is "+str(d)+" seconds.")
 wikicount.fnSetStatusMsg('p2_filter',1)

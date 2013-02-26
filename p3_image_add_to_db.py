@@ -8,6 +8,8 @@ import syslog
 from functions import wikicount
 import os
 
+STARTTIME=wikicount.fnStartTimer()
+syslog.syslog('p3_image_add: starting....')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
@@ -46,9 +48,6 @@ FILEPROC2="/tmp/image/q2_pagecounts.processed.*"
 FILEPROC3="/tmp/image/q3_pagecounts.processed.*"
 FILEPROC4="/tmp/image/q4_pagecounts.processed.*"
 FILEPROC5="/tmp/image/q5_pagecounts.processed.*"
-FILEPROC6="/tmp/image/q6_pagecounts.processed.*"
-FILEPROC7="/tmp/image/q7_pagecounts.processed.*"
-FILEPROC8="/tmp/image/q8_pagecounts.processed.*"
 
 
 
@@ -60,26 +59,14 @@ if __name__ == '__main__':
     q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR))
     r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR))
     s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR))
-    t = Process(target=UpdateHits, args=(FILEPROC6,HOUR,DAY,MONTH,YEAR))
-    u = Process(target=UpdateHits, args=(FILEPROC7,HOUR,DAY,MONTH,YEAR))
-    v = Process(target=UpdateHits, args=(FILEPROC8,HOUR,DAY,MONTH,YEAR))
-#    w = Process(target=f, args=(FILEPROC9,))
     p.daemon=True
     q.daemon=True
     r.daemon=True
     s.daemon=True
-    t.daemon=True
-    u.daemon=True
-    v.daemon=True
-#    w.daemon=True
     p.start()
     q.start()
     r.start()
     s.start()
-    t.start()
-    u.start()
-    v.start()
-#    w.start()
 
 
 
@@ -87,9 +74,6 @@ if __name__ == '__main__':
     q.join()
     r.join()
     s.join()
-    t.join()
-    u.join()
-    v.join()
-#    w.join()
-
+    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
     wikicount.fnSetStatusMsg('p3_image_add',1)
