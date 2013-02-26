@@ -13,10 +13,11 @@
 40 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/tophits.py"
 40 2-23 * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py"
 
-45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/genPages/prepop_filltmpHot.py"
+45 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/prepop_filltmpHot.py"
 
 50 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_trending.py"
 51 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_debuts.py"
 52 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_cold.py"
-
+53 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_category.py"
+54 * * * * /bin/bash -c "/usr/bin/python /home/ec2-user/Python/genPages/populate_image.py"
 

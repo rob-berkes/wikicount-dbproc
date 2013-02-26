@@ -25,7 +25,7 @@ def debuts(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
 
         return
 STARTTIME=wikicount.fnStartTimer()
-syslog.syslog=('populate_debuts.py:  starting...')
+syslog.syslog('populate_debuts.py:  starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -85,6 +85,6 @@ t.join()
 u.join()
 v.join()
 x.join() 
-RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)i
+RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_debuts: runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('populate_debuts',1)
