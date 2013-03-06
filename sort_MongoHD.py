@@ -41,4 +41,5 @@ if __name__ == '__main__' :
 	print 'all done!'
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
-	wikicount.fnSetStatusMsg('sortMongoHD',1)
+	wikicount.fnSetStatusMsg('sortMongoHD',3)
+	wikicount.fnLaunchNextJob('sortMongoHD')

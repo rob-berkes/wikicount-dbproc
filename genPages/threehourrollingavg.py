@@ -56,4 +56,5 @@ for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
 		z+=1
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('threehourrollingavg.py :  runtime is '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('threehrrollingavg',1)
+wikicount.fnSetStatusMsg('threehrrollingavg',3)
+wikicount.fnLaunchNextJob('threehrrollingavg')

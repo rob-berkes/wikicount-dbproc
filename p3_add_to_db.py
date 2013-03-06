@@ -90,5 +90,6 @@ if __name__ == '__main__':
     
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog('p3_add_to_db.py: runtime '+str(RUNTIME)+' seconds.')
-    wikicount.fnSetStatusMsg('p3_add_to_db',1)
+    wikicount.fnSetStatusMsg('p3_add_to_db',3)
+    wikicount.fnLaunchNextJob('p3_add_to_db')
 

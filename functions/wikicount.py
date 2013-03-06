@@ -78,6 +78,112 @@ def fnIsPrevJobDone(CURJOBNAME):
 		elif STATUSQUERY['mesg']==int(HOUR):
 			syslog.syslog('Job not started yet, returning True')
 			return True
+	elif CURJOBNAME=='p3_add_to_db':
+		STATUSQUERY=db.logSystem.find_one({'table':'p3_add_to_db'})
+		CSTATUSQ=db.logSystem.find_one({'table':'p3_image_add'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='p3_image_add':
+		STATUSQUERY=db.logSystem.find_one({'table':'p3_image_add'})
+		CSTATUSQ=db.logSystem.find_one({'table':'p3_category_add'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='p3_category_add':
+		STATUSQUERY=db.logSystem.find_one({'table':'p3_category_add'})
+		CSTATUSQ=db.logSystem.find_one({'table':'p70_export'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='p70_export':
+		STATUSQUERY=db.logSystem.find_one({'table':'p70_export'})
+		CSTATUSQ=db.logSystem.find_one({'table':'p90_remove_noise'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='p90_remove_noise':
+		STATUSQUERY=db.logSystem.find_one({'table':'p90_remove_noise'})
+		CSTATUSQ=db.logSystem.find_one({'table':'sortMongoHD'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='sortMongoHD':
+		STATUSQUERY=db.logSystem.find_one({'table':'sortMongoHD'})
+		CSTATUSQ=db.logSystem.find_one({'table':'tophits'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='tophits':
+		STATUSQUERY=db.logSystem.find_one({'table':'tophits'})
+		CSTATUSQ=db.logSystem.find_one({'table':'threehrrollingavg'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='threehrrollingavg':
+		STATUSQUERY=db.logSystem.find_one({'table':'threehrrollingavg'})
+		CSTATUSQ=db.logSystem.find_one({'table':'fillTmpHot'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='fillTmpHot':
+		STATUSQUERY=db.logSystem.find_one({'table':'fillTmpHot'})
+		CSTATUSQ=db.logSystem.find_one({'table':'populate_trending'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='populate_trending':
+		STATUSQUERY=db.logSystem.find_one({'table':'populate_trending'})
+		CSTATUSQ=db.logSystem.find_one({'table':'populate_debuts'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='populate_debuts':
+		STATUSQUERY=db.logSystem.find_one({'table':'populate_debuts'})
+		CSTATUSQ=db.logSystem.find_one({'table':'populate_cold'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='populate_cold':
+		STATUSQUERY=db.logSystem.find_one({'table':'populate_cold'})
+		CSTATUSQ=db.logSystem.find_one({'table':'populate_category'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='populate_category':
+		STATUSQUERY=db.logSystem.find_one({'table':'populate_category'})
+		CSTATUSQ=db.logSystem.find_one({'table':'populate_image'})
+		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+			syslog.syslog('Job already run, cron job NOT starting')
+		elif STATUSQUERY['mesg']==int(HOUR):
+			syslog.syslog('Job not started yet, returning True')
+			return True
+	elif CURJOBNAME=='populate_image':
+		return True
 	return False
 def fnLaunchNextJob(CURJOBNAME):
 	if CURJOBNAME=='p0_dl' and fnIsPrevJobDone(CURJOBNAME):
@@ -92,6 +198,47 @@ def fnLaunchNextJob(CURJOBNAME):
 	elif CURJOBNAME=='p2x_move_to_action' and fnIsPrevJobDone(CURJOBNAME):
 		syslog.syslog('Launching add to db proc...p3_add_to_db')
 		os.system('/usr/bin/python /home/ec2-user/Python/p3_add_to_db.py') 		
+	elif CURJOBNAME=='p3_add_to_db' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching Image add to db...p3_image_add')
+		os.system('/usr/bin/python /home/ec2-user/Python/p3_image_add_to_db.py') 		
+	elif CURJOBNAME=='p3_image_add' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching Category add to db ...p3_category_add')
+		os.system('/usr/bin/python /home/ec2-user/Python/p3_category_add_to_db.py') 		
+	elif CURJOBNAME=='p3_category_add' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching p70 Export to csv file ...p70_export')
+		os.system('/usr/bin/python /home/ec2-user/Python/p70_export.py') 		
+	elif CURJOBNAME=='p70_export' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching p90 noise removal script ...p90_remove_noise')
+		os.system('/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py') 		
+	elif CURJOBNAME=='p90_remove_noise' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching Mongo CSV Sort script ...sortMongoHD')
+		os.system('/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py') 		
+	elif CURJOBNAME=='sortMongoHD' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching Tophits script ...tophits')
+		os.system('/usr/bin/python /home/ec2-user/Python/tophits.py') 		
+	elif CURJOBNAME=='tophits' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching ThreeHourRollingAvg script ...threehrrollingavg')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py') 		
+	elif CURJOBNAME=='threehrrollingavg' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching prepop_filltmpHot script ...fillTmpHot')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/prepop_filltmpHot.py') 		
+	elif CURJOBNAME=='fillTmpHot' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching populate_trending script ...populate_trending')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/populate_trending.py') 		
+	elif CURJOBNAME=='populate_trending' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching populate_debuts script ...populate_debuts')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/populate_debuts.py') 		
+	elif CURJOBNAME=='populate_debuts' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching populate_cold script ...populate_cold')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/populate_cold.py') 		
+	elif CURJOBNAME=='populate_cold' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching populate_category script ...populate_category')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/populate_category.py') 		
+	elif CURJOBNAME=='populate_category' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('Launching populate_image script ...populate_image')
+		os.system('/usr/bin/python /home/ec2-user/Python/genPages/populate_image.py') 		
+	elif CURJOBNAME=='populate_image' and fnIsPrevJobDone(CURJOBNAME):
+		syslog.syslog('All Done with adding info to databae!')
 
 	return
 def fnGetStatusMsg(COLLCHECK):

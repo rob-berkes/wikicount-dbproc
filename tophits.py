@@ -51,4 +51,5 @@ for item in RESULT:
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('tophits',1)
+wikicount.fnSetStatusMsg('tophits',3)
+wikicount.fnLaunchNextJob('tophits')

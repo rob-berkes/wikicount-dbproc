@@ -18,4 +18,5 @@ os.system("sed -i 1d /home/ec2-user/mongo.csv")
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('p70_export.py: runtime '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('p70_export',1)
+wikicount.fnSetStatusMsg('p70_export',3)
+wikicount.fnLaunchNextJob('p70_export')

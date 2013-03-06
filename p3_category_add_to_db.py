@@ -95,5 +95,5 @@ if __name__ == '__main__':
 #    w.join()
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog('p3_category_add: runtime '+str(RUNTIME)+' seconds.')
-    wikicount.fnSetStatusMsg('p3_category_add',1)
-
+    wikicount.fnSetStatusMsg('p3_category_add',3)
+    wikicount.fnLaunchNextJob('p3_category_add')

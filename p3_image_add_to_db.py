@@ -76,4 +76,5 @@ if __name__ == '__main__':
     s.join()
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
-    wikicount.fnSetStatusMsg('p3_image_add',1)
+    wikicount.fnSetStatusMsg('p3_image_add',3)
+    wikicount.fnLaunchNextJob('p3_image_add')

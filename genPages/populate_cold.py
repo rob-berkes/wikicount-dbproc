@@ -48,4 +48,5 @@ p.join()
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_cold: runtime is '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('populate_cold',1)
+wikicount.fnSetStatusMsg('populate_cold',3)
+wikicount.fnLaunchNextJob('populate_cold')
