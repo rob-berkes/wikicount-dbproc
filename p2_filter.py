@@ -54,4 +54,5 @@ b=time()
 c=b-a
 d=round(c,3)
 syslog.syslog("p2_filter.py: runtime is "+str(d)+" seconds.")
-wikicount.fnSetStatusMsg('p2_filter',1)
+wikicount.fnSetStatusMsg('p2_filter',3)
+wikicount.fnLaunchNextJob('p2_filter')

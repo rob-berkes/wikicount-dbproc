@@ -19,5 +19,5 @@ for FILENAME in glob.glob('/tmp/ondeck/q*'):
 	IFILE.close()
 	OFILE.close() 
 	os.remove(FILENAME)
-wikicount.fnSetStatusMsg('p2x_move_to_action',1)
-
+wikicount.fnSetStatusMsg('p2x_move_to_action',3)
+wikicount.fnLaunchNextJob('p2x_move_to_action')

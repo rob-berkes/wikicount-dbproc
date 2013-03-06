@@ -31,4 +31,5 @@ c=b-a
 d=round(c,3)
 syslog.syslog("[p0-dl.py] - finished download "+str(URL)+" in "+str(d)+" seconds.")
 
-wikicount.fnSetStatusMsg('p0_dl',1)
+wikicount.fnSetStatusMsg('p0_dl',3)
+wikicount.fnLaunchNextJob('p0_dl')

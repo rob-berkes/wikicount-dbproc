@@ -18,7 +18,6 @@ FILEPROC2="/tmp/staging/q2_pagecounts.processed."+str(HOUR)
 FILEPROC3="/tmp/staging/q3_pagecounts.processed."+str(HOUR)
 FILEPROC4="/tmp/staging/q4_pagecounts.processed."+str(HOUR)
 FILEPROC5="/tmp/staging/q5_pagecounts.processed."+str(HOUR)
-FILEPROC6="/tmp/staging/q6_pagecounts.processed."+str(HOUR)
 
 
 IFILE=gzip.open(FILEBASE,"r")
@@ -55,4 +54,5 @@ b=time()
 c=b-a
 d=round(c,3)
 syslog.syslog("p1_split.py : runtime "+str(d)+" seconds.")
-wikicount.fnSetStatusMsg('p1_split',1)
+wikicount.fnSetStatusMsg('p1_split',3)
+wikicount.fnLaunchNextJob('p1_split')
