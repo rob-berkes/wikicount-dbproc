@@ -8,14 +8,6 @@ import urllib2
 RECORDSPERPAGE=100
 
 def image(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
-	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-	YEARSTR=wikicount.fnReturnTimeString(DAY,MONTH,YEAR)
-  	CATEGORY_LIST_QUERY=db.imagedaily.find().sort(YEARSTR,-1).limit(100)
-        title=''
-        for p in CATEGORY_LIST_QUERY:
-                title,utitle=wikicount.MapQuery_FindImageName(p['_id'])
-                rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
-                db.prodimagetrend.insert(rec)
 	
         return
 STARTTIME=wikicount.fnStartTimer()
@@ -40,15 +32,18 @@ RECCOUNT=1
 NUMRECS=31250
 debutCount=0
 wikicount.fnSetStatusMsg('populate_image',0)
-db.prodcattrend.remove()
+db.prodimagetrend.remove()
 RESULT1=[]
 
-p = Process(target=image, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
+YEARSTR=wikicount.fnReturnTimeString(DAY,MONTH,YEAR)
+CATEGORY_LIST_QUERY=db.imagedaily.find().sort(YEARSTR,-1).limit(100)
+title=''
+for p in CATEGORY_LIST_QUERY:
+	title,utitle=wikicount.MapQuery_FindImageName(p['_id'])
+        rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
+        db.prodimagetrend.insert(rec)
 
-p.start()
-
-p.join()
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_image:  runtime is '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('populate_image',1)
+wikicount.fnSetStatusMsg('populate_image',3)
 wikicount.fnLaunchNextJob('populate_image')

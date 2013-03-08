@@ -50,137 +50,120 @@ def fnIsPrevJobDone(CURJOBNAME):
 		STATUSQUERY=db.logSystem.find_one({'table':'p0_dl'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p1_split'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p1_split already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p1_split':
 		STATUSQUERY=db.logSystem.find_one({'table':'p1_split'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p2_filter'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p2_filter already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p2_filter':
 		STATUSQUERY=db.logSystem.find_one({'table':'p2_filter'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p2x_move_to_action'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p2x_move already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p2x_move_to_action':
 		STATUSQUERY=db.logSystem.find_one({'table':'p2x_move_to_action'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p3_add_to_db'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p3_add already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p3_add_to_db':
 		STATUSQUERY=db.logSystem.find_one({'table':'p3_add_to_db'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p3_image_add'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p3_image already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p3_image_add':
 		STATUSQUERY=db.logSystem.find_one({'table':'p3_image_add'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p3_category_add'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p3_category already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p3_category_add':
 		STATUSQUERY=db.logSystem.find_one({'table':'p3_category_add'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p70_export'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p70_export already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p70_export':
 		STATUSQUERY=db.logSystem.find_one({'table':'p70_export'})
 		CSTATUSQ=db.logSystem.find_one({'table':'p90_remove_noise'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job p90_remove_noise already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='p90_remove_noise':
 		STATUSQUERY=db.logSystem.find_one({'table':'p90_remove_noise'})
 		CSTATUSQ=db.logSystem.find_one({'table':'sortMongoHD'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job sortMongoHD already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='sortMongoHD':
 		STATUSQUERY=db.logSystem.find_one({'table':'sortMongoHD'})
 		CSTATUSQ=db.logSystem.find_one({'table':'tophits'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job tophits already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='tophits':
 		STATUSQUERY=db.logSystem.find_one({'table':'tophits'})
 		CSTATUSQ=db.logSystem.find_one({'table':'threehrrollingavg'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job threehrrollingavg already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='threehrrollingavg':
 		STATUSQUERY=db.logSystem.find_one({'table':'threehrrollingavg'})
 		CSTATUSQ=db.logSystem.find_one({'table':'fillTmpHot'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job fillTmpHot already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='fillTmpHot':
 		STATUSQUERY=db.logSystem.find_one({'table':'fillTmpHot'})
 		CSTATUSQ=db.logSystem.find_one({'table':'populate_trending'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job populate_trending already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='populate_trending':
 		STATUSQUERY=db.logSystem.find_one({'table':'populate_trending'})
 		CSTATUSQ=db.logSystem.find_one({'table':'populate_debuts'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job populate_debuts already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='populate_debuts':
 		STATUSQUERY=db.logSystem.find_one({'table':'populate_debuts'})
 		CSTATUSQ=db.logSystem.find_one({'table':'populate_cold'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job pop_cold already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='populate_cold':
 		STATUSQUERY=db.logSystem.find_one({'table':'populate_cold'})
 		CSTATUSQ=db.logSystem.find_one({'table':'populate_category'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job pop_cat already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='populate_category':
 		STATUSQUERY=db.logSystem.find_one({'table':'populate_category'})
 		CSTATUSQ=db.logSystem.find_one({'table':'populate_image'})
 		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job already run, cron job NOT starting')
+			syslog.syslog('Job pop_image already run, cron job NOT starting')
 		elif STATUSQUERY['mesg']==int(HOUR):
-			syslog.syslog('Job not started yet, returning True')
 			return True
 	elif CURJOBNAME=='populate_image':
 		return True

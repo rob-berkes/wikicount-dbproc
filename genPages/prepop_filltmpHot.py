@@ -22,7 +22,7 @@ def tmpHot(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
 	
         return
 STARTTIME=wikicount.fnStartTimer()
-syslog.syslog('prepop_filltmpHot.py : starting...')
+syslog.syslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
@@ -43,7 +43,7 @@ RECCOUNT=1
 NUMRECS=31250
 debutCount=0
 
-wikicount.fnSetStatusMsg('prepop_fillTmpHot',0)
+wikicount.fnSetStatusMsg('fillTmpHot',0)
 
 db.tmpHot.remove()
 RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
