@@ -6,7 +6,11 @@ import datetime
 import time
 from wsgiref.handlers import format_date_time
 import syslog
-import os 
+import os
+import HTMLParser
+
+_htmlparser=HTMLParser.HTMLParser()
+unescape=_htmlparser.unescape 
 
 conn=Connection()
 db=conn.wc
@@ -21,6 +25,7 @@ def MapQuery_FindName(id):
                         s_title=string.replace(title,'_',' ')
                         t_title=s_title.encode('utf-8')
                         utitle=urllib2.unquote(t_title)
+			utitle=unescape(utitle)
         return title, utitle
 def MapQuery_FindCategory(id):
         QUERY={'id':id}
@@ -117,12 +122,12 @@ def fnIsPrevJobDone(CURJOBNAME):
 		elif STATUSQUERY['mesg']==int(HOUR):
 			return True
 	elif CURJOBNAME=='tophits':
-		STATUSQUERY=db.logSystem.find_one({'table':'tophits'})
-		CSTATUSQ=db.logSystem.find_one({'table':'threehrrollingavg'})
-		if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
-			syslog.syslog('Job threehrrollingavg already run, cron job NOT starting')
-		elif STATUSQUERY['mesg']==int(HOUR):
-			return True
+	#	STATUSQUERY=db.logSystem.find_one({'table':'tophits'})
+	#	CSTATUSQ=db.logSystem.find_one({'table':'threehrrollingavg'})
+	#	if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
+	#		syslog.syslog('Job threehrrollingavg already run, cron job NOT starting')
+	#	elif STATUSQUERY['mesg']==int(HOUR):
+		return True
 	elif CURJOBNAME=='threehrrollingavg':
 		STATUSQUERY=db.logSystem.find_one({'table':'threehrrollingavg'})
 		CSTATUSQ=db.logSystem.find_one({'table':'fillTmpHot'})
@@ -298,10 +303,10 @@ def FormatName(title):
         s_title=string.replace(title,'_',' ')
         t_title=s_title.encode('utf-8')
         utitle=urllib2.unquote(t_title)
-#	try:
-#		utitle=utitle.decode('utf-8')
-#	except:
-#		utitle=utitle.encode('utf-8')
+	try:
+		utitle=utitle.decode('utf-8')
+	except:
+		utitle=title
         return title, utitle
 
 def adjustHour(HOUR):
