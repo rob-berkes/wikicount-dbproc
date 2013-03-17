@@ -52,9 +52,9 @@ def fnIsPrevJobDone(CURJOBNAME):
         HOUR=minusHour(int(HOUR))
         HOUR=adjustHour(int(HOUR))
 	return True
-def fnStub1_fnIsPrevJobDone():
+def fnStub1_fnIsPrevJobDone(CURJOBNAME
 	#may be unneeded now that new job scheduling in place, leave for now
-        if CURJOBNAME=='p0_dl':
+       if CURJOBNAME=='p0_dl':
                STATUSQUERY=db.logSystem.find_one({'table':'p0_dl'})
                CSTATUSQ=db.logSystem.find_one({'table':'p1_split'})
                if STATUSQUERY['mesg']==int(HOUR) and CSTATUSQ['mesg']==int(HOUR):
