@@ -52,7 +52,7 @@ def fnIsPrevJobDone(CURJOBNAME):
         HOUR=minusHour(int(HOUR))
         HOUR=adjustHour(int(HOUR))
 	return True
-def fnStub1_fnIsPrevJobDone(CURJOBNAME
+def fnStub1_fnIsPrevJobDone(CURJOBNAME):
 	#may be unneeded now that new job scheduling in place, leave for now
        if CURJOBNAME=='p0_dl':
                STATUSQUERY=db.logSystem.find_one({'table':'p0_dl'})
@@ -280,7 +280,7 @@ def fnReturnTimes():
         half=now+datetime.timedelta(minutes=45)
         stamp=time.mktime(half.timetuple())
         expiretime=format_date_time(stamp)
-       if int(HOUR) < 8:
+        if int(HOUR) < 8:
                DAY-=1
         if DAY==0:
            DAY=30
@@ -297,7 +297,8 @@ def fnFormatTimes(DAY,MONTH,HOUR):
        DAY='%02d' % (int(DAY),)
        MONTH='%02d' % (int(MONTH),)
 
-	return DAY,MONTH,HOUR
+       return DAY,MONTH,HOUR
+
 def fnReturnTimeString(DAY,MONTH,YEAR):
 	YEAR='%02d' % (int(YEAR),)
 	DAY='%02d' % (int(DAY),)

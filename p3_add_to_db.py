@@ -31,6 +31,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 #		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) } },upsert=True)
 			  db.hitshourly.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
 			  db.hitshourlydaily.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
+			  db.hitsmap.update(POSTFIND,{"$set":{'title':TITLESTRING}},upsert=True)
 			  db.hitsdaily.update(POSTFIND,
 					{"$inc":
 						{DAYKEY: int(line[2])}
