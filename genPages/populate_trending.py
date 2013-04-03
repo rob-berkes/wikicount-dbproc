@@ -1,6 +1,5 @@
 from pymongo import Connection
 from datetime import date
-from multiprocessing import Process
 from functions import wikicount
 import syslog
 import string
@@ -35,13 +34,10 @@ y=YEAR
 conn=Connection()
 db=conn.wc
 wikicount.fnSetStatusMsg('populate_trending',0)
+
 db.prodtrend.remove()
+cold(d,m)
 
-p = Process(target=cold, args=(d,m))
-
-p.start()
-
-p.join()
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_trending.py: runtime is '+str(RUNTIME)+' seconds.') 
 wikicount.fnSetStatusMsg('populate_trending',3)

@@ -13,7 +13,7 @@ def tmpHot(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
         dbCN='proddebuts'+COLLECTIONNAME
         for item in RESULTSET:
                 Hits=int(item['Hits'])
-                YHITS=db[thCN].find({'d':yd,'m':ym,'y':y,'id':str(item['id'])})
+                YHITS=db[thCN].find({'id':str(item['id'])})
                 for ROW in YHITS:
                         Hits=Hits-ROW['Hits']
                 NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place'],'title':item['title']}
