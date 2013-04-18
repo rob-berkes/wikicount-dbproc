@@ -41,8 +41,7 @@ for item in RESULT:
 		for a in TREC:
 			title=a['title']
 			INSERTREC={'id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
-			insert=db[COLLECTIONNAME].insert(INSERTREC,safe=True)
-			insert
+			db[COLLECTIONNAME].insert(INSERTREC,safe=True)
 	except KeyError:
 		pass
 	RECCOUNT+=1

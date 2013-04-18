@@ -19,7 +19,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      db=connection.wc
      RECORDS=0
      DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-     for FILENAME in glob.glob(FILEPROC+"*"):	
+     for FILENAME in glob.glob(FILEPROC+"*"+"."+str(HOUR)):	
 	try:
 		IFILE2=open(FILENAME,'r')
 		for line in IFILE2:

@@ -40,9 +40,11 @@ CATEGORY_LIST_QUERY=db.imagedaily.find().sort(YEARSTR,-1).limit(100)
 title=''
 for p in CATEGORY_LIST_QUERY:
 	title,utitle=wikicount.MapQuery_FindImageName(p['_id'])
-        rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
-        db.prodimagetrend.insert(rec)
-
+	try:
+	        rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
+	        db.prodimagetrend.insert(rec)
+	except KeyError:
+		pass 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_image:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('populate_image',3)

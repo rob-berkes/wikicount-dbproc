@@ -11,12 +11,12 @@ def tmpHot(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
 	OUTPUT=[]
         thCN='tophits'+COLLECTIONNAME
         dbCN='proddebuts'+COLLECTIONNAME
+	syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
         for item in RESULTSET:
-                Hits=int(item['Hits'])
-                YHITS=db[thCN].find({'id':str(item['id'])})
-                for ROW in YHITS:
-                        Hits=Hits-ROW['Hits']
-                NEWPOST={'id':item['id'],'delta':Hits,'orPlace':item['place'],'title':item['title']}
+#                YHITS=db[thCN].find({'id':str(item['id'])})
+#                for ROW in YHITS:
+#                       Hits=Hits-ROW['Hits']
+                NEWPOST={'id':item['id'],'delta':int(item['Hits']),'orPlace':item['place'],'title':item['title']}
                 db.tmpHot.insert(NEWPOST)
 
 	

@@ -14,8 +14,11 @@ def category(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
         title=''
         for p in CATEGORY_LIST_QUERY:
                 title,utitle=wikicount.MapQuery_FindCategory(p['_id'])
-                rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
-                db.prodcattrend.insert(rec)
+		try:
+	                rec={'title':utitle,'place':p[YEARSTR],'Hits':p[YEARSTR],'linktitle':title,'d':yd,'m':ym,'y':y,'id':p['_id']}
+	                db.prodcattrend.insert(rec)
+		except KeyError:
+			pass
 	
         return
 STARTTIME=wikicount.fnStartTimer()

@@ -19,7 +19,8 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      db=connection.wc
      RECORDS=0
      DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-     for FILENAME in glob.glob(FILEPROC+"*"):	
+     for FILENAME in glob.glob(FILEPROC):
+	print FILENAME	
 	try:
 		IFILE2=open(FILENAME,'r')
 		for line in IFILE2:
@@ -47,17 +48,18 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 			  pass
      		IFILE2.close()
 		os.remove(FILENAME)
-	except (NameError,IOError):
-		syslog.syslog("Error encountered! P3_add_to_db.py stopping, NameError or IOError")
+	except (NameError,IOError) as e:
+		syslog.syslog("Error in "+str(FILENAME)+", P3_add_to_db.py stopping, "+str(e.strerror)+", errno "+str(e.errno) )
 		pass
      FINAL="p3_add_to_db.py: time %s processed a total of %s records." % (time.strftime("%T"),str(RECORDS))
      syslog.syslog(FINAL)
+#     syslog.syslog("HitsHourly: "+str(HHTIME)+" secs, HitsHourlyDaily: "+str(HHDTIME)+" secs, ")
 
 
-FILEPROC2="/tmp/action/q2_pagecounts.processed.*"
-FILEPROC3="/tmp/action/q3_pagecounts.processed.*"
-FILEPROC4="/tmp/action/q4_pagecounts.processed.*"
-FILEPROC5="/tmp/action/q5_pagecounts.processed.*"
+FILEPROC2="/tmp/action/q2_pagecounts.processed."+str(HOUR)
+FILEPROC3="/tmp/action/q3_pagecounts.processed."+str(HOUR)
+FILEPROC4="/tmp/action/q4_pagecounts.processed."+str(HOUR)
+FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
 
 
 

@@ -6,7 +6,7 @@ import string
 import urllib2
 RECORDSPERPAGE=100
 
-def cold(d,m):
+def cold(d,m,y):
 	TRENDING_LIST_QUERY=db.tmpHot.find().sort('delta',-1).limit(100)
         title=''
         for p in TRENDING_LIST_QUERY:
@@ -21,22 +21,13 @@ syslog.syslog('populate_trending.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
-d=DAY
-yd=int(DAY)-1
-if yd==0:
-        yd=30
-m=MONTH
-ym=MONTH
-if yd==30:
-        ym=int(m)-1
-y=YEAR
 
 conn=Connection()
 db=conn.wc
 wikicount.fnSetStatusMsg('populate_trending',0)
 
 db.prodtrend.remove()
-cold(d,m)
+cold(DAY,MONTH,YEAR)
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('populate_trending.py: runtime is '+str(RUNTIME)+' seconds.') 
