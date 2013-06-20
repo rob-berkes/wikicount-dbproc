@@ -15,6 +15,16 @@ unescape=_htmlparser.unescape
 conn=Connection()
 db=conn.wc
 
+
+class logRecord():
+    def __init__(self,language,page,views,size):
+        self.language=language
+        self.page=page
+        self.views=views
+        self.bwidth=size
+
+
+
 def MapQuery_FindName(id):
         QUERY={'id':id}
         MAPQ=db.hitsdaily.find({'_id':id})
