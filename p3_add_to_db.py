@@ -29,7 +29,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 		          HASH=hashlib.sha1(line[1]).hexdigest()
 		          POSTFIND={'_id': HASH}
 			  TITLESTRING=line[1].decode('utf-8')
-#		          db.hits.update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) } },upsert=True)
+
 			  db.hitshourly.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
 			  db.hitshourlydaily.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
 			  db.hitsmap.update(POSTFIND,{"$set":{'title':TITLESTRING}},upsert=True)
@@ -41,7 +41,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 						{'title':TITLESTRING}
 					}	
 					,upsert=True)
-		  	  #db.map.update(TITLEPOST,upsert=True)
+
 		          RECORDS+=1
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
@@ -53,7 +53,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 		pass
      FINAL="p3_add_to_db.py: time %s processed a total of %s records." % (time.strftime("%T"),str(RECORDS))
      syslog.syslog(FINAL)
-#     syslog.syslog("HitsHourly: "+str(HHTIME)+" secs, HitsHourlyDaily: "+str(HHDTIME)+" secs, ")
+
 
 
 FILEPROC2="/tmp/action/q2_pagecounts.processed."+str(HOUR)
