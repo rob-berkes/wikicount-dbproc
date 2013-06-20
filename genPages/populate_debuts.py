@@ -1,7 +1,6 @@
 from pymongo import Connection
 from multiprocessing import Process
 from functions import wikicount
-import syslog
 import urllib2
 RECORDSPERPAGE=100
 
@@ -25,11 +24,11 @@ def debuts(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
 
         return
 STARTTIME=wikicount.fnStartTimer()
-syslog.syslog('populate_debuts.py:  starting...')
+wikicount.toSyslog('populate_debuts.py:  starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
-COLLECTIONNAME=str(YEAR)+MONTHNAME
+COLLECTIONNAME=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 wikicount.fnSetStatusMsg('populate_debuts',0)
 d=DAY
 yd=int(DAY)-1
@@ -50,14 +49,14 @@ debutCount=0
 dbCN='proddebuts'+COLLECTIONNAME
 db[dbCN].remove({'d':d,'m':m,'y':y})
 
-RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
-RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
-RESULT3=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
+RESULT1=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+RESULT2=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+RESULT3=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+RESULT5=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*4)
+RESULT6=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*5)
+RESULT7=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*6)
+RESULT8=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*7)
 
 p = Process(target=debuts, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
 q = Process(target=debuts, args=(RESULT2,d,m,COLLECTIONNAME,NUMRECS,1))
@@ -86,6 +85,6 @@ u.join()
 v.join()
 x.join() 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-syslog.syslog('populate_debuts: runtime is '+str(RUNTIME)+' seconds.')
+wikicount.toSyslog('populate_debuts: runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('populate_debuts',3)
 wikicount.fnLaunchNextJob('populate_debuts')

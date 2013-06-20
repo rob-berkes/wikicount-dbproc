@@ -362,3 +362,5 @@ def fnReturnLastThreeHours(HOUR):
 def fnStrFmtDate(DVAR):
 	NEWVAR='%02d' % (DVAR,)	
 	return NEWVAR
+def toSyslog(msg):
+    syslog.syslog(msg)
