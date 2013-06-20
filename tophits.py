@@ -11,11 +11,11 @@ DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 MONTHNAME=wikicount.fnGetMonthName()
 HOUR=wikicount.minusHour(int(HOUR))
-COLLECTIONNAME="tophits"+str(YEAR)+str(MONTHNAME)
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
 DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
+COLLECTIONNAME="tophits"+str(DAYKEY)
 
 
 wikicount.fnSetStatusMsg('tophits',0)
@@ -40,7 +40,7 @@ for item in RESULT:
 	try:
 		for a in TREC:
 			title=a['title']
-			INSERTREC={'id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
+			INSERTREC={'_id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
 			db[COLLECTIONNAME].insert(INSERTREC,safe=True)
 	except KeyError:
 		pass
