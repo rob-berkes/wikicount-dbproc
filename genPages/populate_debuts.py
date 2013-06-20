@@ -1,20 +1,20 @@
 from pymongo import Connection
-from datetime import date
 from multiprocessing import Process
 from functions import wikicount
 import syslog
-import string
 import urllib2
 RECORDSPERPAGE=100
 
+def debuts_is_found(item):
+
+    return False
+
 def debuts(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
-	thCN='tophits'+COLLECTIONNAME
-        dbCN='proddebuts'+COLLECTIONNAME
-	debutCount=0
-	print 'entering debut process'
+    dbCN='proddebuts'+COLLECTIONNAME
+    debutCount=0
+    print 'entering debut process'
         for item in RESULTSET:
-             YQUERY={'id':item['id']}
-             if db[thCN].find(YQUERY).count() == 1 and debutCount<25:
+             if debuts_is_found(item) and debutCount<25:
                      title, utitle=wikicount.FormatName(item['title'])
                      try:
                         POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
@@ -44,7 +44,7 @@ y=YEAR
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
-NUMRECS=31250
+NUMRECS=125
 debutCount=0
 
 dbCN='proddebuts'+COLLECTIONNAME
