@@ -2,6 +2,7 @@ from pymongo import Connection
 from multiprocessing import Process
 from functions import wikicount
 import urllib2
+import os
 RECORDSPERPAGE=100
 
 def debuts_is_found(item):
