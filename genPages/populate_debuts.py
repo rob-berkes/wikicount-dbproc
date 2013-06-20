@@ -30,15 +30,7 @@ HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
 COLLECTIONNAME=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 wikicount.fnSetStatusMsg('populate_debuts',0)
-d=DAY
-yd=int(DAY)-1
-if yd==0:
-        yd=30
-m=MONTH
-ym=MONTH
-if yd==30:
-        ym=int(m)-1
-y=YEAR
+yd,ym,y=wikicount.returnPrevDay(DAY,MONTH,YEAR)
 
 conn=Connection()
 db=conn.wc
@@ -47,7 +39,7 @@ NUMRECS=125
 debutCount=0
 
 dbCN='proddebuts'+COLLECTIONNAME
-db[dbCN].remove({'d':d,'m':m,'y':y})
+db[dbCN].remove({'d':DAY,'m': MONTH,'y':YEAR})
 
 RESULT1=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(0)
 RESULT2=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)

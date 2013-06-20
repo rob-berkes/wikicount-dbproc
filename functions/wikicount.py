@@ -364,3 +364,14 @@ def fnStrFmtDate(DVAR):
 	return NEWVAR
 def toSyslog(msg):
     syslog.syslog(msg)
+def returnPrevDay(DAY,MONTH,YEAR):
+    yyear=YEAR
+    yd=DAY-1
+    if yd==0:
+        ym=MONTH-1
+        yd=30
+        yyear=YEAR
+        if ym=0:
+            ym=12
+            yyear=YEAR-1
+    return yd,ym,yyear
