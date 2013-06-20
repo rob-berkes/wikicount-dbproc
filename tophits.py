@@ -28,10 +28,14 @@ for line in IFILE:
         RESULT.append((line[0],line[1]))
         RECCOUNT+=1
         Q={'_id':line[1]}
-        TREC=db.hitsdaily.find_one(Q)
-        title=TREC['title']
-        INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
-        db[COLLECTIONNAME].insert(INSERTREC,safe=True)
+        
+	try:
+		TREC=db.hitsdaily.find_one(Q)
+	        title=TREC['title']
+       		INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
+		db[COLLECTIONNAME].insert(INSERTREC,safe=True)
+	except TypeError:
+		pass
     else:
         break
 IFILE.close()
