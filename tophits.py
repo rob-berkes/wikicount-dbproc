@@ -23,17 +23,17 @@ wikicount.fnSetStatusMsg('tophits',0)
 IFILE=open("/home/ec2-user/mongo.csv.sorted","r")
 RESULT=[]
 for line in IFILE:
-	if RECCOUNT < 250001:
-		line=line.strip().split(",")
-		RESULT.append((line[0],line[1]))
-		RECCOUNT+=1
+    if RECCOUNT < 250001:
+        line=line.strip().split(",")
+        RESULT.append((line[0],line[1]))
+        RECCOUNT+=1
         Q={'_id':line[1]}
         TREC=db.hitsdaily.find_one(Q)
         title=TREC['title']
         INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
         db[COLLECTIONNAME].insert(INSERTREC,safe=True)
-	else:
-		break
+    else:
+        break
 IFILE.close()
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
