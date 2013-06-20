@@ -17,6 +17,7 @@ RECCOUNT=1
 DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
 COLLECTIONNAME="tophits"+str(DAYKEY)
 
+db[COLLECTIONNAME].remove()
 
 wikicount.fnSetStatusMsg('tophits',0)
 IFILE=open("/home/ec2-user/mongo.csv.sorted","r")
@@ -26,27 +27,14 @@ for line in IFILE:
 		line=line.strip().split(",")
 		RESULT.append((line[0],line[1]))
 		RECCOUNT+=1
+        Q={'_id':line[1]}
+        TREC=db.hitsdaily.find_one(Q)
+        title=TREC['title']
+        INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
+        db[COLLECTIONNAME].insert(INSERTREC,safe=True)
 	else:
 		break
 IFILE.close()
-#RESULT=db.hitsdaily.find({DAYKEY:{'$exists':True}}).sort(DAYKEY,-1).limit(250000)
-
-db[COLLECTIONNAME].remove({'d':int(DAY),'m':int(MONTH),'y':int(YEAR)})
-RECCOUNT=1
-for item in RESULT:
-	Q={'_id':item[1]}
-	TREC=db.hitsdaily.find(Q)
-	title=''
-	try:
-		for a in TREC:
-			title=a['title']
-			INSERTREC={'_id':str(item[1]),'d':int(DAY),'m':int(MONTH),'y':int(YEAR),'place':RECCOUNT,'Hits':int(item[0]),'title':title}
-			db[COLLECTIONNAME].insert(INSERTREC,safe=True)
-	except KeyError:
-		pass
-	RECCOUNT+=1
-	if RECCOUNT > 250000:
-		break
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
