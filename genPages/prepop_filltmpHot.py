@@ -4,7 +4,7 @@ from functions import wikicount
 import syslog
 import urllib2
 
-def tmpHot(RESULTSET):
+def FillTmpHot(RESULTSET):
     yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
     syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
@@ -37,10 +37,10 @@ RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
 RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
 RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
 
-p = Process(target=tmpHot, args=RESULT1)
-q = Process(target=tmpHot, args=RESULT2)
-r = Process(target=tmpHot, args=RESULT3)
-s = Process(target=tmpHot, args=RESULT4)
+p = Process(target=FillTmpHot, args=RESULT1)
+q = Process(target=FillTmpHot, args=RESULT2)
+r = Process(target=FillTmpHot, args=RESULT3)
+s = Process(target=FillTmpHot, args=RESULT4)
 
 p.start()
 q.start()
