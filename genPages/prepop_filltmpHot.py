@@ -25,8 +25,9 @@ STARTTIME=wikicount.fnStartTimer()
 syslog.syslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
-MONTHNAME=wikicount.fnGetMonthName()
-COLLECTIONNAME=str(YEAR)+MONTHNAME
+DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
+COLLECTIONNAME=str(YEAR)+DAYKEY
+yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
 d=DAY
 yd=int(DAY)-1
 if yd==0:
