@@ -1,9 +1,7 @@
 from pymongo import Connection
-from datetime import date
 from multiprocessing import Process
 from functions import wikicount
 import syslog
-import string
 import urllib2
 RECORDSPERPAGE=100
 
@@ -24,20 +22,14 @@ def tmpHot(RESULTSET):
 	
         return
 STARTTIME=wikicount.fnStartTimer()
-syslog.syslog('filltmpHot.py : starting...')
+wikicount.syslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-HOUR=wikicount.minusHour(int(HOUR))
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 COLLECTIONNAME=str('tophits')+DAYKEY
-
-
-
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
-NUMRECS=125
-debutCount=0
-
+NUMRECS=250
 wikicount.fnSetStatusMsg('fillTmpHot',0)
 
 db.tmpHot.remove()
@@ -45,38 +37,22 @@ RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
 RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
 RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
 RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*7)
 
 p = Process(target=tmpHot, args=(RESULT1))
 q = Process(target=tmpHot, args=(RESULT2))
 r = Process(target=tmpHot, args=(RESULT3))
 s = Process(target=tmpHot, args=(RESULT4))
-t = Process(target=tmpHot, args=(RESULT5))
-u = Process(target=tmpHot, args=(RESULT6))
-v = Process(target=tmpHot, args=(RESULT7))
-x = Process(target=tmpHot, args=(RESULT8))
 
 p.start()
 q.start()
 r.start()
 s.start()
-t.start()
-u.start()
-v.start()
-x.start()
 
 p.join()
 q.join()
 r.join()
 s.join()
-t.join()
-u.join()
-v.join()
-x.join() 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-syslog.syslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
+wikicount.syslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('fillTmpHot',3)
 wikicount.fnLaunchNextJob('fillTmpHot')
