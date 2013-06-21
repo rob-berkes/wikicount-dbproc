@@ -9,6 +9,7 @@ def FillTmpHot(RESULTSET):
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
     syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
     YHits=0
+    print len(RESULTSET)
     for item in RESULTSET:
         YHITS=db[YESTCOLL].find({'id':str(item['id'])})
         for ROW in YHITS:
@@ -16,7 +17,6 @@ def FillTmpHot(RESULTSET):
         delta=item['Hits']-YHits
         nameq=db.hitsdaily.find({'_id':item['_id']})
         NEWPOST={'id':item['_id'],'delta':int(delta),'orPlace':item['place'],'title':nameq['title']}
-        print NEWPOST
         db.tmpHot.insert(NEWPOST)
 
 	
