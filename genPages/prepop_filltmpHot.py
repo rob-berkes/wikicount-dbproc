@@ -6,7 +6,7 @@ import urllib2
 def FillTmpHot(RESULTSET):
     yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
-    syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
+    wikicount.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
     YHits=0
     for item in RESULTSET:
         YHITS=db[YESTCOLL].find({'id':str(item['id'])})
@@ -26,7 +26,6 @@ wikicount.toSyslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 COLLECTIONNAME=str('tophits')+DAYKEY
-print COLLECTIONNAME
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
