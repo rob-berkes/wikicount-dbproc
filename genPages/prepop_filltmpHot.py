@@ -22,7 +22,7 @@ def tmpHot(RESULTSET):
 	
         return
 STARTTIME=wikicount.fnStartTimer()
-wikicount.syslog('filltmpHot.py : starting...')
+wikicount.toSyslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 COLLECTIONNAME=str('tophits')+DAYKEY
@@ -53,6 +53,6 @@ q.join()
 r.join()
 s.join()
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-wikicount.syslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
+wikicount.toSyslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('fillTmpHot',3)
 wikicount.fnLaunchNextJob('fillTmpHot')
