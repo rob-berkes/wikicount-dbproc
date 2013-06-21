@@ -365,3 +365,14 @@ def fnStrFmtDate(DVAR):
 
 def toSyslog(msg):
     syslog.syslog(msg)
+
+def PreviousDay(YEAR,MONTH,DAY):
+    yd=DAY-1
+    if yd==0:
+        yd=30
+        ym=MONTH-1
+        yy=YEAR
+        if ym==0:
+            ym=12
+            yy=YEAR-1
+    return yy,ym,yd

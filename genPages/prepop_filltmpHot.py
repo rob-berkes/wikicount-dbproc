@@ -7,17 +7,19 @@ import string
 import urllib2
 RECORDSPERPAGE=100
 
-def tmpHot(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
-	OUTPUT=[]
-        thCN='tophits'+COLLECTIONNAME
-        dbCN='proddebuts'+COLLECTIONNAME
-	syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
-        for item in RESULTSET:
-#                YHITS=db[thCN].find({'id':str(item['id'])})
-#                for ROW in YHITS:
-#                       Hits=Hits-ROW['Hits']
-                NEWPOST={'id':item['id'],'delta':int(item['Hits']),'orPlace':item['place'],'title':item['title']}
-                db.tmpHot.insert(NEWPOST)
+def tmpHot(RESULTSET):
+    yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
+    YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
+    syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
+    YHits=0
+    for item in RESULTSET:
+        YHITS=db[YESTCOLL].find({'id':str(item['id'])})
+        for ROW in YHITS:
+            YHits+=ROW['Hits']
+        delta=item['Hits']-YHits
+        nameq=db.hitsdaily.find({'_id':item['_id']})
+        NEWPOST={'id':item['_id'],'delta':int(delta),'orPlace':item['place'],'title':nameq['title']}
+        db.tmpHot.insert(NEWPOST)
 
 	
         return
@@ -26,35 +28,27 @@ syslog.syslog('filltmpHot.py : starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
-COLLECTIONNAME=str(YEAR)+DAYKEY
-yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
-d=DAY
-yd=int(DAY)-1
-if yd==0:
-        yd=30
-m=MONTH
-ym=MONTH
-if yd==30:
-        ym=int(m)-1
-y=YEAR
+COLLECTIONNAME=str('tophits')+DAYKEY
+
+
 
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
-NUMRECS=31250
+NUMRECS=125
 debutCount=0
 
 wikicount.fnSetStatusMsg('fillTmpHot',0)
 
 db.tmpHot.remove()
-RESULT1=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(0)
-RESULT2=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS)
-RESULT3=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db['tophits'+COLLECTIONNAME].find({'d':d,'m':m,'y':y}).limit(NUMRECS).skip(NUMRECS*7)
+RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+RESULT5=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*4)
+RESULT6=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*5)
+RESULT7=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*6)
+RESULT8=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*7)
 
 p = Process(target=tmpHot, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
 q = Process(target=tmpHot, args=(RESULT2,d,m,COLLECTIONNAME,NUMRECS,1))
