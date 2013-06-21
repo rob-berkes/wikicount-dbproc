@@ -1,5 +1,4 @@
 from pymongo import Connection
-from multiprocessing import Process
 from functions import wikicount
 import syslog
 import urllib2
@@ -35,30 +34,12 @@ NUMRECS=250
 wikicount.fnSetStatusMsg('fillTmpHot',0)
 
 db.tmpHot.remove()
-RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
-RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
-RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-
-p = Process(target=FillTmpHot, kwargs=RESULT1)
-q = Process(target=FillTmpHot, args=RESULT2)
-r = Process(target=FillTmpHot, args=RESULT3)
-s = Process(target=FillTmpHot, args=RESULT4)
-
-p.daemon=True
-q.daemon=True
-r.daemon=True
-s.daemon=True
-
-p.start()
-q.start()
-r.start()
-s.start()
-
-p.join()
-q.join()
-r.join()
-s.join()
+RESULT=db[COLLECTIONNAME].find()
+#RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+#RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+#RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+#RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+FillTmpHot(RESULT)
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 wikicount.toSyslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('fillTmpHot',3)
