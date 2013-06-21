@@ -9,7 +9,6 @@ def FillTmpHot(RESULTSET):
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
     syslog.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
     YHits=0
-    print len(RESULTSET)
     for item in RESULTSET:
         YHITS=db[YESTCOLL].find({'id':str(item['id'])})
         for ROW in YHITS:
@@ -40,7 +39,7 @@ if __name__=='main':
     RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
     RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
     RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-
+    print len(RESULT1),len(RESULT2)
     p = Process(target=FillTmpHot, args=RESULT1)
     q = Process(target=FillTmpHot, args=RESULT2)
     r = Process(target=FillTmpHot, args=RESULT3)
