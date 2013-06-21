@@ -368,10 +368,11 @@ def toSyslog(msg):
 
 def PreviousDay(YEAR,MONTH,DAY):
     yd=DAY-1
+    ym=MONTH
+    yy=YEAR
     if yd==0:
         yd=30
         ym=MONTH-1
-        yy=YEAR
         if ym==0:
             ym=12
             yy=YEAR-1
