@@ -21,34 +21,34 @@ def FillTmpHot(RESULTSET):
 	
         return
 
-if __name__=='main':
-    STARTTIME=wikicount.fnStartTimer()
-    wikicount.toSyslog('filltmpHot.py : starting...')
-    DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-    DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
-    COLLECTIONNAME=str('tophits')+DAYKEY
-    print COLLECTIONNAME
-    conn=Connection()
-    db=conn.wc
-    RECCOUNT=1
-    NUMRECS=250
-    wikicount.fnSetStatusMsg('fillTmpHot',0)
 
-    db.tmpHot.remove()
-    RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
-    RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
-    RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
-    RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-    print len(RESULT1),len(RESULT2)
-    p = Process(target=FillTmpHot, args=RESULT1)
-    q = Process(target=FillTmpHot, args=RESULT2)
-    r = Process(target=FillTmpHot, args=RESULT3)
-    s = Process(target=FillTmpHot, args=RESULT4)
+STARTTIME=wikicount.fnStartTimer()
+wikicount.toSyslog('filltmpHot.py : starting...')
+DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
+COLLECTIONNAME=str('tophits')+DAYKEY
+print COLLECTIONNAME
+conn=Connection()
+db=conn.wc
+RECCOUNT=1
+NUMRECS=250
+wikicount.fnSetStatusMsg('fillTmpHot',0)
 
-    p.start()
-    q.start()
-    r.start()
-    s.start()
+db.tmpHot.remove()
+RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+print len(RESULT1),len(RESULT2)
+p = Process(target=FillTmpHot, args=RESULT1)
+q = Process(target=FillTmpHot, args=RESULT2)
+r = Process(target=FillTmpHot, args=RESULT3)
+s = Process(target=FillTmpHot, args=RESULT4)
+
+p.start()
+q.start()
+r.start()
+s.start()
 
     p.join()
     q.join()
