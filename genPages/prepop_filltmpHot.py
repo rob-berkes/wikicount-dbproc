@@ -39,7 +39,7 @@ RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
 RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
 RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
 RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-print len(RESULT1),len(RESULT2)
+
 p = Process(target=FillTmpHot, args=RESULT1)
 q = Process(target=FillTmpHot, args=RESULT2)
 r = Process(target=FillTmpHot, args=RESULT3)
