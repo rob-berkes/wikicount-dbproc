@@ -2,45 +2,38 @@ from pymongo import Connection
 from multiprocessing import Process
 from functions import wikicount
 import urllib2
-import os
 RECORDSPERPAGE=100
 
 def debuts_is_found(item):
+    yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
+    YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
+    if db[YESTCOLL].findOne({'_id':item['_id']}):
+        return True
+    else:
+        return False
 
-    return False
-
-def debuts(RESULTSET,d,m,COLLECTIONNAME,NUMRECS,SKIPNUM):
-    dbCN='proddebuts'+COLLECTIONNAME
+def debuts(RESULTSET,DAYKEY):
+    dbCN='proddebuts'+DAYKEY
     debutCount=0
     print 'entering debut process'
-        for item in RESULTSET:
-             if debuts_is_found(item) and debutCount<25:
-                     title, utitle=wikicount.FormatName(item['title'])
-                     try:
-                        POSTQ={'d':d,'m':m,'y':y,'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
-                        db[dbCN].insert(POSTQ)
-                        debutCount+=1
-                     except TypeError:
-                        pass
-
-        return
+    for item in RESULTSET:
+        if not debuts_is_found(item) and debutCount<25:
+            title, utitle=wikicount.FormatName(item['title'])
+            try:
+                POSTQ={'place':item['place'],'Hits':item['Hits'],'title':title,'linktitle':title,'id':item['id']}
+                db[dbCN].insert(POSTQ)
+                debutCount+=1
+            except TypeError:
+                pass
+    return
 STARTTIME=wikicount.fnStartTimer()
 wikicount.toSyslog('populate_debuts.py:  starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 MONTHNAME=wikicount.fnGetMonthName()
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
-COLLECTIONNAME=str(YEAR)+str(DAYKEY)
+COLLECTIONNAME='tophits'+str(DAYKEY)
 wikicount.fnSetStatusMsg('populate_debuts',0)
-d=DAY
-yd=int(DAY)-1
-if yd==0:
-        yd=30
-m=MONTH
-ym=MONTH
-if yd==30:
-        ym=int(m)-1
-y=YEAR
 
 conn=Connection()
 db=conn.wc
@@ -49,25 +42,25 @@ NUMRECS=125
 debutCount=0
 
 dbCN='proddebuts'+COLLECTIONNAME
-db[dbCN].remove({'d':d,'m':m,'y':y})
+db[dbCN].remove()
 
-RESULT1=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(0)
-RESULT2=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
-RESULT3=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
-RESULT5=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*4)
-RESULT6=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*5)
-RESULT7=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*6)
-RESULT8=db['tophits'+COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*7)
+RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+RESULT5=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*4)
+RESULT6=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*5)
+RESULT7=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*6)
+RESULT8=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*7)
 
-p = Process(target=debuts, args=(RESULT1,d,m,COLLECTIONNAME,NUMRECS,0))
-q = Process(target=debuts, args=(RESULT2,d,m,COLLECTIONNAME,NUMRECS,1))
-r = Process(target=debuts, args=(RESULT3,d,m,COLLECTIONNAME,NUMRECS,2))
-s = Process(target=debuts, args=(RESULT4,d,m,COLLECTIONNAME,NUMRECS,3))
-t = Process(target=debuts, args=(RESULT5,d,m,COLLECTIONNAME,NUMRECS,4))
-u = Process(target=debuts, args=(RESULT6,d,m,COLLECTIONNAME,NUMRECS,5))
-v = Process(target=debuts, args=(RESULT7,d,m,COLLECTIONNAME,NUMRECS,6))
-x = Process(target=debuts, args=(RESULT8,d,m,COLLECTIONNAME,NUMRECS,7))
+p = Process(target=debuts, args=(RESULT1,DAYKEY))
+q = Process(target=debuts, args=(RESULT2,DAYKEY))
+r = Process(target=debuts, args=(RESULT3,DAYKEY))
+s = Process(target=debuts, args=(RESULT4,DAYKEY))
+t = Process(target=debuts, args=(RESULT5,DAYKEY))
+u = Process(target=debuts, args=(RESULT6,DAYKEY))
+v = Process(target=debuts, args=(RESULT7,DAYKEY))
+x = Process(target=debuts, args=(RESULT8,DAYKEY))
 
 p.start()
 q.start()
