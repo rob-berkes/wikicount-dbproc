@@ -16,6 +16,7 @@ def FillTmpHot(RESULTSET):
         delta=item['Hits']-YHits
         nameq=db.hitsdaily.find({'_id':item['_id']})
         NEWPOST={'id':item['_id'],'delta':int(delta),'orPlace':item['place'],'title':nameq['title']}
+        print NEWPOST
         db.tmpHot.insert(NEWPOST)
 
 	
