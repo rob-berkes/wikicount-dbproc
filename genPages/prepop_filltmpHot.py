@@ -3,7 +3,6 @@ from multiprocessing import Process
 from functions import wikicount
 import syslog
 import urllib2
-RECORDSPERPAGE=100
 
 def tmpHot(RESULTSET):
     yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
