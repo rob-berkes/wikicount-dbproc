@@ -20,38 +20,40 @@ def FillTmpHot(RESULTSET):
 
 	
         return
-STARTTIME=wikicount.fnStartTimer()
-wikicount.toSyslog('filltmpHot.py : starting...')
-DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
-COLLECTIONNAME=str('tophits')+DAYKEY
-conn=Connection()
-db=conn.wc
-RECCOUNT=1
-NUMRECS=250
-wikicount.fnSetStatusMsg('fillTmpHot',0)
 
-db.tmpHot.remove()
-RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
-RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
-RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
-RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
+if __name__=='main':
+    STARTTIME=wikicount.fnStartTimer()
+    wikicount.toSyslog('filltmpHot.py : starting...')
+    DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+    DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
+    COLLECTIONNAME=str('tophits')+DAYKEY
+    conn=Connection()
+    db=conn.wc
+    RECCOUNT=1
+    NUMRECS=250
+    wikicount.fnSetStatusMsg('fillTmpHot',0)
 
-p = Process(target=FillTmpHot, args=RESULT1)
-q = Process(target=FillTmpHot, args=RESULT2)
-r = Process(target=FillTmpHot, args=RESULT3)
-s = Process(target=FillTmpHot, args=RESULT4)
+    db.tmpHot.remove()
+    RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
+    RESULT2=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS)
+    RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
+    RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
 
-p.start()
-q.start()
-r.start()
-s.start()
+    p = Process(target=FillTmpHot, args=RESULT1)
+    q = Process(target=FillTmpHot, args=RESULT2)
+    r = Process(target=FillTmpHot, args=RESULT3)
+    s = Process(target=FillTmpHot, args=RESULT4)
 
-p.join()
-q.join()
-r.join()
-s.join()
-RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-wikicount.toSyslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('fillTmpHot',3)
-wikicount.fnLaunchNextJob('fillTmpHot')
+    p.start()
+    q.start()
+    r.start()
+    s.start()
+
+    p.join()
+    q.join()
+    r.join()
+    s.join()
+    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+    wikicount.toSyslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
+    wikicount.fnSetStatusMsg('fillTmpHot',3)
+    wikicount.fnLaunchNextJob('fillTmpHot')
