@@ -11,8 +11,8 @@ def cold(d,m):
   	COLD_LIST_QUERY=db.tmpHot.find().sort('delta',1).limit(100)
         title=''
         for p in COLD_LIST_QUERY:
-                title,utitle=wikicount.FormatName(p['title'])
-                rec={'title':utitle,'place':p['orPlace'],'Hits':p['delta'],'linktitle':title,'d':d,'m':m,'y':y,'id':p['id']}
+                NAMEQ=db.hitsdaily.findOne({'_id':p['_id']})
+                rec={'title':NAMEQ['title'],'place':p['orPlace'],'Hits':p['delta'],'linktitle':NAMEQ['title'],'_id':p['_id']}
                 db.prodcold.insert(rec)
 	
         return
