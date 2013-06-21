@@ -45,6 +45,11 @@ q = Process(target=FillTmpHot, args=RESULT2)
 r = Process(target=FillTmpHot, args=RESULT3)
 s = Process(target=FillTmpHot, args=RESULT4)
 
+p.daemon=True
+q.daemon=True
+r.daemon=True
+s.daemon=True
+
 p.start()
 q.start()
 r.start()
