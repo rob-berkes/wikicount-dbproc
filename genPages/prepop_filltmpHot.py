@@ -27,6 +27,7 @@ if __name__=='main':
     DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
     DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
     COLLECTIONNAME=str('tophits')+DAYKEY
+    print COLLECTIONNAME
     conn=Connection()
     db=conn.wc
     RECCOUNT=1
