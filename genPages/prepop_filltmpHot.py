@@ -1,6 +1,5 @@
 from pymongo import Connection
 from functions import wikicount
-import syslog
 import urllib2
 
 def FillTmpHot(RESULTSET):
