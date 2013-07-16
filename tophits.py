@@ -33,7 +33,7 @@ for line in IFILE:
             title=TREC['title']
             INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
             db[COLLECTIONNAME].insert(INSERTREC,safe=True)
-	    except TypeError:
+	except TypeError:
     		pass
     else:
         break

@@ -19,7 +19,8 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      db=connection.wc
      RECORDS=0
      DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-     for FILENAME in glob.glob(FILEPROC+"*"+"."+str(HOUR)):	
+     print "images "+str(DAYKEY)
+     for FILENAME in glob.glob(FILEPROC):	
 	try:
 		IFILE2=open(FILENAME,'r')
 		for line in IFILE2:
@@ -77,4 +78,4 @@ if __name__ == '__main__':
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
     wikicount.fnSetStatusMsg('p3_image_add',3)
-    wikicount.fnLaunchNextJob('p3_image_add')
+#    wikicount.fnLaunchNextJob('p3_image_add')
