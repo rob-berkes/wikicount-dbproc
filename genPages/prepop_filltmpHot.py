@@ -12,11 +12,10 @@ def FillTmpHot(RESULTSET):
         for ROW in YHITS:
             YHits+=ROW['Hits']
         delta=item['Hits']-YHits
+        print 'hello!'
         nameq=db.hitsdaily.find({'_id':item['_id']})
         NEWPOST={'id':item['_id'],'delta':int(delta),'orPlace':item['place'],'title':nameq['title']}
         db.tmpHot.insert(NEWPOST)
-
-	
         return
 
 
@@ -30,7 +29,7 @@ db=conn.wc
 RECCOUNT=1
 NUMRECS=250
 wikicount.fnSetStatusMsg('fillTmpHot',0)
-
+print COLLECTIONNAME
 db.tmpHot.remove()
 RESULT=db[COLLECTIONNAME].find()
 #RESULT1=db[COLLECTIONNAME].find().limit(NUMRECS).skip(0)
