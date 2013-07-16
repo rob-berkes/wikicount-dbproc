@@ -194,6 +194,9 @@ def fnLaunchNextJob(CURJOBNAME):
                syslog.syslog('Launching filter proc...p2_filter')
                os.system('/usr/bin/python /home/ec2-user/Python/p2_filter.py')                 
        elif CURJOBNAME=='p2_filter' and fnIsPrevJobDone(CURJOBNAME):
+               syslog.syslog('Launching Russian filter...p2_ru_filter')
+               os.system('/usr/bin/python /home/ec2-user/Python/p2_ru_filter.py')                
+       elif CURJOBNAME=='p2_ru_filter' and fnIsPrevJobDone(CURJOBNAME):
                syslog.syslog('Launching move to action proc...p2x_move_to_action')
                os.system('/usr/bin/python /home/ec2-user/Python/p2x_move_to_action.py')                
        elif CURJOBNAME=='p2x_move_to_action' and fnIsPrevJobDone(CURJOBNAME):
