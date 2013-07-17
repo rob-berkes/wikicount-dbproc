@@ -29,14 +29,33 @@ for line in IFILE:
         RECCOUNT+=1
         Q={'_id':line[1]}
         try:
-            TREC=db.hitsdaily.find_one(Q)
-            title=TREC['title']
             INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
             db[COLLECTIONNAME].insert(INSERTREC,safe=True)
 	except TypeError:
     		pass
     else:
         break
+IFILE.close()
+
+LANGLIST=wikicount.getLanguageList()
+for lang in LANGLIST:
+	COLLECTIONNAME=str(lang)+"_tophits"+str(DAYKEY)
+	db[COLLECTIONNAME].remove()
+	IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","r")
+	RESULT=[]
+	RECCOUNT=0
+	for line in IFILE:
+    		if RECCOUNT < 1000:
+        		line=line.strip().split(",")
+        		RESULT.append((line[0],line[1]))
+        		RECCOUNT+=1
+        		try:
+            			INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
+				db[COLLECTIONNAME].insert(INSERTREC,safe=True)
+			except TypeError:
+    				pass
+   	 	else:
+        		break
 IFILE.close()
 
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
