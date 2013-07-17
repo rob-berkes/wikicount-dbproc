@@ -187,7 +187,7 @@ def fnStub1_fnIsPrevJobDone(CURJOBNAME):
                return True
        return False
 def getLanguageList():
-	LList=['ru',]
+	LList=['ru','ja','zh']
 	return LList
 
 def fnLaunchNextJob(CURJOBNAME):

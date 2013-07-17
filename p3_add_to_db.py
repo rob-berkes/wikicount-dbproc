@@ -107,32 +107,31 @@ if __name__ == '__main__':
     
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog('p3_add: EN records added in '+str(RUNTIME)+' seconds. Russian next.')
+    LANGLIST=wikicount.getLanguageList()
+    for lang in LANGLIST:
+	    STARTTIME=wikicount.fnStartTimer()
+	    t = Process(target=UpdateHits, args=(ruFILE1,HOUR,DAY,MONTH,YEAR,'ru'))
+	    u = Process(target=UpdateHits, args=(ruFILE2,HOUR,DAY,MONTH,YEAR,'ru'))
+	    v = Process(target=UpdateHits, args=(ruFILE3,HOUR,DAY,MONTH,YEAR,'ru'))
+	    w = Process(target=UpdateHits, args=(ruFILE4,HOUR,DAY,MONTH,YEAR,'ru'))
+	
+	    t.daemon=True
+	    u.daemon=True
+	    v.daemon=True
+	    w.daemon=True
 
-    STARTTIME=wikicount.fnStartTimer()
-    t = Process(target=UpdateHits, args=(ruFILE1,HOUR,DAY,MONTH,YEAR,'ru'))
-    u = Process(target=UpdateHits, args=(ruFILE2,HOUR,DAY,MONTH,YEAR,'ru'))
-    v = Process(target=UpdateHits, args=(ruFILE3,HOUR,DAY,MONTH,YEAR,'ru'))
-    w = Process(target=UpdateHits, args=(ruFILE4,HOUR,DAY,MONTH,YEAR,'ru'))
+	    t.start()
+	    u.start()
+	    v.start()
+	    w.start()
 
-    t.daemon=True
-    u.daemon=True
-    v.daemon=True
-    w.daemon=True
+	    t.join()
+	    u.join()
+	    v.join()
+	    w.join()
+	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+	    syslog.syslog('p3_add: Lang: '+str(lang)+' records added in '+str(RUNTIME)+' seconds.P3 Done now!')
 
-    t.start()
-    u.start()
-    v.start()
-    w.start()
-
-    t.join()
-    u.join()
-    v.join()
-    w.join()
-
-    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-
-
-    syslog.syslog('p3_add: Russian records added in '+str(RUNTIME)+' seconds.P3 Done now!')
     wikicount.fnSetStatusMsg('p3_add_to_db',3)
     wikicount.fnLaunchNextJob('p3_add_to_db')
 

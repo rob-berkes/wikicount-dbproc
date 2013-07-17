@@ -9,13 +9,13 @@ from functions import wikicount
 from time import time
 import syslog
  
-a=time()
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 wikicount.fnSetStatusMsg('p2_filter',0)
 syslog.syslog('p2_filter.py: starting....')
 LANGLIST=wikicount.getLanguageList()
 for lang in LANGLIST:
+	a=time()
 	for FILENAME in glob.glob('/tmp/'+str(lang)+'_staging/q*'):
 		print FILENAME
 		IFILE=open(FILENAME,"r")
@@ -53,9 +53,9 @@ for lang in LANGLIST:
 		CATFILE.close()
 		os.remove(FILENAME)
 
-b=time()
-c=b-a
-d=round(c,3)
-syslog.syslog("p2_filter.py: runtime is "+str(d)+" seconds.")
+	b=time()
+	c=b-a
+	d=round(c,3)
+	syslog.syslog("p2_ru_fi: Language: "+str(lang)+" runtime is "+str(d)+" seconds.")
 #wikicount.fnSetStatusMsg('p2_ru_filter',3)
 wikicount.fnLaunchNextJob('p2_ru_filter')
