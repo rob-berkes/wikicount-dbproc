@@ -41,5 +41,39 @@ if __name__ == '__main__' :
 	print 'all done!'
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
+
+	LANGLIST=wikicount.getLanguageList()
+	for lang in LANGLIST:
+		IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv","r")
+		SORTME=[]
+		for line in IFILE:
+			line=line.strip('"').split(',')
+			HASH=line[1].replace("\"","")
+			rec=(line[0],HASH)
+			SORTME.append(rec)
+		IFILE.close()
+		pconn,cconn=Pipe()
+		lyst=[]
+		p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
+		p.start()
+		lyst=pconn.recv()
+		p.join()
+		OFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","w")
+		for a in lyst:
+			OFILE.write(str(a[0])+','+a[1])
+		OFILE.close()
+
+
+
+	
+
+
+
+
+
+
+
+
+
 	wikicount.fnSetStatusMsg('sortMongoHD',3)
 	wikicount.fnLaunchNextJob('sortMongoHD')

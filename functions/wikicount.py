@@ -186,6 +186,10 @@ def fnStub1_fnIsPrevJobDone(CURJOBNAME):
        elif CURJOBNAME=='populate_image':
                return True
        return False
+def getLanguageList():
+	LList=['ru',]
+	return LList
+
 def fnLaunchNextJob(CURJOBNAME):
        if CURJOBNAME=='p0_dl' and fnIsPrevJobDone(CURJOBNAME):
                syslog.syslog('Launching split proc...p1_split')

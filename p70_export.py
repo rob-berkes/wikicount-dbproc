@@ -16,6 +16,14 @@ os.system("mongoexport "+str(OPTIONS))
 
 os.system("sed -i 1d /home/ec2-user/mongo.csv")
 
+for lang in ['ru',]:
+	hdCOLL=str(lang)+"_hitsdaily"
+	outfile="/home/ec2-user/"+str(lang)+"_mongo.csv"
+	OPTIONS=" -d wc -c "+hdCOLL+" -q '{\""+str(DAYKEY)+"\":{\"$exists\":true}}' --fields "+str(DAYKEY)+",\"_id\" --csv --out "+str(outfile)
+	os.system("mongoexport "+str(OPTIONS))
+	os.system("sed -i 1d "+str(outfile))
+
+
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('p70_export.py: runtime '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('p70_export',3)

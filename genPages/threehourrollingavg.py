@@ -4,6 +4,7 @@ from functions import wikicount
 from numpy import sqrt,mean,array
 from operator import itemgetter
 import syslog
+import urllib
 
 STARTTIME=wikicount.fnStartTimer()
 conn=Connection()
@@ -22,7 +23,7 @@ KeyErrors=0
 for item in ALLRES:
 	try:
 		QUERYtitle=db.hitsdaily.find_one({'_id':item['_id']})
-		atitle=QUERYtitle['title']
+		atitle=urllib.unquote(QUERYtitle['title'])
 		title,utitle=wikicount.FormatName(atitle)
 		try:
 			b1=item[HOUR]
@@ -87,7 +88,7 @@ for lang in LANGUAGES:
 
 	                rollingavg=mean(array([b1,b2,b3]))
 	
-	                rec={'title':title,'rollavg':int(rollingavg),'id':item['_id']}
+	                rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
 	                hourlies.append(rec)
 	        except TypeError:
 	                TypeErrors+=1
