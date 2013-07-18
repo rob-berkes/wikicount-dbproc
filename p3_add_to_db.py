@@ -14,16 +14,10 @@ HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
 def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
-     if LANG=='en':
-	HOURLYDB='hitshourly'
-        HOURDAYDB='hitshourlydaily'
-        HITSMAPDB='hitsmap'
-        HITSDAILY='hitsdaily'
-     elif LANG=='ru':
-	HOURLYDB='ru_hitshourly'
-        HOURDAYDB='ru_hitshourlydaily'
-        HITSMAPDB='ru_hitsmap'
-        HITSDAILY='ru_hitsdaily'
+     HOURLYDB=str(LANG)+'_hitshourly'
+     HOURDAYDB=str(LANG)+'_hitshourlydaily'
+     HITSMAPDB=str(LANG)+'_hitsmap'
+     HITSDAILY=str(LANG)+'_hitsdaily'
      connection=Connection()
      db=connection.wc
      RECORDS=0
@@ -70,10 +64,6 @@ FILEPROC3="/tmp/action/q3_pagecounts.processed."+str(HOUR)
 FILEPROC4="/tmp/action/q4_pagecounts.processed."+str(HOUR)
 FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
 
-ruFILE1="/tmp/ru_action/q1_pagecounts.ru."+str(HOUR)
-ruFILE2="/tmp/ru_action/q2_pagecounts.ru."+str(HOUR)
-ruFILE3="/tmp/ru_action/q3_pagecounts.ru."+str(HOUR)
-ruFILE4="/tmp/ru_action/q4_pagecounts.ru."+str(HOUR)
 
 
 #FILEPROC2="/tmp/action/q2_pagecounts.processed.17"
@@ -109,11 +99,16 @@ if __name__ == '__main__':
     syslog.syslog('p3_add: EN records added in '+str(RUNTIME)+' seconds. Russian next.')
     LANGLIST=wikicount.getLanguageList()
     for lang in LANGLIST:
+ 	    ruFILE1="/tmp/"+str(lang)+"_action/q1_pagecounts.*"
+	    ruFILE2="/tmp/"+str(lang)+"_action/q2_pagecounts.*"
+	    ruFILE3="/tmp/"+str(lang)+"_action/q3_pagecounts.*"
+	    ruFILE4="/tmp/"+str(lang)+"_action/q4_pagecounts.*"
+
 	    STARTTIME=wikicount.fnStartTimer()
-	    t = Process(target=UpdateHits, args=(ruFILE1,HOUR,DAY,MONTH,YEAR,'ru'))
-	    u = Process(target=UpdateHits, args=(ruFILE2,HOUR,DAY,MONTH,YEAR,'ru'))
-	    v = Process(target=UpdateHits, args=(ruFILE3,HOUR,DAY,MONTH,YEAR,'ru'))
-	    w = Process(target=UpdateHits, args=(ruFILE4,HOUR,DAY,MONTH,YEAR,'ru'))
+	    t = Process(target=UpdateHits, args=(ruFILE1,HOUR,DAY,MONTH,YEAR,lang))
+	    u = Process(target=UpdateHits, args=(ruFILE2,HOUR,DAY,MONTH,YEAR,lang))
+	    v = Process(target=UpdateHits, args=(ruFILE3,HOUR,DAY,MONTH,YEAR,lang))
+	    w = Process(target=UpdateHits, args=(ruFILE4,HOUR,DAY,MONTH,YEAR,lang))
 	
 	    t.daemon=True
 	    u.daemon=True

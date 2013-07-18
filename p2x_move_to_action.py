@@ -9,8 +9,9 @@ HOUR=int(HOUR)-2
 if HOUR==-1:
 	HOUR=23
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-FOLDERLIST=['/tmp/ondeck/q*','/tmp/ru_ondeck/q*']
-for FOLDER in FOLDERLIST:
+LANGLIST=wikicount.getLanguageList()
+for lang in LANGLIST:
+	FOLDER='/tmp/'+str(lang)+'_ondeck/q*'
 	for FILENAME in glob.glob(FOLDER):
 		IFILE=open(FILENAME,'r')
 		OFILENAME=string.replace(FILENAME,'ondeck','action')

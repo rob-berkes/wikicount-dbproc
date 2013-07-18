@@ -5,7 +5,6 @@ import urllib2
 def FillTmpHot(RESULTSET):
     yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
-    wikicount.syslog("prepop-filltmpHot - thCN equals:"+str(thCN))
     YHits=0
     for item in RESULTSET:
         YHITS=db[YESTCOLL].find({'id':str(item['id'])})

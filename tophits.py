@@ -40,8 +40,13 @@ IFILE.close()
 LANGLIST=wikicount.getLanguageList()
 for lang in LANGLIST:
 	COLLECTIONNAME=str(lang)+"_tophits"+str(DAYKEY)
+	PLACEMAP=str(lang)+"_mapPlace"
+	HITSMAP=str(lang)+"_mapHits"
 	db[COLLECTIONNAME].remove()
-	IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","r")
+	try:
+		IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","r")
+	except IOError:
+		continue
 	RESULT=[]
 	RECCOUNT=0
 	for line in IFILE:
@@ -50,8 +55,8 @@ for lang in LANGLIST:
         		RESULT.append((line[0],line[1]))
         		RECCOUNT+=1
         		try:
-            			INSERTREC={'_id':str(line[1]),'place':RECCOUNT,'Hits':int(line[0])}
-				db[COLLECTIONNAME].insert(INSERTREC,safe=True)
+				db[PLACEMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:RECCOUNT}},upsert=True)
+				db[HITSMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:int(line[0])}},upsert=True)
 			except TypeError:
     				pass
    	 	else:

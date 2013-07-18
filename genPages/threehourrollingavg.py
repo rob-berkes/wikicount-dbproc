@@ -59,7 +59,7 @@ for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('threehourrollingavg.py :  runtime is '+str(RUNTIME)+' seconds for English.')
 
-LANGUAGES=['ru',]
+LANGUAGES=wikicount.getLanguageList()
 for lang in LANGUAGES:
 	hourlies=[]
 	KeyErrors=0
@@ -68,6 +68,7 @@ for lang in LANGUAGES:
 	hdTABLE=str(lang)+"_hitsdaily"
 	outTABLE=str(lang)+"_threehour"
 	RESULTS=db[hhdTABLE].find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(200)
+	print lang,str(RESULTS.count())
 	for item in RESULTS:
 		try:
 	                QUERYtitle=db[hdTABLE].find_one({'_id':item['_id']})

@@ -15,8 +15,8 @@ print OPTIONS
 os.system("mongoexport "+str(OPTIONS))
 
 os.system("sed -i 1d /home/ec2-user/mongo.csv")
-
-for lang in ['ru',]:
+LANGLIST=wikicount.getLanguageList()
+for lang in LANGLIST:
 	hdCOLL=str(lang)+"_hitsdaily"
 	outfile="/home/ec2-user/"+str(lang)+"_mongo.csv"
 	OPTIONS=" -d wc -c "+hdCOLL+" -q '{\""+str(DAYKEY)+"\":{\"$exists\":true}}' --fields "+str(DAYKEY)+",\"_id\" --csv --out "+str(outfile)
