@@ -187,7 +187,7 @@ def fnStub1_fnIsPrevJobDone(CURJOBNAME):
                return True
        return False
 def getLanguageList():
-	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo']
+	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af']
 	return LList
 
 def fnLaunchNextJob(CURJOBNAME):
@@ -359,13 +359,16 @@ def minusHour(HOUR):
 def fnReturnLastThreeHours(HOUR):
 	a=HOUR-1
 	b=HOUR-2
+	c=HOUR-3
 	if a==-1:
 		a=23
 	if b==-1:
 		b=23
 	elif b==-2:
 		b=22
-	return HOUR,a,b
+	if c<0:
+		c+=24
+	return a,b,c
 def fnStrFmtDate(DVAR):
 	NEWVAR='%02d' % (DVAR,)	
 	return NEWVAR

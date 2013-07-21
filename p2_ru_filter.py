@@ -42,6 +42,7 @@ for lang in LANGLIST:
 			ptnSTalk=re.search("talk:",record[1])
 			ptnImage=re.search("Image:",record[1])
 			ptnPhp=re.search(".php",record[1])
+				
 			if ptnCategory:
 				CATFILE.write(line)
 			if ptnImage or ptnFile:
