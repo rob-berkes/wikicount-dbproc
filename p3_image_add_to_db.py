@@ -14,7 +14,10 @@ DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 
-def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
+def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
+     IMAGECNAME=str(LANG)+"_image"
+     IMAGECHNAME=str(LANG)+"_imagehourly"
+     IMAGECDNAME=str(LANG)+"_imagedaily"
      connection=Connection()
      db=connection.wc
      RECORDS=0
@@ -29,9 +32,9 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
 		          HASH=hashlib.sha1(line[1]).hexdigest()
 		          POSTFIND={'_id': HASH}
 			  TITLESTRING=line[1].decode('utf-8')
-		          db.image.update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) },"$set":{'title':TITLESTRING} },upsert=True)
-			  db.imagehourly.update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
-			  db.imagedaily.update(POSTFIND,{"$inc":{DAYKEY: int(line[2])}},upsert=True)
+		          db[IMAGECNAME].update(POSTFIND,{ "$inc" : { "Hits" : int(line[2]) },"$set":{'title':TITLESTRING} },upsert=True)
+			  db[IMAGECHNAME].update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
+			  db[IMAGECDNAME].update(POSTFIND,{"$inc":{DAYKEY: int(line[2])}},upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
@@ -45,10 +48,6 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR):
      syslog.syslog(FINAL)
 
 
-FILEPROC2="/tmp/image/q2_pagecounts.processed.*"
-FILEPROC3="/tmp/image/q3_pagecounts.processed.*"
-FILEPROC4="/tmp/image/q4_pagecounts.processed.*"
-FILEPROC5="/tmp/image/q5_pagecounts.processed.*"
 
 
 
@@ -56,26 +55,32 @@ FILEPROC5="/tmp/image/q5_pagecounts.processed.*"
 
 if __name__ == '__main__':
     wikicount.fnSetStatusMsg('p3_image_add',0)
-    p = Process(target=UpdateHits, args=(FILEPROC2,HOUR,DAY,MONTH,YEAR))
-    q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR))
-    r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR))
-    s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR))
-    p.daemon=True
-    q.daemon=True
-    r.daemon=True
-    s.daemon=True
-    p.start()
-    q.start()
-    r.start()
-    s.start()
+    LANGUAGES=wikicount.getLanguageList()
+    for lang in LANGUAGES:
+	    FILEPROC2="/tmp/"+str(lang)+"_image/q2_pagecounts.*"
+	    FILEPROC3="/tmp/"+str(lang)+"_image/q3_pagecounts.*"
+	    FILEPROC4="/tmp/"+str(lang)+"_image/q4_pagecounts.*"
+	    FILEPROC5="/tmp/"+str(lang)+"_image/q1_pagecounts.*"
+	    p = Process(target=UpdateHits, args=(FILEPROC2,HOUR,DAY,MONTH,YEAR,str(lang)))
+	    q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR,str(lang)))
+	    r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR,str(lang)))
+	    s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR,str(lang)))
+	    p.daemon=True
+	    q.daemon=True
+	    r.daemon=True
+	    s.daemon=True
+	    p.start()
+	    q.start()
+	    r.start()
+	    s.start()
 
 
 
-    p.join()
-    q.join()
-    r.join()
-    s.join()
-    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
+	    p.join()
+	    q.join()
+	    r.join()
+	    s.join()
+	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+	    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
     wikicount.fnSetStatusMsg('p3_image_add',3)
 #    wikicount.fnLaunchNextJob('p3_image_add')

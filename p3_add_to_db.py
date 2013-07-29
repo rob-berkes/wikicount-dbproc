@@ -75,25 +75,6 @@ FILEPROC5="/tmp/action/q5_pagecounts.processed."+str(HOUR)
 if __name__ == '__main__':
     STARTTIME=wikicount.fnStartTimer()
     wikicount.fnSetStatusMsg('p3_add_to_db',0)
-    p = Process(target=UpdateHits, args=(FILEPROC2,HOUR,DAY,MONTH,YEAR,'en'))
-    q = Process(target=UpdateHits, args=(FILEPROC3,HOUR,DAY,MONTH,YEAR,'en'))
-    r = Process(target=UpdateHits, args=(FILEPROC4,HOUR,DAY,MONTH,YEAR,'en'))
-    s = Process(target=UpdateHits, args=(FILEPROC5,HOUR,DAY,MONTH,YEAR,'en'))
-    p.daemon=True
-    q.daemon=True
-    r.daemon=True
-    s.daemon=True
-    p.start()
-    q.start()
-    r.start()
-    s.start()
-
-
-
-    p.join()
-    q.join()
-    r.join()
-    s.join()
     
     RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     syslog.syslog('p3_add: EN records added in '+str(RUNTIME)+' seconds. Russian next.')
@@ -116,8 +97,11 @@ if __name__ == '__main__':
 	    w.daemon=True
 
 	    t.start()
+	    time.sleep(1)
 	    u.start()
+	    time.sleep(1)
 	    v.start()
+	    time.sleep(1)
 	    w.start()
 
 	    t.join()

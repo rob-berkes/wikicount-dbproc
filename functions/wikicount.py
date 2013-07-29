@@ -187,7 +187,7 @@ def fnStub1_fnIsPrevJobDone(CURJOBNAME):
                return True
        return False
 def getLanguageList():
-	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af']
+	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af','simple','en.b','en.q']
 	return LList
 
 def fnLaunchNextJob(CURJOBNAME):
@@ -315,7 +315,9 @@ def fnFormatTimes(DAY,MONTH,HOUR):
        MONTH='%02d' % (int(MONTH),)
 
        return DAY,MONTH,HOUR
-
+def fnFormatHour(HOUR):
+	HOUR='%02d' % (int(HOUR),)
+	return HOUR
 def fnReturnTimeString(DAY,MONTH,YEAR):
 	YEAR='%02d' % (int(YEAR),)
 	DAY='%02d' % (int(DAY),)

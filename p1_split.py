@@ -36,6 +36,7 @@ RECCOUNT=0
 LANGLIST=wikicount.getLanguageList()
 for line in IFILE:
         record=line.strip().split()
+	record[0]=record[0].strip('.')
 	RECCOUNT+=1
 	try:
 		if record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES==0:

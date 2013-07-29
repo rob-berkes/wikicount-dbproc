@@ -27,7 +27,10 @@ for lang in LANGLIST:
 		CATFILE=open(CATFILENAME,"a")
 		for line in IFILE:
 			record=line.strip().split()
-			TITLE=record[1].decode('unicode_escape')
+			try:
+				TITLE=record[1].decode('unicode_escape')
+			except UnicodeDecodeError:
+				continue
 			TITLE=TITLE.strip('(){}')
 			ptnTalk=re.search("Talk:",record[1])
 			ptnUser=re.search("User:",record[1])
@@ -47,7 +50,7 @@ for lang in LANGLIST:
 				CATFILE.write(line)
 			if ptnImage or ptnFile:
 				IMGFILE.write(line)
-			if  not ptnImage and not ptnPhp and not ptnTalk and not ptnUser and not ptnWiki and not ptnSpecial and not ptnUTalk and not ptnTemplate and not ptnWTalk and not ptnFile and not ptnCategory and not ptnCTalk and not ptnSTalk:
+			if  not ptnImage and not ptnPhp and not ptnSpecial and not ptnTemplate and not ptnWTalk and not ptnFile and not ptnCategory and not ptnCTalk and not ptnSTalk:
 				OFILE.write(line)
 		OFILE.close()
 		IMGFILE.close()

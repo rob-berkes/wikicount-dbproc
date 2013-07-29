@@ -66,4 +66,4 @@ for lang in LANGUAGES:
 	
 	syslog.syslog("[3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-wikicount.fnLaunchNextJob('threehrrollingavg')
+#wikicount.fnLaunchNextJob('threehrrollingavg')
