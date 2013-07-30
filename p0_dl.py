@@ -9,7 +9,7 @@ import glob
 FILEBASE="/tmp/staging/pagecounts.tmp"
 wikicount.fnSetStatusMsg('p0_dl',0)
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-#HOUR=wikicount.minusHour(int(HOUR))
+HOUR=wikicount.minusHour(int(HOUR))
 #HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 URL="http://dumps.wikimedia.org/other/pagecounts-raw/"+str(YEAR)+"/"+str(YEAR)+"-"+str(MONTH)+"/pagecounts-"
@@ -38,14 +38,21 @@ while missing and MINUTESEARCH<60:
 		COUNTFILE=urllib2.urlopen(URL)
 		if COUNTFILE.code==200:
 			fetchURL=URL
+			print "fetchURL: "+str(fetchURL)
 			missing=False
 	except urllib2.HTTPError:
 		pass
 if not missing:
+	print "fetchURL: "+str(fetchURL)
 	COUNTFILE=urllib2.urlopen(fetchURL)
 	OFILE=open(FILEBASE,"w")
 	OFILE.write(COUNTFILE.read())
 	OFILE.close()
+	COUNTFILE=urllib2.urlopen(fetchURL)
+	CFILE=open("/home/ec2-user/pagecounts.tmp.gz","w")
+
+	CFILE.write(COUNTFILE.read())
+	CFILE.close()
 	b=time()
 	c=b-a
 	d=round(c,3)

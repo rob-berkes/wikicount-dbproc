@@ -1,7 +1,8 @@
 import os
-LANG='en.s'
+LANG=['fr.d','fr.b','sv']
 FOLDERS=['action','category','image','ondeck','staging']
-for folder in FOLDERS:
-	NEWPATH="/tmp/"+str(LANG)+"_"+str(folder)
-	if not os.path.exists(NEWPATH):
-		os.makedirs(NEWPATH)
+for lang in LANG:
+	for folder in FOLDERS:
+		NEWPATH="/tmp/"+str(lang)+"_"+str(folder)
+		if not os.path.exists(NEWPATH):
+			os.makedirs(NEWPATH)

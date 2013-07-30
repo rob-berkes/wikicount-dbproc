@@ -12,7 +12,7 @@ syslog.syslog('p3_add_to_db.py: starting...')
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-
+HOUR=wikicount.fnFormatHour(HOUR)
 def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
      HOURLYDB=str(LANG)+'_hitshourly'
      HOURDAYDB=str(LANG)+'_hitshourlydaily'
