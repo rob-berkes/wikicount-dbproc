@@ -26,6 +26,7 @@ for lang in LANGLIST:
 	try:
 		IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","r")
 	except IOError:
+		syslog.syslog("Error opening file for "+str(lang))
 		continue
 	RESULT=[]
 	RECCOUNT=0
