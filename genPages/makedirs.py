@@ -1,5 +1,5 @@
 import os
-LANG=['commons.m']
+LANG=['it.q','pl.q','ru.q','zh.q']
 FOLDERS=['action','category','image','ondeck','staging']
 for lang in LANG:
 	for folder in FOLDERS:
