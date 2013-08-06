@@ -1,3 +1,4 @@
+#coding: utf-8
 from pymongo import Connection 
 import string
 import urllib2
@@ -189,6 +190,59 @@ def fnStub1_fnIsPrevJobDone(CURJOBNAME):
 def getLanguageList():
 	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af','simple','en.b','en.q','en.s','en.d','en.voy','fr.d','fr.b','sv','ja.b','it.b','de.b','commons.m','it.q','pl.q','ru.q','zh.q']
 	return LList
+def getBadList(lang):
+	enBList=['Grażyna_Plebanek,','Amanda_O`neill,','Philip_C.','Ks._Marian',]
+	return enBList
+def fnGetSpamList(lang):
+	if lang=='en':
+		en_SpamList=['6ce8dbdabc9b9936478d9196007e2ee3864ac1db',
+			     'ff255e4bcb8594a7ed26c92d292dc3b442aefb4c',
+			     'e9ed3661a6aeab9cb79287e45b4149b6051fb3ef',
+			     '64800b72317695df142009c4fe8c06bde2aae00d',
+			     'b5bc606f0ffa21182c07abcf4758ad94e45bfb34', #Anita Ganeri, with comma
+			     'aa737042d3988ef5277d7867e01fe228c7c4077f', #W_Walce 
+			     '1fb36d041828a6bdb5f1fdcd72e9173abb563334', #Phillip_C
+			     '3bf7345236012805f564fa244fd433dace4d39bf', #Tadeusz Naserouski
+			     'a6166c582b6827501160af830b833a106e03a211', #Bozena Aksamit
+			     '3d76578c4f8cb0be75411bb902ddef7d150cc79f', #Maureen Johnson,
+			     '079c8c7539635605810064cd4f3ca0bf0d266ddd', #Arkadiusz Marciniak
+			     '47760316c811df09dd1ba6b64b59dddc108cd5e3', #David Levien
+			     '0dbd8334375fc0f09f85247ec3318aa380640473', #Aleksander Fredro,
+			     '5118e9c2ca447be4af9cc12e987175b248877df2', #J._R.
+			     '32bdf0f13a86a03dd89fcd42fa90791cfa23e2ac', #Zarys Psychologii
+		             'ed67fe416c2802cfceabbe48717ba3b6af2da255', #L._E
+		 	     'b9820135e2ce385f5eb84374854c77bba1aeeef4', #L._L_
+			     '4a3891325b68f8a20f4f1624822c24c890591402', #Al Switzler
+			     'd63c638062355132cd0cb9536e6a0ff9c4d05a0a', #Tomas Jaztrun
+			     'c0c3a3e4858a825c6be4a470f2529dcdc63755d9', #Melanie Maddison
+			     '9efd6788044203629b8fb9fdb3666cb6a9dbf7c4',
+			     '6af42fbe86717da2a5b2254bc060acb8a269571a',
+			     '7f1e4cdb5985106b3efdb443c06a590a92c637f0',
+			     '61a9a52d62131297c3405f85e8d7f183a42ab496',
+			     '14f58e40f51f35f11ff68aeb59a78d2a5c53e370',
+			     '4a616bee21e11cb01e92efb2bb53e9f207c3792f',
+			     '79ba648642d5eebafb7912925a41a0b89d1793ce',
+			     'bf80678c8b7a33134555c34d5d06d756c172dc8b',
+			     'de8567bd1e0c5f43bd7010dac36cd16b202c7f94',
+			     '955626aef7c2cffaea68f7a16bfc86a21a1cd91f',
+			     '1284700d4bdfd784433abae7c856c55069cee13c',
+			     '2bcfc9ac2a6d2e0f494d2fe9ebb9cb5e715719c3',
+			     'c65536c01867cebb050b2b7208bcf7bc29353e6b',
+			     '7261c8b1dcf430050ccd1ad1da7a4280b2413dd4',
+			     'f3594556fee36c2e789ce37de9c846304766fa7b',
+			     'd90e0187e7958cc2e31d8a882a52dee459e1f330',
+			     '12db9e4eeb73167e2abc61dd1261d49e3f171ff5',
+			     '4460ade4dc2601bf1e87a40e8a20d69f78836819',
+			     '1acece7723467da8404cc1645233daa11f62b8b8',
+			     'aa1c52a2654a83c58b958282cf584f07cffb78d9',
+			     '61534bb3ce024b6f609ce281b70a648111df7bd5',
+			     'dd309538e9e911e8a4d717d1c5073553a09a582e',
+			     'a0e12e8f30cfe82316cb3b56cf37bf3ed3048d44',
+			     'f6157f0449151ccb95b86abdf51aae3c3deecd95', #?cmd=
+		
+				]
+		return en_SpamList
+	return 0
 
 def fnLaunchNextJob(CURJOBNAME):
        if CURJOBNAME=='p0_dl' and fnIsPrevJobDone(CURJOBNAME):
@@ -220,6 +274,7 @@ def fnLaunchNextJob(CURJOBNAME):
                os.system('/usr/bin/python /home/ec2-user/Python/p90_remove_noise.py')          
        elif CURJOBNAME=='p90_remove_noise' and fnIsPrevJobDone(CURJOBNAME):
                syslog.syslog('Launching Mongo CSV Sort script ...sortMongoHD')
+               os.system('/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py')              
                os.system('/usr/bin/python /home/ec2-user/Python/sort_MongoHD.py')              
        elif CURJOBNAME=='sortMongoHD' and fnIsPrevJobDone(CURJOBNAME):
                syslog.syslog('Launching Tophits script ...tophits')
@@ -295,7 +350,6 @@ def fnReturnTimes():
         HOUR=time.strftime('%H')
         now=datetime.datetime.now()
         half=now+datetime.timedelta(minutes=45)
-        stamp=time.mktime(half.timetuple())
         expiretime=format_date_time(stamp)
         if int(HOUR) < 8:
                DAY-=1

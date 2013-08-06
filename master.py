@@ -18,9 +18,12 @@ from datetime import date
 from numpy import sqrt,mean,array
 from operator import itemgetter
 import urllib
+import httplib #used in checking for 404s 200s etc
 
 FILEBASE="/tmp/staging/pagecounts.tmp"
 DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+HOUR=wikicount.minusHour(int(HOUR))
+HOUR=wikicount.minusHour(int(HOUR))
 HOUR=wikicount.minusHour(int(HOUR))
 #HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
@@ -125,12 +128,20 @@ def p1_split():
 	c=b-a
 	d=round(c,3)
 	syslog.syslog("[p1_split] : done "+str(d)+" seconds.")
-
+def isValidUrl(lang,artURL):
+	BADLIST=wikicount.getBadList(lang)
+	if artURL in BADLIST:
+		return False
+	else:
+		return True
+	
 
 def p2_filter():
 	syslog.syslog('[p2_filter] start')
 	for lang in LANGLIST:
 		a=time()
+		VALIDS=0
+		INVALIDS=0
 		for FILENAME in glob.glob('/tmp/'+str(lang)+'_staging/q*'):
 			print FILENAME
 			IFILE=open(FILENAME,"r")
@@ -146,6 +157,12 @@ def p2_filter():
 					TITLE=record[1].decode('unicode_escape')
 				except UnicodeDecodeError:
 					continue
+				if lang=='en':
+					if isValidUrl(lang,record[1]):
+						pass
+					else:
+						INVALIDS+=1
+						continue
 				TITLE=TITLE.strip('(){}')
 				ptnTalk=re.search("Talk:",record[1])
 				ptnUser=re.search("User:",record[1])
@@ -160,7 +177,6 @@ def p2_filter():
 				ptnSTalk=re.search("talk:",record[1])
 				ptnImage=re.search("Image:",record[1])
 				ptnPhp=re.search(".php",record[1])
-				
 				if ptnCategory:
 					CATFILE.write(line)
 				if ptnImage or ptnFile:
@@ -175,9 +191,7 @@ def p2_filter():
 		b=time()
 		c=b-a
 		d=round(c,3)
-		syslog.syslog("p2_ru_fi: Lang: "+str(lang)+" runtime: "+str(d)+" seconds.")
-
-
+		syslog.syslog("p2_fi: Lang: "+str(lang)+" runtime: "+str(d)+" seconds. V:"+str(VALIDS)+" InV:"+str(INVALIDS))
 
 def p2x_move_to_action():
 	syslog.syslog("[p2x] - start")
@@ -334,7 +348,20 @@ def p3_addImages():
 	    s.join()
 	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
-
+def p50_removeSpam():
+	lang='en'
+	conn=Connection()
+	db=conn.wc
+	SPAMLIST=wikicount.fnGetSpamList(lang)
+	COUNT=0
+	for id in SPAMLIST:
+		db.en_hitshourly.remove({'_id':str(id)})
+		db.en_hitshourlydaily.remove({'_id':str(id)})
+		db.en_hitsdaily.remove({'_id':str(id)})
+		db.en_mapHits.remove({'_id':str(id)})
+		db.en_mapPlace.remove({'_id':str(id)})
+		COUNT+=1
+	syslog.syslog("[p50] - "+str(COUNT)+" records removed.")
 def p70export():
 	STARTTIME=wikicount.fnStartTimer()
 	syslog.syslog('p70_export.py: starting...')
@@ -486,6 +513,7 @@ p2_filter()
 p2x_move_to_action()
 p3_add()
 p3_addImages()
+p50_removeSpam()
 p70export()
 p80_sortMongoHD()
 p90_addTophits()
