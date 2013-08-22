@@ -25,5 +25,3 @@ for item in HASHES:
 	db.hitshourlydaily.remove({'_id':item})
 RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('p90_remove: runtime '+str(RUNTIME)+' seconds.')
-wikicount.fnSetStatusMsg('p90_remove_noise',3)
-wikicount.fnLaunchNextJob('p90_remove_noise')

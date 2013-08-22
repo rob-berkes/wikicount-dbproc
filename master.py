@@ -254,7 +254,6 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 
 def p3_add():
 	STARTTIME=wikicount.fnStartTimer()
-	wikicount.fnSetStatusMsg('p3_add_to_db',0)
     
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('p3_add: EN records added in '+str(RUNTIME)+' seconds. Russian next.')
@@ -353,15 +352,16 @@ def p50_removeSpam():
 	LANGUAGES=wikicount.getLanguageList()
 	conn=Connection()
 	db=conn.wc
+	COUNT=0
 	for lang in LANGUAGES:
 		SPAMLIST=wikicount.fnGetSpamList(lang)
-		COUNT=0
+		CNAMEHH=str(lang)+'_hitshourly'
+		CNAMEHHD=str(lang)+'_hitshourlydaily'
+		CNAMEHD=str(lang)+'_hitsdaily'
 		for id in SPAMLIST:
-			db.en_hitshourly.remove({'_id':str(id)})
-			db.en_hitshourlydaily.remove({'_id':str(id)})
-			db.en_hitsdaily.remove({'_id':str(id)})
-			db.en_mapHits.remove({'_id':str(id)})
-			db.en_mapPlace.remove({'_id':str(id)})
+			db[CNAMEHH].remove({'_id':str(id)})
+			db[CNAMEHHD].remove({'_id':str(id)})
+			db[CNAMEHD].remove({'_id':str(id)})
 			COUNT+=1
 	syslog.syslog("[p50] - "+str(COUNT)+" records removed.")
 def p70export():
@@ -382,12 +382,10 @@ def p70export():
 
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('p70_export.py: runtime '+str(RUNTIME)+' seconds.')
-	wikicount.fnSetStatusMsg('p70_export',3)
-	wikicount.fnLaunchNextJob('p70_export')
 
 def p80_sortMongoHD():
 	STARTTIME=wikicount.fnStartTimer()
-	syslog.syslog('sortMongoHD.csv: starting...')
+	syslog.syslog('p80_sortMongoHD: starting...')
 	n=7  #number partitions to break into
 	IFILE=open("/home/ec2-user/mongo.csv","r")
 	SORTME=[]
@@ -450,6 +448,7 @@ def p90_addTophits():
 	syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
 
 def p99_threehrrolling():
+	syslog.syslog("Entering p99_threehrrolling")
 	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 	STARTTIME=wikicount.fnStartTimer()
 	conn=Connection()
@@ -458,7 +457,6 @@ def p99_threehrrolling():
 	HOUR=wikicount.fnStrFmtDate(HOUR)
 	HOUR2=wikicount.fnStrFmtDate(HOUR2)
 	HOUR3=wikicount.fnStrFmtDate(HOUR3)
-	wikicount.fnSetStatusMsg('threehrrollingavg',0)
 	hourlies=[]
 	TypeErrors=0
 	KeyErrors=0
@@ -507,7 +505,7 @@ def p99_threehrrolling():
 		                db[outTABLE].insert(rec)
 		                z+=1
 	
-		syslog.syslog("[3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
+		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
 p0_dl()
 p1_split()
@@ -517,6 +515,6 @@ p3_add()
 p3_addImages()
 p50_removeSpam()
 p70export()
-p80_sortMongoHD()
+#p80_sortMongoHD()
 #p90_addTophits()
 p99_threehrrolling()
