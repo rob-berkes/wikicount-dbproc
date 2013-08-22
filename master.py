@@ -230,7 +230,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 
 			  db[HOURLYDB].update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
 			  db[HOURDAYDB].update(POSTFIND,{"$set":{HOUR:int(line[2])}},upsert=True)
-			  db[HITSMAPDB].update(POSTFIND,{"$set":{'title':TITLESTRING}},upsert=True)
+#			  db[HITSMAPDB].update(POSTFIND,{"$set":{'title':TITLESTRING}},upsert=True)
 			  db[HITSDAILY].update(POSTFIND,
 					{"$inc":
 						{DAYKEY: int(line[2])}
@@ -350,17 +350,19 @@ def p3_addImages():
 	    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
 def p50_removeSpam():
 	lang='en'
+	LANGUAGES=wikicount.getLanguageList()
 	conn=Connection()
 	db=conn.wc
-	SPAMLIST=wikicount.fnGetSpamList(lang)
-	COUNT=0
-	for id in SPAMLIST:
-		db.en_hitshourly.remove({'_id':str(id)})
-		db.en_hitshourlydaily.remove({'_id':str(id)})
-		db.en_hitsdaily.remove({'_id':str(id)})
-		db.en_mapHits.remove({'_id':str(id)})
-		db.en_mapPlace.remove({'_id':str(id)})
-		COUNT+=1
+	for lang in LANGUAGES:
+		SPAMLIST=wikicount.fnGetSpamList(lang)
+		COUNT=0
+		for id in SPAMLIST:
+			db.en_hitshourly.remove({'_id':str(id)})
+			db.en_hitshourlydaily.remove({'_id':str(id)})
+			db.en_hitsdaily.remove({'_id':str(id)})
+			db.en_mapHits.remove({'_id':str(id)})
+			db.en_mapPlace.remove({'_id':str(id)})
+			COUNT+=1
 	syslog.syslog("[p50] - "+str(COUNT)+" records removed.")
 def p70export():
 	STARTTIME=wikicount.fnStartTimer()
@@ -516,5 +518,5 @@ p3_addImages()
 p50_removeSpam()
 p70export()
 p80_sortMongoHD()
-p90_addTophits()
+#p90_addTophits()
 p99_threehrrolling()

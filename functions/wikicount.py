@@ -195,7 +195,7 @@ def getBadList(lang):
 	return enBList
 def fnGetSpamList(lang):
 	if lang=='en':
-		en_SpamList=['6ce8dbdabc9b9936478d9196007e2ee3864ac1db',
+		SpamList=['6ce8dbdabc9b9936478d9196007e2ee3864ac1db',
 			     'ff255e4bcb8594a7ed26c92d292dc3b442aefb4c',
 			     'e9ed3661a6aeab9cb79287e45b4149b6051fb3ef',
 			     '64800b72317695df142009c4fe8c06bde2aae00d',
@@ -239,10 +239,63 @@ def fnGetSpamList(lang):
 			     'dd309538e9e911e8a4d717d1c5073553a09a582e',
 			     'a0e12e8f30cfe82316cb3b56cf37bf3ed3048d44',
 			     'f6157f0449151ccb95b86abdf51aae3c3deecd95', #?cmd=
-		
+			     '9a17f9280ad599ed06310d348ddf729a03830175',
+			     '68302be3f3807ebc890215ef29bf0d3c1c28e2ac',
+			     'bf53b330c0875317d3e8db35cf1c82d900ec97d3',
+			     'f6ece7ccd700925e6e80b7436f4b6a655855bb57',
+			     '358f7ca1ed80bc6461f151c3baaa53ad386fb043',
+			     '1800db8ae071d071eb02965296e476c0fc2554f8',
+			     '5fe7615d92ae8ab9db99b14809eb0bddd06101cd', 	#Ks._Mario
+			     'efa1facd3a57169608abf74e60c5b3a94990f50f', 	#Micky_Neilson,
+			     'fa72a4f373b749ba4b1734d15621b7eab8cf4cff', 	#Anna_Onichimowska,
+			     '4d07224ed7568e0451dce003d82788057f6465e9', 	#Krzysztof_Piskorski,
+			     '9a8f6fe164878330844dc861ab2dd2c9701cda7c', 	#Daniel_Morgan_Perry
+			     '05eeaea9702d728d14b9f269999f9dd2153b857a', 	#Food1.jpg
+			     '955e7bfa2d908e4cfeebb12b17797d6239c8d2fd', 	#History_of_England//bits.wikimedia.org/static-1.22wmf9/skins/common/images/magnify-clip.png
+			     'cd98c10bb00717d250878d09d4212367c734eb96', 	#History_of_England//bits.wikimedia.org/static-1.22wmf9/skins/common/images/poweredby_mediawiki_88x31.png
+			     'f1cea642e49bebc097f4e57db88d287e60c0e0fa', 	#History_of_England//bits.wikimedia.org/static-1.22wmf9/skins/vector/images/search-ltr.png
+	
 				]
-		return en_SpamList
-	return 0
+	elif lang=='zh':
+		SpamList= [ 'bb7d64d96a472fd27d27036fb2f8a9e6e2757ac5', 	#%B2%A8%CCm%91%F0%D2%DB_Invasion_of_Poland
+			    '916203e6d9cc86aa5949f6e07f75bdfb277a8055', 	#%E7%98%9C%EF%BC%BA%98%E5%89%9C%88%E5%95%A3%E8%9D%B4_Invasion_of_Poland
+			    'e429e87d975fa87b95a09ae027b7ecab40be9414', 	#Wikipedia:\xE9\xA6\x96\xE9\xA1\xB5
+			    '18fb3fbdc60b903e63d1f10511766162dfe1362b', 	#\xE5\xB0\x8F\xE9\x8E\xAE\xE6\x9C\x89\xE4\xBD\xA0
+			    '731440e131dba173e18c2f782ec5b8dae23f0e06', 	#\xE6\x96\xB0\xE4\xB8\x96\xE7\xBA\xAA\xE7\xA6\x8F\xE9\x9F\xB3\xE6\x88\x98\xE5\xA3\xAB
+			    '5923ccc3751d3c15352f7c7e35ab9f46fa4d3db3', 	#\xE5\xB8\xAB\xE7\x88\xB6\xC2\xB7\xE6\x98\x8E\xE7\x99\xBD\xE4\xBA\x86
+			    'ce75a71d3c3e918373c9f6bfe04b0fd1624aeff9', 	#\xE6\xAD\xA5\xE5\x85\xB5
+			    'db2268352b367a766524b9d7880b7c28c072ff70', 	#\xE5\xA4\xA9\xE7\xA9\xBA\xE4\xB9\x8B\xE5\x9F\x8E
+			    '08284665fb7989cd27cfcd293e9973ca40a4308f', 	#\xE6\xA7\x8D\xE5\xBD\x88\xE8\xBE\xAF\xE9\xA7\x81_\xE5\xB8\x8C\xE6\x9C\x9B\xE5\xAD\xB8\xE5\x9C\x92\xE8\x88\x87\xE7\xB5\x95\xE6\x9C\x9B\xE9\xAB\x98\xE4\xB8\xAD\xE7\x94\x9F
+			    'f7e09ade2a4255b14cb1e784e3d1140c2eb87ea2', 	#\xE7\xA5\x9E\xE4\xB8\x8D\xE5\x9C\xA8\xE7\x9A\x84\xE6\x98\x9F\xE6\x9C\x9F\xE5\xA4\xA9
+			    '16159b16df13f78531247b088c6a8e8e68291cdf', 	#\xE5\xBC\xB5\xE5\x8F\x8B\xE9\xA9\x8A
+			    '97907b5ccd95ed6baff7af688e21542b4306492d', 	#\xE5\xAE\xAB\xE5\xB4\x8E\xE9\xAA\x8F
+			    '99f2fbe07457b73afa67f456facbce722543df1c', 	#\xE8\x91\xA3\xE6\xB5\xB7\xE5\xB7\x9D
+			    'ad8bba50d9bf8370cce1938424f3a93e83dd80ee', 	#\xE5\x90\xB3\xE9\x8E\xAE\xE5\xAE\x87
+			    'deddcf30a5ec0310984a8f0d2f717737ac7d0fa9', 	#\xE6\xB5\xB7\xE6\xBD\xAE\xE4\xB9\x8B\xE5\xA3\xB0
+			    '07d262d685c0b8a75f23d2e050632bb66812e2e6', 	#\xE5\x8A\x89\xE5\xBE\xB7\xE8\x8F\xAF
+			    '3c1a66d93bd4b230b7d6ec3cf3628f51446f82cb', 	#\xE5\x8F\xB2\xE4\xB8\x8A\xE6\x9C\x80\xE7\x89\x9B\xE9\x87\x98\xE5\xAD\x90\xE6\x88\xB6\xE4\xBA\x8B\xE4\xBB\xB6
+			    '513881f71a24bff9908fd9214e8655341c63fdbb', 	#/bits.wikimedia.org/favicon/wikipedia.ico
+			    '2f491f581e2c038620aa694cd47e9e07f3599940', 	#\xE9\xAD\x94\xE5\xA5\x87\xE5\xB0\x91\xE5\xB9\xB4
+			    '121d5a59069e7c9e87e7c16226e0440a9c65e438', 	#\xE6\x9D\x8E\xE8\x81\x96\xE5\x82\x91
+			    'b444fc393ed2e212c37e00a194388649c4f143d1', 	#\xE7\x9F\xB3\xE5\xB7\x9D\xE6\xA2\xA8\xE8\x8F\xAF
+			    '48b208987bdbb4c27825c2b05e002f6f5ae005af', 	#\xE6\xB1\x9F\xE7\xA5\x96\xE5\xB9\xB3
+				]
+	elif lang=='ru':
+		SpamList= [ 'f2f7f4438f0c496f601bab3f6938cd3cfb4c6052', 	#AC/edit
+			    '99d692c55a080187cf0770cdf5c029d5ba98e048', 	#The_Genius/edit
+			    '62e958d59133210768510e2f0fa0668a1c4dfd7d', 	#%D0%9A%D1%83%D0%B1%D0%BE%D0%BA_%D0%A3%D0%95%D0%A4%D0%90_2008/edit
+			    '33aa66b4118532b358b9b200d2fd6362156f20c3', 	#\xD0\x97\xD0\xB0\xD0\xB2\xD0\xBE\xD1\x80\xD0\xBE\xD1\x82\xD0\xBD\xD1\x8E\xD0\xBA,_\xD0\x90\xD0\xBD\xD0\xB0\xD1\x81\xD1\x82\xD0\xB0\xD1\x81\xD0\xB8\xD1\x8F_\xD0\xAE\xD1\x80\xD1\x8C\xD0\xB5\xD0\xB2\xD0\xBD\xD0\xB0
+			    'a34ffb7333053250c9e5146687895bd44a312808', 	#\xD0\xA4\xD1\x83\xD1\x82\xD1\x83\xD1\x80\xD0\xB0\xD0\xBC\xD0\xB0
+			    '8e155e759f27e5fb1cdfe32bab05aae8d2051031', 	#%D0%A7%D0%B5%D0%BC%D0%BF%D0%B8%D0%BE%D0%BD%D0%B0%D1%82_%D0%A4%D1%80%D0%B0%D0%BD%D1%86%D0%B8%D0%B8_%D0%BF%D0%BE_%D1%84%D1%83%D1%82%D0%B1%D0%BE%D0%BB%D1%83_2011/edit
+			    'bcb93d2eba04a93337028cbe202d6e3667937394', 	#%D0%9B%D0%B8%D0%B3%D0%B0_%D0%95%D0%B2%D1%80%D0%BE%D0%BF%D1%8B_%D0%A3%D0%95%D0%A4%D0%90_2013/edit
+			    '1ab3790e89745555e406ed9f820196ca46360736', 	#\xD0\x97\xD0\xB0\xD0\xB3\xD0\xBB\xD0\xB0\xD0\xB2\xD0\xBD\xD0\xB0\xD1\x8F_\xD1\x81\xD1\x82\xD1\x80\xD0\xB0\xD0\xBD\xD0\xB8\xD1\x86\xD0\xB0
+			    '9dccd42cf42c25d19e15373d82235fd7c4ee5335', 	#\xD0\x90\xD0\xB4\xD0\xB5\xD0\xBB\xD1\x8C\xD0\xB3\xD0\xB5\xD0\xB9\xD0\xBC,_\xD0\x9F\xD0\xB0\xD0\xB2\xD0\xB5\xD0\xBB_\xD0\x90\xD0\xBD\xD0\xB0\xD1\x82\xD0\xBE\xD0\xBB\xD1\x8C\xD0\xB5\xD0\xB2\xD0\xB8\xD1\x87
+				]
+
+	else:
+		SpamList= []
+
+	return SpamList
 
 def fnLaunchNextJob(CURJOBNAME):
        if CURJOBNAME=='p0_dl' and fnIsPrevJobDone(CURJOBNAME):
@@ -350,6 +403,7 @@ def fnReturnTimes():
         HOUR=time.strftime('%H')
         now=datetime.datetime.now()
         half=now+datetime.timedelta(minutes=45)
+        stamp=time.mktime(half.timetuple())
         expiretime=format_date_time(stamp)
         if int(HOUR) < 8:
                DAY-=1
