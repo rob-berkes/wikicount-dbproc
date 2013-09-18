@@ -29,6 +29,8 @@ HOUR=wikicount.minusHour(int(HOUR))
 DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
 LANGLIST=wikicount.getLanguageList()
 LANGUAGES=wikicount.getLanguageList()
+vTODAY=date.today()
+vDOW=vTODAY.weekday()
 def p0_dl():
 	URL="http://dumps.wikimedia.org/other/pagecounts-raw/"+str(YEAR)+"/"+str(YEAR)+"-"+str(MONTH)+"/pagecounts-"
 	URLDATE=str(YEAR)+str(MONTH)+str(DAY)
@@ -89,7 +91,7 @@ def p1_split():
 	IFILE=gzip.open(FILEBASE,"r")
 	
 	NUMBERLOGFILES=4
-	COUNTTHRESHOLD=4
+	COUNTTHRESHOLD=2
 	RECCOUNT=0
 
 	for line in IFILE:
@@ -143,14 +145,40 @@ def p2_filter():
 		VALIDS=0
 		INVALIDS=0
 		for FILENAME in glob.glob('/tmp/'+str(lang)+'_staging/q*'):
+			DIRNAME='/tmp/'+str(lang)+'_staging/'
+			if not os.path.exists(DIRNAME):
+				print "creating new directory for "+str(lang)+"_staging"
+				os.makedirs(DIRNAME)
 			print FILENAME
 			IFILE=open(FILENAME,"r")
 	        	OUTFILENAME=string.replace(FILENAME,'staging','ondeck')
 			IMGFILENAME=string.replace(FILENAME,'staging','image')
 			CATFILENAME=string.replace(FILENAME,'staging','category')
-			OFILE=open(OUTFILENAME,"w")
-			IMGFILE=open(IMGFILENAME,"a")
-			CATFILE=open(CATFILENAME,"a")
+			try:
+				OFILE=open(OUTFILENAME,"w")
+			except IOError:
+				ODIR='/tmp/'+str(lang)+'_ondeck'
+				if not os.path.exists(ODIR):
+					print "create new for "+ODIR
+					os.makedirs(ODIR)
+				continue
+				
+			try:
+				CATFILE=open(CATFILENAME,"a")
+			except IOError:
+				CATDIR='/tmp/'+str(lang)+'_category/'
+				if not os.path.exists(CATDIR):
+					print "create new dir for "+CATDIR
+					os.makedirs(CATDIR)
+				continue
+			try:
+				IMGFILE=open(IMGFILENAME,"a")
+			except IOError:
+				IMGDIR='/tmp/'+str(lang)+'_image'
+				if not os.path.exists(IMGDIR):
+					print "create new dir for "+IMGDIR
+					os.makedirs(IMGDIR)
+				continue
 			for line in IFILE:
 				record=line.strip().split()
 				try:
@@ -229,8 +257,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 			  TITLESTRING=line[1].decode('utf-8')
 
 			  db[HOURLYDB].update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
-			  db[HOURDAYDB].update(POSTFIND,{"$set":{HOUR:int(line[2])}},upsert=True)
-#			  db[HITSMAPDB].update(POSTFIND,{"$set":{'title':TITLESTRING}},upsert=True)
+			  db[HOURDAYDB].update(POSTFIND,{"$set":{HOUR:int(line[2]),'DayOfWeek':str(vDOW)}},upsert=True)
 			  db[HITSDAILY].update(POSTFIND,
 					{"$inc":
 						{DAYKEY: int(line[2])}
@@ -473,23 +500,41 @@ def p99_threehrrolling():
 		syslog.syslog(str(lang)+" : "+str(RESULTS.count()))
 		for item in RESULTS:
 			try:
+				vB1=False
+				vB2=False
+				vB3=False
 		                QUERYtitle=db[hdTABLE].find_one({'_id':item['_id']})
 		                atitle=QUERYtitle['title']
 		                title,utitle=wikicount.FormatName(atitle)
 		                try:
 		                        b1=item[HOUR]
+					vB1=True
 		                except KeyError:
 		                        b1=0
 		                try:
 		                        b2=item[HOUR2]
+					vB2=True
 		                except KeyError:
 		                        b2=0
 		                try:
 		                        b3=item[HOUR3]
+					vB3=True
 		                except KeyError:
 		                        b3=0
-
-	        	        rollingavg=mean(array([b1,b2,b3]))
+				if vB1 and vB2 and vB3:
+		        	        rollingavg=mean(array([b1,b2,b3]))
+				elif vB1 and vB2:
+					rollingavg=mean(array([b1,b2]))
+				elif vB1 and vB3:
+					rollingavg=mean(array([b1,b3]))
+				elif vB1:
+					rollingavg=b1
+				elif vB2 and vB3:
+					rollingavg=mean(array([b3,b2]))
+				elif vB2:
+					rollingavg=b2
+				else:
+					rollingavg=b3
 		
 		                rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
 		                hourlies.append(rec)
@@ -507,10 +552,10 @@ def p99_threehrrolling():
 	
 		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-p0_dl()
-p1_split()
-p2_filter()
-p2x_move_to_action()
+#p0_dl()
+#p1_split()
+#p2_filter()
+#p2x_move_to_action()
 p3_add()
 p3_addImages()
 p50_removeSpam()
