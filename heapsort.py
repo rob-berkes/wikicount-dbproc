@@ -26,11 +26,11 @@ MAX_VAL_EL=0
 for a in range(0,len(SORTME)):
 	ELEMENT=heapq.heappop(SORTME)
 	SORTED.append(ELEMENT)
+END=time.time()
 OFILE=open('918_hd.heap','w')
 for line in SORTED:
 	OFILE.write(str(line[0])+','+line[1]+'\n')
 OFILE.close()
-END=time.time()
 print "Heapsort took "+str(END-START)+" seconds.\n"
 
 
@@ -55,14 +55,14 @@ print "Imported file with "+str(len(SORTME))+" records.\n"
 START=time.time()
 SORTED=[]
 pconn,cconn=Pipe()
-n=4 #number of procs
+n=1 #number of procs
 p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
 p.start()
 SORTED=pconn.recv()
 p.join()
+OFILE.close()
 OFILE=open("918_hd.qs","w")
 for a in SORTED:
 	OFILE.write(str(a[0])+','+a[1]+'\n')
-OFILE.close()
 END=time.time()
 print "Quicksort took "+str(END-START)+" seconds.\n"

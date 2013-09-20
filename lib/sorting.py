@@ -1,64 +1,65 @@
 import random
 from multiprocessing import Process,Manager,Pipe,Queue
-def QuickSort(A):
-        if len(A)==1:
-                return A
-        elif len(A)==0:
-                return A
-        else:
-                PivotIndex=random.randint(0,len(A)-1)
-                PivotValue=int(A.pop(PivotIndex))
-                lesser=[]
-                greater=[]
-                pv=[]
-                pv.append(PivotValue)
-                for val in range(0,len(A)):
-                        if int(A[val]) <= PivotValue:
-                                lesser.append(int(A[val]))
-			elif int(A[val]) == PivotValue:
-				pv.append(int(A[val]))
-                        else:
-                                greater.append(int(A[val]))
-        return QuickSort(lesser)+pv+QuickSort(greater)
-def QuickSortSiMPle(A,Q,SplitDepth):
-	exitQ=Queue()
-	totalQueue=Queue()
-	SplitDepth-=1
-        if len(A)==1:
-		Q.put(A)
-                return 
-        elif len(A)==0:
-                return 
-        elif SplitDepth<=1:
-		sortedlist=QuickSort(A)
-		for z in sortedlist:
-			Q.put(z)
-		return 
-	else:
-                PivotIndex=random.randint(0,len(A)-1)
-                PivotValue=int(A[PivotIndex])
-                lesser=[]
-                greater=[]
-                pv=[]
-                pv.append(PivotValue)
-		
-		lesser=[x for x in A if x < PivotValue]
-		greater=[x for x in A if x > PivotValue]
-		equals=[x for x in A if x == PivotValue]
-		pL=Process(target=QuickSortSiMPle,args=(lesser,exitQ,SplitDepth))
-		for y in equals:
-			exitQ.put(y)
-		pR=Process(target=QuickSortSiMPle,args=(greater,exitQ,SplitDepth))
-        return 
+#def QuickSort(A):
+#        if len(A)==1:
+#                return A
+#        elif len(A)==0:
+#                return A
+#        else:
+#                PivotIndex=random.randint(0,len(A)-1)
+#                PivotValue=int(A.pop(PivotIndex))
+#                lesser=[]
+#                greater=[]
+#                pv=[]
+#                pv.append(PivotValue)
+#                for val in range(0,len(A)):
+#                        if int(A[val]) <= PivotValue:
+#                                lesser.append(int(A[val]))
+#			elif int(A[val]) == PivotValue:
+#				pv.append(int(A[val]))
+#                        else:
+#                                greater.append(int(A[val]))
+#        return QuickSort(lesser)+pv+QuickSort(greater)
+#def QuickSortSiMPle(A,Q,SplitDepth):
+#	exitQ=Queue()
+#	totalQueue=Queue()
+#3	SplitDepth-=1
+# 3       if len(A)==1:
+#		Q.put(A)
+ #               return 
+#        elif len(A)==0:
+#                return 
+#        elif SplitDepth<=1:
+#		sortedlist=QuickSort(A)
+#		for z in sortedlist:
+#			Q.put(z)
+#		return 
+#	else:
+ #               PivotIndex=random.randint(0,len(A)-1)
+#                PivotValue=int(A[PivotIndex])
+#                lesser=[]
+#                greater=[]
+#                pv=[]
+#                pv.append(PivotValue)
+#		
+#		lesser=[x for x in A if x < PivotValue]
+#		greater=[x for x in A if x > PivotValue]
+#3		equals=[x for x in A if x == PivotValue]
+#		pL=Process(target=QuickSortSiMPle,args=(lesser,exitQ,SplitDepth))
+#		for y in equals:
+#			exitQ.put(y)
+#		pR=Process(target=QuickSortSiMPle,args=(greater,exitQ,SplitDepth))
+ #       return 
 def QuickSortListArray(A):
         if len(A)<=1:
                 return A
         else:
-                PivotIndex=random.randint(0,len(A)-1)
-                PivotValue=A.pop(PivotIndex)
-                lesser=[x for x in A if int(x[0]) > int(PivotValue[0])]
-                greater=[x for x in A if int(x[0]) < int(PivotValue[0])]
-                pv=[x for x in A if int(x[0]) == int(PivotValue[0])]
+ #               PivotIndex=random.randint(0,len(A)-1)
+                PivotValue=A.pop(0)
+		pvVal=int(PivotValue[0])
+                lesser=[x for x in A if x[0] < pvVal]
+                greater=[x for x in A if x[0] > pvVal]
+                pv=[x for x in A if x[0] == pvVal]
 		pv.append(PivotValue)
         return QuickSortListArray(lesser)+pv+QuickSortListArray(greater)
 
@@ -74,9 +75,10 @@ def QuickSortMPListArray(A,conn,NumProcs):
 		greater=[]
 		pv=[]
 		Pivot=A.pop(0)
-		lesser=[x for x in A if int(x[0]) > int(Pivot[0])]
-	        greater=[x for x in A if int(x[0]) < int(Pivot[0])]
-		pv=[x for x in A if int(x[0]) == int(Pivot[0])]
+		pvVal=int(Pivot[0])
+		lesser=[x for x in A if x[0] < pvVal]
+	        greater=[x for x in A if x[0] > pvVal]
+		pv=[x for x in A if x[0] == pvVal]
 		pv.append(Pivot)
 		Procs=int(NumProcs)-1
 		pConnLeft,cConnLeft=Pipe()
