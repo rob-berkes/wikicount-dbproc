@@ -70,7 +70,7 @@ def p0_dl():
 		OFILE.write(COUNTFILE.read())
 		OFILE.close()
 		COUNTFILE=urllib2.urlopen(fetchURL)
-		CFILE=open("/home/ec2-user/pagecounts.tmp.gz","w")
+		CFILE=open("/root/pagecounts.tmp.gz","w")
 	
 		CFILE.write(COUNTFILE.read())
 		CFILE.close()
@@ -395,13 +395,13 @@ def p70export():
 	STARTTIME=wikicount.fnStartTimer()
 	syslog.syslog('p70_export.py: starting...')
 	DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
-	OPTIONS=" -d wc -c hitsdaily -q '{\""+str(DAYKEY)+"\":{\"$exists\":true}}' --fields "+str(DAYKEY)+",\"_id\" --csv --out /home/ec2-user/mongo.csv"
+	OPTIONS=" -d wc -c hitsdaily -q '{\""+str(DAYKEY)+"\":{\"$exists\":true}}' --fields "+str(DAYKEY)+",\"_id\" --csv --out /root/mongo.csv"
 	os.system("mongoexport "+str(OPTIONS))
 
-	os.system("sed -i 1d /home/ec2-user/mongo.csv")
+	os.system("sed -i 1d /root/mongo.csv")
 	for lang in LANGLIST:
 		hdCOLL=str(lang)+"_hitsdaily"
-		outfile="/home/ec2-user/"+str(lang)+"_mongo.csv"
+		outfile="/root/"+str(lang)+"_mongo.csv"
 		OPTIONS=" -d wc -c "+hdCOLL+" -q '{\""+str(DAYKEY)+"\":{\"$exists\":true}}' --fields "+str(DAYKEY)+",\"_id\" --csv --out "+str(outfile)
 		os.system("mongoexport "+str(OPTIONS))
 		os.system("sed -i 1d "+str(outfile))
@@ -414,10 +414,10 @@ def p80_sortMongoHD():
 	STARTTIME=wikicount.fnStartTimer()
 	syslog.syslog('p80_sortMongoHD: starting...')
 	n=7  #number partitions to break into
-	IFILE=open("/home/ec2-user/mongo.csv","r")
+	IFILE=open("/root/mongo.csv","r")
 	SORTME=[]
 	for lang in LANGLIST:
-		IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv","r")
+		IFILE=open("/root/"+str(lang)+"_mongo.csv","r")
 		SORTME=[]
 		for line in IFILE:
 			line=line.strip('"').split(',')
@@ -431,7 +431,7 @@ def p80_sortMongoHD():
 		p.start()
 		lyst=pconn.recv()
 		p.join()
-		OFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","w")
+		OFILE=open("/root/"+str(lang)+"_mongo.csv.sorted","w")
 		for a in lyst:
 			OFILE.write(str(a[0])+','+a[1])
 		OFILE.close()
@@ -451,7 +451,7 @@ def p90_addTophits():
 		PLACEMAP=str(lang)+"_mapPlace"
 		HITSMAP=str(lang)+"_mapHits"
 		try:
-			IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv.sorted","r")
+			IFILE=open("/root/"+str(lang)+"_mongo.csv.sorted","r")
 		except IOError:
 			syslog.syslog("Error opening file for "+str(lang))
 			continue
@@ -552,17 +552,14 @@ def p99_threehrrolling():
 	
 		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-#p0_dl()
-#p1_split()
-#p2_filter()
-#p2x_move_to_action()
+p0_dl()
+p1_split()
+p2_filter()
+p2x_move_to_action()
 p3_add()
 p3_addImages()
 p50_removeSpam()
 
 
-#p70export()
-#p80_sortMongoHD()
-#p90_addTophits()
 p99_threehrrolling()
 syslog.syslog("Master.py - All Functions complete!")

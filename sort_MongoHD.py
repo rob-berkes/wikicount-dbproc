@@ -24,23 +24,23 @@ if __name__ == '__main__' :
 	IFILE.close()
 
 	print 'done reading list .... starting mulitple procs'
-	pconn,cconn=Pipe()
-	lyst=[]
-	p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
-	p.start()
-	print 'main proc started'
+#	pconn,cconn=Pipe()
+#	lyst=[]
+#	p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
+#	p.start()
+#	print 'main proc started'
 
-	lyst=pconn.recv()
-	print 'starting out write'
-	print 'joining child procs'
-	p.join()
-	OFILE=open("/home/ec2-user/mongo.csv.sorted","w")
-	for a in lyst:
-		OFILE.write(str(a[0])+','+a[1])
-	OFILE.close()
-	print 'all done!'
-	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
+#	lyst=pconn.recv()
+#	print 'starting out write'
+#	print 'joining child procs'
+#	p.join()
+#	OFILE=open("/home/ec2-user/mongo.csv.sorted","w")
+#	for a in lyst:
+#		OFILE.write(str(a[0])+','+a[1])
+#	OFILE.close()
+#	print 'all done!'
+#	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+#	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
 
 	LANGLIST=wikicount.getLanguageList()
 	for lang in LANGLIST:
