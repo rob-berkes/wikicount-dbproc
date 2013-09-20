@@ -54,15 +54,16 @@ print "Imported file with "+str(len(SORTME))+" records.\n"
 #Do some quick sortin
 START=time.time()
 SORTED=[]
-pconn,cconn=Pipe()
-n=1 #number of procs
-p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
-p.start()
-SORTED=pconn.recv()
-p.join()
-OFILE.close()
+#pconn,cconn=Pipe()
+#n=1 #of procs
+#p=Process(target=sorting.QuickSortListArray,args=(SORTME,cconn,n))
+#p.start()
+#SORTED=pconn.recv()
+#p.join()
+SORTED=sorting.QuickSortListArray(SORTME)
 OFILE=open("918_hd.qs","w")
 for a in SORTED:
 	OFILE.write(str(a[0])+','+a[1]+'\n')
+OFILE.close()
 END=time.time()
 print "Quicksort took "+str(END-START)+" seconds.\n"
