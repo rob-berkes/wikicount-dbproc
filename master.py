@@ -31,6 +31,12 @@ LANGLIST=wikicount.getLanguageList()
 LANGUAGES=wikicount.getLanguageList()
 vTODAY=date.today()
 vDOW=vTODAY.weekday()
+
+def returnInvertedHour(HOUR):
+	if HOUR < 12: 
+		return HOUR+12
+	elif HOUR > 11:
+		return HOUR-12
 def p0_dl():
 	URL="http://dumps.wikimedia.org/other/pagecounts-raw/"+str(YEAR)+"/"+str(YEAR)+"-"+str(MONTH)+"/pagecounts-"
 	URLDATE=str(YEAR)+str(MONTH)+str(DAY)
@@ -255,9 +261,11 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 		          HASH=hashlib.sha1(line[1]).hexdigest()
 		          POSTFIND={'_id': HASH}
 			  TITLESTRING=line[1].decode('utf-8')
-
+	
+				#hitshourly never deleted
 			  db[HOURLYDB].update(POSTFIND,{"$inc":{HOUR:int(line[2])}},upsert=True)
-			  db[HOURDAYDB].update(POSTFIND,{"$set":{HOUR:int(line[2]),'DayOfWeek':str(vDOW)}},upsert=True)
+				#hitshourlydaily wipes inverted hour every hour
+			  db[HOURDAYDB].update(POSTFIND,{"$set":{HOUR:int(line[2])}},upsert=True)
 			  db[HITSDAILY].update(POSTFIND,
 					{"$inc":
 						{DAYKEY: int(line[2])}
@@ -280,11 +288,13 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
      syslog.syslog(FINAL)
 
 def p3_add():
-	STARTTIME=wikicount.fnStartTimer()
-    
-	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-	syslog.syslog('p3_add: EN records added in '+str(RUNTIME)+' seconds. Russian next.')
 	for lang in LANGLIST:
+            STARTTIME=wikicount.fnStartTimer()
+    	    InvertHour=returnInvertedHour(HOUR)
+	    HOURDAYDB=str(lang)+'_hitshourlydaily'
+	    db[HOURDAYDB].update({'$exists':{InvertHour:true}},{'$set':{InvertHour:0}})
+	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+	    syslog.syslog('p3_add: Inverted Hour records deleted in '+str(RUNTIME)+' seconds. Now adding to db...')
 	    ruFILE1="/tmp/"+str(lang)+"_action/q1_pagecounts.*"
 	    ruFILE2="/tmp/"+str(lang)+"_action/q2_pagecounts.*"
 	    ruFILE3="/tmp/"+str(lang)+"_action/q3_pagecounts.*"
