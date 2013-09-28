@@ -8,4 +8,4 @@ for lang in LANGS:
 		if not os.path.exists(DIRMAKE):
 			os.makedirs(DIRMAKE)
 
-
+os.makedirs('/tmp/staging/')

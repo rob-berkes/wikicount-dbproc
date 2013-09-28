@@ -33,10 +33,10 @@ vTODAY=date.today()
 vDOW=vTODAY.weekday()
 
 def returnInvertedHour(HOUR):
-	if HOUR < 12: 
-		return HOUR+12
-	elif HOUR > 11:
-		return HOUR-12
+	if int(HOUR) < 12: 
+		return str(int(HOUR)+12)
+	elif int(HOUR) > 11:
+		return str(int(HOUR)-12)
 def p0_dl():
 	URL="http://dumps.wikimedia.org/other/pagecounts-raw/"+str(YEAR)+"/"+str(YEAR)+"-"+str(MONTH)+"/pagecounts-"
 	URLDATE=str(YEAR)+str(MONTH)+str(DAY)
@@ -288,13 +288,15 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
      syslog.syslog(FINAL)
 
 def p3_add():
+	conn=Connection()
+	db=conn.wc
+    	InvertHour=returnInvertedHour(HOUR)
 	for lang in LANGLIST:
             STARTTIME=wikicount.fnStartTimer()
-    	    InvertHour=returnInvertedHour(HOUR)
 	    HOURDAYDB=str(lang)+'_hitshourlydaily'
-	    db[HOURDAYDB].update({'$exists':{InvertHour:true}},{'$set':{InvertHour:0}})
+	    db[HOURDAYDB].update({str(InvertHour):{'$exists':True}},{'$set':{str(InvertHour):0}},multi=True)
 	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-	    syslog.syslog('p3_add: Inverted Hour records deleted in '+str(RUNTIME)+' seconds. Now adding to db...')
+	    syslog.syslog('p3_add: Old Hour '+str(HOUR)+' records reset to zero in '+str(RUNTIME)+' seconds. Now adding to db the current hour...')
 	    ruFILE1="/tmp/"+str(lang)+"_action/q1_pagecounts.*"
 	    ruFILE2="/tmp/"+str(lang)+"_action/q2_pagecounts.*"
 	    ruFILE3="/tmp/"+str(lang)+"_action/q3_pagecounts.*"
@@ -562,10 +564,10 @@ def p99_threehrrolling():
 	
 		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-p0_dl()
-p1_split()
-p2_filter()
-p2x_move_to_action()
+#p0_dl()
+#p1_split()
+#p2_filter()
+#p2x_move_to_action()
 p3_add()
 p3_addImages()
 p50_removeSpam()
