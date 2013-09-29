@@ -32,6 +32,14 @@ LANGUAGES=wikicount.getLanguageList()
 vTODAY=date.today()
 vDOW=vTODAY.weekday()
 
+
+import time
+WEEKDAY=time.strftime("%w")
+from time import time
+
+
+
+
 def returnInvertedHour(HOUR):
 	if int(HOUR) < 12: 
 		return str(int(HOUR)+12)
@@ -292,11 +300,12 @@ def p3_add():
 	db=conn.wc
     	InvertHour=returnInvertedHour(HOUR)
 	for lang in LANGLIST:
-            STARTTIME=wikicount.fnStartTimer()
-	    HOURDAYDB=str(lang)+'_hitshourlydaily'
-	    db[HOURDAYDB].update({str(InvertHour):{'$exists':True}},{'$set':{str(InvertHour):0}},multi=True)
-	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-	    syslog.syslog('p3_add: Old Hour '+str(HOUR)+' records reset to zero in '+str(RUNTIME)+' seconds. Now adding to db the current hour...')
+	    if WEEKDAY=='5':
+	            STARTTIME=wikicount.fnStartTimer()
+		    HOURDAYDB=str(lang)+'_hitshourlydaily'
+		    db[HOURDAYDB].update({str(InvertHour):{'$exists':True}},{'$set':{str(InvertHour):0}},False,{'multi':True})
+		    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+		    syslog.syslog('p3_add: Old Hour '+str(HOUR)+' records reset to zero in '+str(RUNTIME)+' seconds. Now adding to db the current hour...')
 	    ruFILE1="/tmp/"+str(lang)+"_action/q1_pagecounts.*"
 	    ruFILE2="/tmp/"+str(lang)+"_action/q2_pagecounts.*"
 	    ruFILE3="/tmp/"+str(lang)+"_action/q3_pagecounts.*"
@@ -543,10 +552,11 @@ def p99_threehrrolling():
 					rollingavg=b1
 				elif vB2 and vB3:
 					rollingavg=mean(array([b3,b2]))
-				elif vB2:
-					rollingavg=b2
+#				elif vB2:
+#					rollingavg=b2
 				else:
-					rollingavg=b3
+					rollingavg=0
+#					rollingavg=b3
 		
 		                rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
 		                hourlies.append(rec)
@@ -564,10 +574,10 @@ def p99_threehrrolling():
 	
 		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-#p0_dl()
-#p1_split()
-#p2_filter()
-#p2x_move_to_action()
+p0_dl()
+p1_split()
+p2_filter()
+p2x_move_to_action()
 p3_add()
 p3_addImages()
 p50_removeSpam()
