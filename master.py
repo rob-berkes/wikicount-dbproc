@@ -55,7 +55,6 @@ def p0_dl():
 
 	#Now with URL, download file
 	a=time()
-	syslog.syslog("[p0] - p0DL "+str(URL))
 	missing=True
 	MINUTESEARCH=0
 	while missing and MINUTESEARCH<60:
@@ -74,12 +73,10 @@ def p0_dl():
 				fetchURL=URL
 				print "fetchURL: "+str(fetchURL)
 				missing=False
-				syslog.syslog("[p0_dl] p0MINUTEFOUND "+str(fetchURL))
 		except urllib2.HTTPError, e:
 			print e.fp.read()
 	
 	if not missing:
-		syslog.syslog("[p0_dl] p0DLSTART "+str(fetchURL))
 		COUNTFILE=urllib2.urlopen(fetchURL)
 		OFILE=open(FILEBASE,"w")
 		OFILE.write(COUNTFILE.read())
@@ -92,17 +89,17 @@ def p0_dl():
 		b=time()
 		c=b-a
 		d=round(c,3)
-		syslog.syslog("[p0_dl] - p0200 "+str(URL)+" : "+str(d)+" seconds.")
+		syslog.syslog("[master.py][p0_dl] Successful download of "+str(URL)+" in "+str(d)+" seconds.")
 	else:
-		syslog.syslog("[p0_dl] - p0404, 404 not found error")
+		syslog.syslog("[master.py][p0_dl] 404 not found error")
 
 
 
 def p1_split():
 
 	a=time()
-	syslog.syslog("[p1_split] : begin")
-
+	SUCCESS=0
+	EXCEPTS=0
 	IFILE=gzip.open(FILEBASE,"r")
 	
 	NUMBERLOGFILES=4
@@ -144,7 +141,7 @@ def p1_split():
 	b=time()
 	c=b-a
 	d=round(c,3)
-	syslog.syslog("[p1_split] : done "+str(d)+" seconds.")
+	syslog.syslog("[master.py][p1_split] done in "+str(d)+" seconds. Successes: "+str(SUCCESS)+" Exceptions: "+str(EXCEPTS))
 def isValidUrl(lang,artURL):
 	BADLIST=wikicount.getBadList(lang)
 	if artURL in BADLIST:
@@ -154,9 +151,10 @@ def isValidUrl(lang,artURL):
 	
 
 def p2_filter():
-	syslog.syslog('[p2_filter] start')
 	for lang in LANGLIST:
 		a=time()
+		RECS=0
+		RECERRS=0
 		VALIDS=0
 		INVALIDS=0
 		for FILENAME in glob.glob('/tmp/'+str(lang)+'_staging/q*'):
@@ -199,9 +197,11 @@ def p2_filter():
 				try:
 					TITLE=record[1].decode('unicode_escape')
 				except UnicodeDecodeError:
+					RECERRS+=1
 					continue
 				if lang=='en':
 					if isValidUrl(lang,record[1]):
+						VALIDS+=1
 						pass
 					else:
 						INVALIDS+=1
@@ -222,10 +222,13 @@ def p2_filter():
 				ptnPhp=re.search(".php",record[1])
 				if ptnCategory:
 					CATFILE.write(line)
+					RECS+=1
 				if ptnImage or ptnFile:
 					IMGFILE.write(line)
+					RECS+=1
 				if  not ptnImage and not ptnPhp and not ptnSpecial and not ptnTemplate and not ptnWTalk and not ptnFile and not ptnCategory and not ptnCTalk and not ptnSTalk:
 					OFILE.write(line)
+					RECS+=1
 			OFILE.close()
 			IMGFILE.close()
 			CATFILE.close()
@@ -234,10 +237,9 @@ def p2_filter():
 		b=time()
 		c=b-a
 		d=round(c,3)
-		syslog.syslog("p2_fi: Lang: "+str(lang)+" runtime: "+str(d)+" seconds. V:"+str(VALIDS)+" InV:"+str(INVALIDS))
+		syslog.syslog("[master.py][p2_filter] Lang: "+str(lang)+" runtime: "+str(d)+" seconds. Recs written: "+str(RECS)+" Record errors: "+str(RECERRS))
 
 def p2x_move_to_action():
-	syslog.syslog("[p2x] - start")
 	for lang in LANGLIST:
 		FOLDER='/tmp/'+str(lang)+'_ondeck/q*'
 		for FILENAME in glob.glob(FOLDER):
@@ -249,9 +251,10 @@ def p2x_move_to_action():
 			IFILE.close()
 			OFILE.close() 
 			os.remove(FILENAME)
-	syslog.syslog("[p2x] - end")
 
 def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
+     UPDATED=0
+     EXCEPTS=0
      HOURLYDB=str(LANG)+'_hitshourly'
      HOURDAYDB=str(LANG)+'_hitshourlydaily'
      HITSMAPDB=str(LANG)+'_hitsmap'
@@ -283,17 +286,16 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 					}	
 					,upsert=True)
 
-		          TOTAL_RECORDS_UPDATED+=1
+		          UPDATED+=1
 			except UnicodeDecodeError: 
-			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
-			  pass
+			  EXCEPTS+=1
+			  continue
      		IFILE2.close()
 		os.remove(FILENAME)
 	except (NameError,IOError) as e:
-		syslog.syslog("Error in "+str(FILENAME)+", P3_add_to_db.py stopping, "+str(e.strerror)+", errno "+str(e.errno) )
-		pass
-     FINAL="p3_add_to_db.py:total of %s records." % (str(RECORDS))
-     syslog.syslog(FINAL)
+		EXCEPTS+=1
+		continue
+     syslog.syslog("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
 
 def p3_add():
 	conn=Connection()
@@ -305,7 +307,7 @@ def p3_add():
 		    HOURDAYDB=str(lang)+'_hitshourlydaily'
 		    db[HOURDAYDB].update({str(InvertHour):{'$exists':True}},{'$set':{str(InvertHour):0}},False,{'multi':True})
 		    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-		    syslog.syslog('p3_add: Old Hour '+str(HOUR)+' records reset to zero in '+str(RUNTIME)+' seconds. Now adding to db the current hour...')
+		    syslog.syslog('[master.py][p3_add] Old Hour '+str(InvertHour)+' records reset to zero in '+str(RUNTIME)+' seconds. ')
 	    ruFILE1="/tmp/"+str(lang)+"_action/q1_pagecounts.*"
 	    ruFILE2="/tmp/"+str(lang)+"_action/q2_pagecounts.*"
 	    ruFILE3="/tmp/"+str(lang)+"_action/q3_pagecounts.*"
@@ -332,7 +334,6 @@ def p3_add():
 	    v.join()
 	    w.join()
 	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-    	    syslog.syslog('p3_add: Lang: '+str(lang)+' records added in '+str(RUNTIME)+' seconds.P3 Done now!')
 
 
 def UpdateImages(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
@@ -357,15 +358,12 @@ def UpdateImages(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 			  db[IMAGECDNAME].update(POSTFIND,{"$inc":{DAYKEY: int(line[2])}},upsert=True)
 		          RECORDS+=1
 			except UnicodeDecodeError: 
-			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
 			  pass
      		IFILE2.close()
 		os.remove(FILENAME)
 	except (NameError,IOError):
-		syslog.syslog("Error encountered! P3_add_to_db.py stopping, NameError or IOError")
 		pass
-     FINAL=" processed a total of %s records." % (str(RECORDS))
-     syslog.syslog(FINAL)
+     syslog.syslog("[master.py][UpdateImages] Language: "+str(LANG)+" Records: "+str(RECORDS))
 
 def p3_addImages():
     STARTTIME=wikicount.fnStartTimer()
@@ -394,7 +392,6 @@ def p3_addImages():
 	    r.join()
 	    s.join()
 	    RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
-	    syslog.syslog("p3_image_add: runtime "+str(RUNTIME)+' seconds')
 def p50_removeSpam():
 	lang='en'
 	LANGUAGES=wikicount.getLanguageList()
@@ -411,7 +408,7 @@ def p50_removeSpam():
 			db[CNAMEHHD].remove({'_id':str(id)})
 			db[CNAMEHD].remove({'_id':str(id)})
 			COUNT+=1
-	syslog.syslog("[p50] - "+str(COUNT)+" records removed.")
+	syslog.syslog("[master.py][p50] "+str(COUNT)+" records removed.")
 def p70export():
 	STARTTIME=wikicount.fnStartTimer()
 	syslog.syslog('p70_export.py: starting...')
@@ -434,7 +431,7 @@ def p70export():
 def p80_sortMongoHD():
 	STARTTIME=wikicount.fnStartTimer()
 	syslog.syslog('p80_sortMongoHD: starting...')
-	n=7  #number partitions to break into
+
 	IFILE=open("/root/mongo.csv","r")
 	SORTME=[]
 	for lang in LANGLIST:
@@ -446,12 +443,8 @@ def p80_sortMongoHD():
 			rec=(line[0],HASH)
 			SORTME.append(rec)
 		IFILE.close()
-		pconn,cconn=Pipe()
 		lyst=[]
-		p=Process(target=sorting.QuickSortMPListArray,args=(SORTME,cconn,n))
-		p.start()
-		lyst=pconn.recv()
-		p.join()
+		lyst=sorting.QuickSortListArray(SORTME)
 		OFILE=open("/root/"+str(lang)+"_mongo.csv.sorted","w")
 		for a in lyst:
 			OFILE.write(str(a[0])+','+a[1])
@@ -509,15 +502,23 @@ def p98_todaysmovers():
 	conn=Connection()
 	db=conn.wc
 	LANGUAGES=wikicount.getLanguageList()
-	MOVERS=[]
 	for lang in LANGUAGES:
+		MOVERS=[]
 		hdTABLE=str(lang)+"_hitsdaily"	
-		RS=db[hdTABLE].find({STRINGDATE:{"$gt":10}})
-		try:
-			rec=(RS[STRINGDATE]-RS[YSTRINGDATE],RS['_id'],RS['title'])
-		
+		RECSET=db[hdTABLE].find({STRINGDATE:{'$gt':10}})
+		for RS in RECSET:
+			try:
+				rec=(RS[STRINGDATE]-RS[YSTRINGDATE],RS['_id'],RS['title'])
+				MOVERS.append(rec)
+			except:
+				continue
+		SMOVERS=sorting.QuickSortListArray(MOVERS)
+		for a in range(1,25):
+			print SMOVERS[-a]
+	return
+			
 def p99_threehrrolling():
-	syslog.syslog("Entering p99_threehrrolling")
+	syslog.syslog("[master.py][p99] Adding to db done. Now entering p99_threehrrolling")
 	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
 	STARTTIME=wikicount.fnStartTimer()
 	conn=Connection()
@@ -539,7 +540,6 @@ def p99_threehrrolling():
 		hdTABLE=str(lang)+"_hitsdaily"
 		outTABLE=str(lang)+"_threehour"
 		RESULTS=db[hhdTABLE].find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(200)
-		syslog.syslog(str(lang)+" : "+str(RESULTS.count()))
 		for item in RESULTS:
 			try:
 				vB1=False
@@ -593,8 +593,9 @@ def p99_threehrrolling():
 		                db[outTABLE].insert(rec)
 		                z+=1
 	
-		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors)+" TRU: "+str(TOTAL_RECORDS_UPDATED))
+		syslog.syslog("[master.py][p99] Lang: "+str(lang)+" TypeErrs: "+str(TypeErrors)+" KeyErrs: "+str(KeyErrors)+" REC COUNT: "+str(RESULTS.count()))
 
+syslog.syslog("[master.py][main] Begin")
 p0_dl()
 p1_split()
 p2_filter()
@@ -604,5 +605,4 @@ p3_addImages()
 p50_removeSpam()
 
 
-p99_threehrrolling()
-syslog.syslog("Master.py - All Functions complete!")
+syslog.syslog("[master.py][main] Master.py - All Functions complete!")
