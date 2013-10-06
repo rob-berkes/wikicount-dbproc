@@ -12,6 +12,25 @@ def QuickSortListArray(A):
 		pv.append(PivotValue)
         return QuickSortListArray(lesser)+pv+QuickSortListArray(greater)
 
+def QuickSortListArray(A,type='asc'):
+        if len(A)<=1:
+                return A
+        else:
+                PivotValue=A.pop(0)
+		pvVal=int(PivotValue[0])
+		if type=='asc':
+                	lesser=[x for x in A if x[0] < pvVal]
+                	greater=[x for x in A if x[0] > pvVal]
+                	pv=[x for x in A if x[0] == pvVal]
+			pv.append(PivotValue)
+        		return QuickSortListArray(lesser)+pv+QuickSortListArray(greater)
+		elif type=='desc':
+                	lesser=[x for x in A if x[0] < pvVal]
+                	greater=[x for x in A if x[0] > pvVal]
+                	pv=[x for x in A if x[0] == pvVal]
+			pv.append(PivotValue)
+        		return QuickSortListArray(greater)+pv+QuickSortListArray(lesser)
+			
 def QuickSortMPListArray(A,conn,NumProcs):
         if len(A)<=1 :
 		conn.send(A)

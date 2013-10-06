@@ -6,6 +6,4 @@ db=conn.wc
 LANGUAGES=wikicount.getLanguageList()
 for lang in LANGUAGES:
 	HHNAME=str(lang)+'_hitsdaily'
-	QUERYA=db[HHNAME].update({'2013_09_12':{'$exists':True}},{'$unset':{'2013_09_12':1}},False,True)
-	HD=str(lang)+'_hitshourly'
-	db[HD].drop()
+	QUERYA=db[HHNAME].update({'2013_09_12':{'$exists':True}},{'$set':{'2013_09_12':1}},False,True)

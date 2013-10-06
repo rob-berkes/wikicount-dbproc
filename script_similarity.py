@@ -173,7 +173,7 @@ for m in ENTHREE:
 		for rec in SORTLIST:
 			if LC>11:
 				break
-			OFILE.write(str(rec[0])+' '+str(rec[1])+' '+str(rec[2]))
+			OFILE.write('<li><a href="http://www.wikitrends.info/'+str(lang)+'infoview/'+str(rec[1])+'> '+str(rec[2])+'</a></li><br>')
 			OFILE.write('\n')
 			LC+=1
 		OFILE.close()

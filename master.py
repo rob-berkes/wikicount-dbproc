@@ -32,6 +32,7 @@ LANGUAGES=wikicount.getLanguageList()
 vTODAY=date.today()
 vDOW=vTODAY.weekday()
 
+TOTAL_RECORDS_UPDATED=0
 
 import time
 WEEKDAY=time.strftime("%w")
@@ -257,7 +258,6 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
      HITSDAILY=str(LANG)+'_hitsdaily'
      connection=Connection()
      db=connection.wc
-     RECORDS=0
      DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
      for FILENAME in glob.glob(FILEPROC):
 	print FILENAME	
@@ -283,7 +283,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 					}	
 					,upsert=True)
 
-		          RECORDS+=1
+		          TOTAL_RECORDS_UPDATED+=1
 			except UnicodeDecodeError: 
 			  syslog.syslog("p3_add_to_db.py - UnicodeDecodeError")
 			  pass
@@ -494,7 +494,28 @@ def p90_addTophits():
 
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
-
+def p98_todaysmovers():
+	syslog.syslog("Entering p98_todaysmovers...")
+	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+	if DAY==1:
+		YMONTH-=1
+		YDAY=30
+	else:
+		YDAY-=1
+	STARTTIME=wikicount.fnStartTimer()
+	STRINGDATE=str(YEAR)+"_"+"%02d" % (MONTH,)+"_"+"%02d" % (DAY,)
+	YSTRINGDATE=str(YEAR)+"_"+"%02d" % (YMONTH,)+"_"+"%02d" % (YDAY,)
+	syslog.syslog(STRINGDATE)
+	conn=Connection()
+	db=conn.wc
+	LANGUAGES=wikicount.getLanguageList()
+	MOVERS=[]
+	for lang in LANGUAGES:
+		hdTABLE=str(lang)+"_hitsdaily"	
+		RS=db[hdTABLE].find({STRINGDATE:{"$gt":10}})
+		try:
+			rec=(RS[STRINGDATE]-RS[YSTRINGDATE],RS['_id'],RS['title'])
+		
 def p99_threehrrolling():
 	syslog.syslog("Entering p99_threehrrolling")
 	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
@@ -572,7 +593,7 @@ def p99_threehrrolling():
 		                db[outTABLE].insert(rec)
 		                z+=1
 	
-		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
+		syslog.syslog("[p99_end_3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors)+" TRU: "+str(TOTAL_RECORDS_UPDATED))
 
 p0_dl()
 p1_split()
