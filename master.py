@@ -363,7 +363,7 @@ def UpdateImages(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
 		os.remove(FILENAME)
 	except (NameError,IOError):
 		pass
-     syslog.syslog("[master.py][UpdateImages] Language: "+str(LANG)+" Records: "+str(RECORDS))
+     #syslog.syslog("[master.py][UpdateImages] Language: "+str(LANG)+" Records: "+str(RECORDS))
 
 def p3_addImages():
     STARTTIME=wikicount.fnStartTimer()
@@ -487,115 +487,8 @@ def p90_addTophits():
 
 	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 	syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
-def p98_todaysmovers():
-	syslog.syslog("Entering p98_todaysmovers...")
-	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-	if DAY==1:
-		YMONTH-=1
-		YDAY=30
-	else:
-		YDAY-=1
-	STARTTIME=wikicount.fnStartTimer()
-	STRINGDATE=str(YEAR)+"_"+"%02d" % (MONTH,)+"_"+"%02d" % (DAY,)
-	YSTRINGDATE=str(YEAR)+"_"+"%02d" % (YMONTH,)+"_"+"%02d" % (YDAY,)
-	syslog.syslog(STRINGDATE)
-	conn=Connection()
-	db=conn.wc
-	LANGUAGES=wikicount.getLanguageList()
-	for lang in LANGUAGES:
-		MOVERS=[]
-		hdTABLE=str(lang)+"_hitsdaily"	
-		RECSET=db[hdTABLE].find({STRINGDATE:{'$gt':10}})
-		for RS in RECSET:
-			try:
-				rec=(RS[STRINGDATE]-RS[YSTRINGDATE],RS['_id'],RS['title'])
-				MOVERS.append(rec)
-			except:
-				continue
-		SMOVERS=sorting.QuickSortListArray(MOVERS)
-		for a in range(1,25):
-			print SMOVERS[-a]
-	return
-			
-def p99_threehrrolling():
-	syslog.syslog("[master.py][p99] Adding to db done. Now entering p99_threehrrolling")
-	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-	STARTTIME=wikicount.fnStartTimer()
-	conn=Connection()
-	db=conn.wc
-	HOUR,HOUR2,HOUR3=wikicount.fnReturnLastThreeHours(int(HOUR))
-	HOUR=wikicount.fnStrFmtDate(HOUR)
-	HOUR2=wikicount.fnStrFmtDate(HOUR2)
-	HOUR3=wikicount.fnStrFmtDate(HOUR3)
-	hourlies=[]
-	TypeErrors=0
-	KeyErrors=0
-	z=1
-	LANGUAGES=wikicount.getLanguageList()
-	for lang in LANGUAGES:
-		hourlies=[]
-		KeyErrors=0
-		TypeErrors=0
-		hhdTABLE=str(lang)+"_hitshourlydaily"
-		hdTABLE=str(lang)+"_hitsdaily"
-		outTABLE=str(lang)+"_threehour"
-		RESULTS=db[hhdTABLE].find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(200)
-		for item in RESULTS:
-			try:
-				vB1=False
-				vB2=False
-				vB3=False
-		                QUERYtitle=db[hdTABLE].find_one({'_id':item['_id']})
-		                atitle=QUERYtitle['title']
-		                title,utitle=wikicount.FormatName(atitle)
-		                try:
-		                        b1=item[HOUR]
-					vB1=True
-		                except KeyError:
-		                        b1=0
-		                try:
-		                        b2=item[HOUR2]
-					vB2=True
-		                except KeyError:
-		                        b2=0
-		                try:
-		                        b3=item[HOUR3]
-					vB3=True
-		                except KeyError:
-		                        b3=0
-				if vB1 and vB2 and vB3:
-		        	        rollingavg=mean(array([b1,b2,b3]))
-				elif vB1 and vB2:
-					rollingavg=mean(array([b1,b2]))
-				elif vB1 and vB3:
-					rollingavg=mean(array([b1,b3]))
-				elif vB1:
-					rollingavg=b1
-				elif vB2 and vB3:
-					rollingavg=mean(array([b3,b2]))
-#				elif vB2:
-#					rollingavg=b2
-				else:
-					rollingavg=0
-#					rollingavg=b3
-		
-		                rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
-		                hourlies.append(rec)
-		        except TypeError:
-		                TypeErrors+=1
-		        except KeyError:
-		                KeyErrors+=1
-		z=1
-		db[outTABLE].remove()
-		for w in sorted(hourlies,key=itemgetter('rollavg'),reverse=True):
-		        if z < 101:
-		                rec={'place':z,'title':w['title'],'rollavg':w['rollavg'],'id':w['id']}
-		                db[outTABLE].insert(rec)
-		                z+=1
-	
-		syslog.syslog("[master.py][p99] Lang: "+str(lang)+" TypeErrs: "+str(TypeErrors)+" KeyErrs: "+str(KeyErrors)+" REC COUNT: "+str(RESULTS.count()))
 
-syslog.syslog("[master.py][main] Begin")
+syslog.syslog("[master.py][main] Started")			
 p0_dl()
 p1_split()
 p2_filter()
