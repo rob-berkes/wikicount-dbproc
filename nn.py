@@ -3,6 +3,8 @@ from lib import sorting
 import math
 import sys
 import random
+import hashlib
+
 conn=Connection()
 db=conn.wc
 nndb=conn.neuralweights
@@ -211,17 +213,38 @@ def calcChildRatios(id):
 		D3RAT=0
 	CLIST=(HRAT1,HRAT2,TRATIO,D1RAT,D2RAT,D3RAT)
 	return CLIST
+
+def getAllWeights():
+	RS=nndb['settings'].find_one({'_id':'WikiNN'})
+	return RS
 	
-def outputFunction(clirec,VLIST):
-	H1SWeight=returnWeight('H1SWeight')
-	H2SWeight=returnWeight('H2SWeight')
-	D1Weight=returnWeight('D1Weight')
-	D2Weight=returnWeight('D2Weight')
-	D3Weight=returnWeight('D3Weight')
-	T1SWeight=returnWeight('T1SWeight')
+def outputFunction(clirec,VLIST,ALLWEIGHTS):
+	try:
+		H1SWeight=ALLWEIGHTS['H1SWeight']
+	except:
+		H1SWeight=1
+	try:
+		H2SWeight=ALLWEIGHTS['H2SWeight']
+	except:
+		H2SWeight=1
+	try:
+		D1Weight=ALLWEIGHTS['D1Weight']
+	except:
+		D1Weight=1
+	try:
+		D2Weight=ALLWEIGHTS['D2Weight']
+	except:
+		D2Weight=1
+	try:
+		D3Weight=ALLWEIGHTS['D3Weight']
+	except:
+		D3Weight=1
+	try:
+		T1SWeight=ALLWEIGHTS['T1SWeight']
+	except:
+		T1SWeight=1
 	
 	CLIST=calcChildRatios(clirec['_id'])
-
 	H1S=nH1Eval(CLIST[0],VLIST[2])*H1SWeight
 	H2S=nH2Eval(CLIST[1],VLIST[1])*H2SWeight
 	T1S=nTodayEval(CLIST[2],VLIST[0])*T1SWeight
@@ -234,29 +257,54 @@ def outputFunction(clirec,VLIST):
 	WeightsRecord=(H1S,H2S,T1S,D1,D2,D3)
 	return  OUTPUT,WeightsRecord
 
-RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
-CHECKS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
-YESS=0
-NOS=0
-for c in range(0,25):
-	SEED=random.randint(0,CHECKS.count())
-	MASTERREC=CHECKS[SEED]['_id'] 
+def main_TestPages():
+	RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
+	CHECKS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
+	YESS=0
+	NOS=0
+	ALLWEIGHTS=getAllWeights()
+	for c in range(0,25):
+		SEED=random.randint(0,CHECKS.count())
+		MASTERREC=CHECKS[SEED]['_id'] 
+		VLIST=calcMasterRatios(MASTERREC)
+		MASTERTITLE=CHECKS[SEED]['title']
+		RL=[]
+		print "Looking for similars to : "+str(MASTERTITLE)
+		for clirec in RS:
+			TOTALSCORE,WeightsRecord=outputFunction(clirec,VLIST,ALLWEIGHTS)
+			insme=(TOTALSCORE,clirec['_id'],clirec['title'])
+			RL.append(insme)
+		print 'now sorting list of length '+str(len(RL))	
+		SL=sorting.QuickSort(RL)
+		#SL=sorted(RL)
+		C=0
+		for a in SL:
+			if a[0]< -0.1 or a[0]> 0.1:
+				continue
+			print a
+			uinput=raw_input("Master: "+str(MASTERTITLE)+". Is this a match?(Y/N)")
+			bpnnRescoreWeights(str(uinput),WeightsRecord)
+		RS.rewind()
+	return
+
+
+def main_SingleOFILE():
+	RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
+	MASTERREC=hashlib.sha1('Breaking_Bad').hexdigest()
 	VLIST=calcMasterRatios(MASTERREC)
-	MASTERTITLE=CHECKS[SEED]['title']
+	ALLWEIGHTS=getAllWeights()
 	RL=[]
-	print "Looking for similars to : "+str(MASTERTITLE)
+	print "Scoring for similars to Breaking Bad..."
 	for clirec in RS:
-		TOTALSCORE,WeightsRecord=outputFunction(clirec,VLIST)
-		insme=(TOTALSCORE,clirec['_id'],clirec['title'])
+		TOTALSCORE,WeightsRecord=outputFunction(clirec,VLIST,ALLWEIGHTS)
+		insme=(TOTALSCORE,clirec['title'])
 		RL.append(insme)
-	print 'now sorting list of length '+str(len(RL))	
+	print "now sorting"
 	SL=sorting.QuickSort(RL)
-	#SL=sorted(RL)
-	C=0
+	OFILE=open(MASTERREC+'.txt','w')
 	for a in SL:
-		if a[0]< -0.1 or a[0]> 0.1:
-			continue
-		print a
-		uinput=raw_input("Master: "+str(MASTERTITLE)+". Is this a match?(Y/N)")
-		bpnnRescoreWeights(str(uinput),WeightsRecord)
-	RS.rewind()
+		OFILE.write(str(a)+'\n')
+	OFILE.close()
+	return
+
+main_SingleOFILE()	
