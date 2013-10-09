@@ -10,27 +10,52 @@ db=conn.wc
 nndb=conn.neuralweights
 sys.setrecursionlimit(2000)
 def returnWeight(SEARCHREC):
-	rs1=nndb['settings'].find_one({'_id':'WikiNN'})
+	rs1=nndb['binsettings'].find_one({'_id':'WikiNN'})
 	try:
 		VALUE=rs1[SEARCHREC]
 	except:
 		VALUE=1.0
 	return VALUE
 def nH1Eval(cHR,mHR):
-	return mHR-cHR
+	TOTAL=mHR-cHR
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
 def nH2Eval(cHR,mHR2):
-	return mHR2-cHR
+	TOTAL= mHR2-cHR
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
+
 def nTodayEval(cTR,mTR):
-	return mTR-cTR
+	TOTAL= mTR-cTR
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
 def nD1Eval(D1RAT,mRAT):
-	return mRAT-D1RAT
+	TOTAL=mRAT-D1RAT
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
 def nD2Eval(D2RAT,mRAT):
-	return mRAT-D2RAT			
+	TOTAL=mRAT-D2RAT
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
 def nD3Eval(D3RAT,mRAT):
-	return mRAT-D3RAT
+	TOTAL=mRAT-D3RAT
+	if TOTAL<1 and TOTAL>0:
+		return 0
+	else:
+		return 1
  
 def setWeight(nVALUE,nTITLE):
-	nndb['settings'].update({'_id':'WikiNN'},{'$set':{nTITLE:nVALUE}},upsert=True)
+	nndb['binsettings'].update({'_id':'WikiNN'},{'$set':{nTITLE:nVALUE}},upsert=True)
 	return
 
 def isLowest(REC,idx):
@@ -80,55 +105,56 @@ def isHighest(REC,idx):
 def bpnnRescoreWeights(RESULT,ScoreRecord):
 	MVAL=0.95
 	LVAL=1.002
+	CUTOFF=2
 	if RESULT=='y' or RESULT=='Y':
-		#reward lowest scorer
-		if isLowest(ScoreRecord,'H1S'):
+		#reward low scorers
+		if ScoreRecord[0]<CUTOFF:
 			H1SWeight=returnWeight('H1SWeight')
 			H1SWeight=float(H1SWeight)*MVAL
 			setWeight(H1SWeight,'H1SWeight')		
-		elif isLowest(ScoreRecord,'H2S'):
+		if ScoreRecord[1]<CUTOFF:
 			H2SWeight=returnWeight('H2SWeight')
 			H2SWeight=float(H2SWeight)*MVAL
 			setWeight(H2SWeight,'H2SWeight')
-		elif isLowest(ScoreRecord,'T1S'):
+		if ScoreRecord[2]<CUTOFF:
 			T1SWeight=returnWeight('T1SWeight')
 			T1SWeight=float(T1SWeight)*MVAL
 			setWeight(T1SWeight,'T1SWeight')
-		elif isLowest(ScoreRecord,'D1'):
+		if ScoreRecord[3]<CUTOFF:
 			D1Weight=returnWeight('D1Weight')
 			D1Weight=float(D1Weight)*MVAL
 			setWeight(D1Weight,'D1Weight')
-		elif isLowest(ScoreRecord,'D2'):
+		if ScoreRecord[4]<CUTOFF:
 			D2Weight=returnWeight('D2Weight')
 			D2Weight=float(D2Weight)*MVAL
 			setWeight(D2Weight,'D2Weight')
-		elif isLowest(ScoreRecord,'D3'):
+		if ScoreRecord[5]<CUTOFF:
 			D3Weight=returnWeight('D3Weight')
 			D3Weight=float(D3Weight)*MVAL
 			setWeight(D3Weight,'D3Weight')
 	elif RESULT=='n' or RESULT=='N':
 		#reward high scorer
-		if isHighest(ScoreRecord,'H1S'):
+		if ScoreRecord[0]>CUTOFF:
 			H1SWeight=returnWeight('H1SWeight')
 			H1SWeight=float(H1SWeight)*LVAL
 			setWeight(H1SWeight,'H1SWeight')		
-		elif isHighest(ScoreRecord,'H2S'):
+		if ScoreRecord[1]>CUTOFF:
 			H2SWeight=returnWeight('H2SWeight')
 			H2SWeight=float(H2SWeight)*LVAL
 			setWeight(H2SWeight,'H2SWeight')
-		elif isHighest(ScoreRecord,'T1S'):
+		if ScoreRecord[2]>CUTOFF:
 			T1SWeight=returnWeight('T1SWeight')
 			T1SWeight=float(T1SWeight)*LVAL
 			setWeight(T1SWeight,'T1SWeight')
-		elif isHighest(ScoreRecord,'D1'):
+		if ScoreRecord[3]>CUTOFF:
 			D1Weight=returnWeight('D1Weight')
 			D1Weight=float(D1Weight)*LVAL
 			setWeight(D1Weight,'D1Weight')
-		elif isHighest(ScoreRecord,'D2'):
+		if ScoreRecord[4]>CUTOFF:
 			D2Weight=returnWeight('D2Weight')
 			D2Weight=float(D2Weight)*LVAL
 			setWeight(D2Weight,'D2Weight')
-		elif isHighest(ScoreRecord,'D3'):
+		if ScoreRecord[5]>CUTOFF:
 			D3Weight=returnWeight('D3Weight')
 			D3Weight=float(D2Weight)*LVAL
 			setWeight(D3Weight,'D3Weight')
@@ -215,7 +241,7 @@ def calcChildRatios(id):
 	return CLIST
 
 def getAllWeights():
-	RS=nndb['settings'].find_one({'_id':'WikiNN'})
+	RS=nndb['binsettings'].find_one({'_id':'WikiNN'})
 	return RS
 	
 def outputFunction(clirec,VLIST,ALLWEIGHTS):
@@ -302,7 +328,7 @@ def main_TestRandomPages():
 		#SL=sorted(RL)
 		C=0
 		for a in SL:
-			if a[0]< -0.1 or a[0]> 0.1:
+			if a[0]>1:
 				continue
 			print a
 			uinput=raw_input("Master: "+str(MASTERTITLE)+". Is this a match?(Y/N)")
@@ -358,4 +384,5 @@ def main_SingleOFILE():
 
 #main_SingleOFILE()	
 #main_TestSinglePage()
-main_ProductionRun()
+#main_ProductionRun()
+main_TestRandomPages()
