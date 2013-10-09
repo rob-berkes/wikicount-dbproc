@@ -37,6 +37,10 @@ def p98_todaysmovers():
 				rec=(RS[STRINGDATE]-RS[YSTRINGDATE],RS['_id'],RS['title'])
 				MOVERS.append(rec)
 				RECEVALS+=1
+			except KeyError:
+				rec=(RS[STRINGDATE],RS['_id'],RS['title'])
+				MOVERS.append(rec)
+				RECEVALS+=1
 			except:
 				RECEXCEPTS+=1
 				continue

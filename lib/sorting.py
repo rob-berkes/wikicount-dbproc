@@ -11,6 +11,15 @@ def QuickSortListArray(A):
                 pv=[x for x in A if x[0] == pvVal]
 		pv.append(PivotValue)
         return QuickSortListArray(lesser)+pv+QuickSortListArray(greater)
+def QuickSort(A):
+	if len(A)<=1:
+		return A
+	else:
+		pvVal=(A[0])
+		lesser=QuickSort([x for x in A[1:] if x[0] < pvVal[0]])
+		upper=QuickSort([x for x in A[1:] if x[0] > pvVal[0]])
+		pv=[x for x in A if x[0] == pvVal[0]]
+	return lesser+pv+upper
 
 def QuickSortListArray(A,type='asc'):
         if len(A)<=1:
