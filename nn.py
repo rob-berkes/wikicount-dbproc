@@ -22,10 +22,17 @@ def nTodayEval(cTR,mTR):
 	return mTR-cTR
 def nDayEval(D1RAT,mRAT):
 	return mRAT-D1RAT
+
+
+
+
+def retMD5(name):
+	return hashlib.sha1(name).hexdigest()
  
 def setWeight(nVALUE,nTITLE):
 	nndb['settings'].update({'_id':'WikiNN'},{'$set':{nTITLE:nVALUE}},upsert=True)
 	return
+
 def findLowest(REC,fromLowest):
 	LOWEST=999999
 	LOWNAME='Initvalue'
@@ -34,6 +41,7 @@ def findLowest(REC,fromLowest):
 			LOWEST=value
 			LOWNAME=name
 	return LOWNAME,LOWEST
+
 def findHighest(REC,fromHighest):
 	HIGHEST=-1
 	HIGHNAME='InitValue'
@@ -73,6 +81,13 @@ def calcRatios(MASTERREC):
 	except:
 		Misses+=1
 		d5RAT=1
+	STRINGDATE='2013_10_04'
+	YSTRINGDATE='2013_08_29'
+	try:
+		d6RAT=float(rsM[STRINGDATE])/float(rsM[YSTRINGDATE])
+	except:
+		Misses+=1
+		d6RAT=1
 
 	STRINGDATE='2013_10_08'
 	YSTRINGDATE='2013_10_01'
@@ -125,7 +140,7 @@ def calcRatios(MASTERREC):
 	except:
 		Misses+=1
 		mTR=1.0
-	VLIST=(mTR,h2HR,h1HR,d1RAT,d2RAT,d3RAT,h3HR,d4RAT,d5RAT)
+	VLIST=(mTR,h2HR,h1HR,d1RAT,d2RAT,d3RAT,h3HR,d4RAT,d5RAT,d6RAT)
 	return VLIST,Misses
 
 def getAllWeights():
@@ -166,6 +181,10 @@ def outputFunction(clirec,VLIST,ALLWEIGHTS):
 	except:
 		D5Weight=1
 	try:
+		D6Weight=ALLWEIGHTS['D6Weight']
+	except:
+		D6Weight=1
+	try:
 		T1SWeight=ALLWEIGHTS['T1SWeight']
 	except:
 		T1SWeight=1
@@ -180,12 +199,57 @@ def outputFunction(clirec,VLIST,ALLWEIGHTS):
 	D3=nDayEval(CLIST[5],VLIST[5])*D3Weight
 	D4=nDayEval(CLIST[7],VLIST[7])*D4Weight
 	D5=nDayEval(CLIST[8],VLIST[8])*D5Weight
+	D6=nDayEval(CLIST[9],VLIST[9])*D6Weight
 #	print H1S,H2S,T1S,D1,D2,D3
-	OUTPUT=math.fabs(H1S)+math.fabs(H2S)+math.fabs(T1S)+math.fabs(D1)+math.fabs(D2)+math.fabs(D3)+math.fabs(H3S)+math.fabs(D4)+math.fabs(D5)
-	WeightsRecord={'H1SWeight':H1SWeight,'H2SWeight':H2SWeight,'T1SWeight':T1SWeight,'D1Weight':D1Weight,'D2Weight':D2Weight,'D3Weight':D3Weight,'H3SWeight':H3SWeight,'D4Weight':D4Weight,'D5Weight':D5Weight}
-	ScoreRecord={'H1S':H1S,'H2S':H2S,'T1S':T1S,'D1':D1,'D2':D2,'D3':D3,'H3S':H3S,'D4':D4,'D5':D5}
+	OUTPUT=math.fabs(H1S)+math.fabs(H2S)+math.fabs(T1S)+math.fabs(D1)+math.fabs(D2)+math.fabs(D3)+math.fabs(H3S)+math.fabs(D4)+math.fabs(D5)+math.fabs(D6)
+	WeightsRecord={'H1SWeight':H1SWeight,'H2SWeight':H2SWeight,'T1SWeight':T1SWeight,'D1Weight':D1Weight,'D2Weight':D2Weight,'D3Weight':D3Weight,'H3SWeight':H3SWeight,'D4Weight':D4Weight,'D5Weight':D5Weight,'D6Weight':D6Weight}
+	ScoreRecord={'H1S':H1S,'H2S':H2S,'T1S':T1S,'D1':D1,'D2':D2,'D3':D3,'H3S':H3S,'D4':D4,'D5':D5,'D6':D6}
 	return  OUTPUT,WeightsRecord,ScoreRecord,Misses
 
+def main_InsertIntoDB():
+	MRS=db['en_threehour'].find()
+	RS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':500}})
+	ALLWEIGHTS=getAllWeights()
+	SKIPS=0
+	for mrec in MRS:
+		EJECTIONS=0
+		MASTERREC=mrec['id']
+		VLIST,MMisses=calcRatios(MASTERREC)
+		if MMisses>4:
+			SKIPS+=1
+			continue
+		MASTERTITLE=mrec['title']
+		RL=[]
+		EJECTIONS=0
+		print '[main_InsertIntoDB] Producing similars for '+str(MASTERTITLE)
+		for clirec in RS:
+			TOTALSCORE,WeightsRecord,ScoreRecord,Misses=outputFunction(clirec,VLIST,ALLWEIGHTS)
+			if Misses <3:
+				insme=(TOTALSCORE,clirec['_id'],clirec['title'])
+				RL.append(insme)
+			else:
+				EJECTIONS+=1
+		print '[main_InsertIntoDB] Insert complete, '+str(EJECTIONS)+' ejections. now sorting list of size '+str(len(RL))
+		SL=sorting.QuickSort(RL)
+		COUNT=0
+		ZCOUNT=0
+		ILIST=[]
+		for s in SL:
+			if s[0]!=0:
+				ID=str(s[1])
+				IREC={'score':s[0],'id':s[1],'title':s[2]}
+				ILIST.append(IREC)
+				COUNT+=1
+			else:
+				ZCOUNT+=1
+			if COUNT > 5:
+				break
+		print '[main_InsertIntoDB] List sorted. '+str(ZCOUNT)+' records were skipped due to being zero exactly.'
+		INSERTREC={'_id':MASTERREC,'similars':ILIST}
+		db['en_similarity'].insert(INSERTREC)
+		RS.rewind()
+	return	
+				
 def main_ProductionRun():
 	MRS=db['en_threehour'].find()
 	RS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':500}})
@@ -225,7 +289,35 @@ def main_ProductionRun():
 		print "---------------------------------"
 	print "Skipped "+str(SKIPS)+" records"
 	return
-		
+def main_ProcInput():
+	ALLWEIGHTS=getAllWeights()
+	MASTERTITLE=raw_input("Please enter title of master page...")
+	MASTERREC=retMD5(MASTERTITLE)
+	VLIST,Misses=calcRatios(MASTERREC)
+	print "Now enter pages, either matching or nonmatching but not both..."
+	RECLIST=[]
+ 	while True:
+		CLITITLE=raw_input("Enter child page name(or 'x' to quit):")
+		if CLITITLE=='x':
+			break
+		CLIID=retMD5(CLITITLE)
+	 	CLIREC={'_id':CLIID,'title':CLITITLE}
+		RECLIST.append(CLIREC)
+	RESCHOICE=raw_input("Done entering.  Are these pages matches(y) or not(n)?")
+	print "Great! now processing ..."
+	RL=[]
+	for rec in RECLIST:
+		TOTALSCORE,WeightsRecord,ScoreRecord,Misses=outputFunction(rec,VLIST,ALLWEIGHTS)
+		insme=(TOTALSCORE,rec['_id'],rec['title'])
+		RL.append(insme)
+		bpnnRescoreWeights(str(RESCHOICE),WeightsRecord,ScoreRecord)
+	if RESCHOICE=='n' or RESCHOICE=='N':
+		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'NO':len(RECLIST)}},upsert=True)
+	elif RESCHOICE=='y' or RESCHOICE=='Y':
+		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'YES':len(RECLIST)}},upsert=True)
+	print 'All done!'
+	
+				
 def main_TestRandomPages():
 	RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
 	CHECKS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
@@ -261,7 +353,8 @@ def main_TestRandomPages():
 			if uinput=='n':
 				NOS+=1
 			bpnnRescoreWeights(str(uinput),WeightsRecord,ScoreRecord)
-		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'YES':YESS},'$inc':{'NO':NOS}},upsert=True)
+		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'YES':YESS}},upsert=True)
+		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'NO':NOS}},upsert=True)
 		RS.rewind()
 	return
 
@@ -314,4 +407,6 @@ def main_SingleOFILE():
 #main_SingleOFILE()	
 #main_TestSinglePage()
 #main_ProductionRun()
-main_TestRandomPages()
+#main_TestRandomPages()
+#main_ProcInput()
+main_InsertIntoDB()
