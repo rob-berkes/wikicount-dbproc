@@ -262,7 +262,7 @@ def clientOutputFunction(clirec,MASTERLIST,MASTERHOURLIST,DAYWEIGHTS,HOURWEIGHTS
 
 def main_InsertIntoDB():
 	MRS=db['en_threehour'].find()
-	RS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	SKIPS=0
 	for mrec in MRS:
@@ -306,7 +306,7 @@ def main_InsertIntoDB():
 				
 def main_ProductionRun():
 	MRS=db['en_threehour'].find()
-	RS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	SKIPS=0
 	for mrec in MRS:
@@ -375,8 +375,8 @@ def main_ProcInput():
 	
 				
 def main_TestRandomPages():
-	RS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':200}})
-	CHECKS=db['en_hitsdaily'].find({'2013_10_10':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
+	CHECKS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	for c in range(0,25):
 		YESS=0
@@ -419,28 +419,34 @@ def main_TestRandomPages():
 	return
 
 def main_TestSinglePage():
-	MASTERTITLE='Tetraphobia'
+	MASTERTITLE='Star_Trek'
 	MAXCOUNT=25
-	RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':100}})
 	MASTERREC=hashlib.sha1(MASTERTITLE).hexdigest() 
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	VLIST,HOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
 	RL=[]
 	print "Looking for similars to : "+str(MASTERTITLE)
+	rc=0
 	for clirec in RS:
-		TOTALSCORE,ScoreRecord,Misses=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+		if rc % 10000 == 0:
+			print "[mTSP] Scored "+str(rc)+" of "+str(RS.count())+" records."
+			rc+=1
+		else:
+			rc+=1
+		TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 		insme=(TOTALSCORE,clirec['_id'],clirec['title'])
 		RL.append(insme)
 	print 'now sorting list of length '+str(len(RL))	
 	SL=sorting.QuickSort(RL)
 	#SL=sorted(RL)
-	C=0
-	for a in SL:
+	C=1
+	for C in range(0,222):
 		if C>MAXCOUNT:
 			break
 		else:
 			C+=1
-		print str(a)+'\r'
+		print str(SL[-C])+'\r'
 		uinput=raw_input("Master: "+str(MASTERTITLE)+". Is this a match?(Y/N)")
 		if str(uinput)=='x':
 			break
@@ -449,7 +455,7 @@ def main_TestSinglePage():
 
 def main_SingleOFILE():
 	HASHSTRING='Green_Bay_Packers'
-	RS=db['en_hitsdaily'].find({'2013_10_07':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
 	MASTERREC=hashlib.sha1(HASHSTRING).hexdigest()
 	VLIST,HOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
@@ -468,8 +474,8 @@ def main_SingleOFILE():
 	return
 
 #main_SingleOFILE()	
-#main_TestSinglePage()
+main_TestSinglePage()
 #main_ProductionRun()
-main_TestRandomPages()
+#main_TestRandomPages()
 #main_ProcInput()
 #main_InsertIntoDB()
