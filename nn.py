@@ -15,7 +15,7 @@ def nHourEval(cHOURRATIOS,mHOURRATIOS,HOURWEIGHTS):
 	MISSES=0
 	for a in range(0,24):
 		HOUR="%02d"%(a,)
-		HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[a])
+		:HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[a])
 		try:
 			HOURSCORE=(1/HOURSCORE)*(HOURWEIGHTS[a])
 		except ZeroDivisionError:
@@ -402,8 +402,9 @@ def main_TestRandomPages():
 		print 'now sorting list of length '+str(len(RL))	
 		SL=sorting.QuickSort(RL)
 		#SL=sorted(RL)
-		for c in range(1,100):
-			uinput=raw_input("Master: "+str(MASTERTITLE)+". Score "+str(SL[-c][0])+" for RECORD "+str(SL[-c][2])+". Is this a match?(Y/N)")
+		for c in range(1,30):
+			uinput=raw_input("("+str(c)+")_Master: "+str(MASTERTITLE)+". Score "+str(SL[-c][0])+" for RECORD "+str(SL[-c][2])+". Is this a match?(Y/N)")
+			vinput=raw_input("("+str(c)+")_Master: "+str(MASTERTITLE)+". Score "+str(SL[c][0])+" for RECORD "+str(SL[c][2])+". Is this a match?(Y/N)")
 			if uinput=='x':
 				break
 			if uinput=='c':
