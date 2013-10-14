@@ -1,5 +1,6 @@
 from pymongo import Connection
 from lib import sorting
+from datetime import date
 import math
 import sys
 import random
@@ -9,27 +10,19 @@ import types
 conn=Connection()
 db=conn.wc
 nndb=conn.neuralweights
-sys.setrecursionlimit(2000)
-def returnWeight(SEARCHREC):
-	rs1=nndb['settings'].find_one({'_id':'WikiNN'})
-	try:
-		VALUE=rs1[SEARCHREC]
-	except:
-		VALUE=1.0
-	return VALUE
-def nHourEval(cHOURLIST,mHOURLIST,HOURWEIGHTS):
+def nHourEval(cHOURRATIOS,mHOURRATIOS,HOURWEIGHTS):
 	SCORELIST=list()
 	MISSES=0
 	for a in range(0,24):
 		HOUR="%02d"%(a,)
-		HOURSCORE=float(mHOURLIST[a])-float(cHOURLIST[a])
+		HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[a])
 		try:
 			HOURSCORE=(1/HOURSCORE)*(HOURWEIGHTS[a])
 		except ZeroDivisionError:
 			HOURSCORE=1
 		SCORELIST.append(HOURSCORE)
 	return SCORELIST
-def nHourMinus1Eval(cHOURLIST,mHOURLIST,HOURM1WEIGHTS):
+def nHourMinus1Eval(cHOURRATIOS,mHOURRATIOS,HOURM1WEIGHTS):
 	SCORELIST=list()
 	MISSES=0
 	for a in range(0,24):
@@ -39,7 +32,7 @@ def nHourMinus1Eval(cHOURLIST,mHOURLIST,HOURM1WEIGHTS):
 			b=a-1
 		HOUR="%02d"%(a,)
 		LASTHOUR="%02d"%(b,)
-		HOURSCORE=float(mHOURLIST[a])-float(cHOURLIST[b])
+		HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[b])
 		try:
 			HOURSCORE=(1/HOURSCORE)*(HOURM1WEIGHTS[a])
 		except ZeroDivisionError:
@@ -49,10 +42,36 @@ def nHourMinus1Eval(cHOURLIST,mHOURLIST,HOURM1WEIGHTS):
 
 def nTodayEval(cTR,mTR):
 	return mTR-cTR
-def nDayEval(D1RAT,mRAT):
-	return mRAT-D1RAT
+def nDayEval(DAYRATIOS,MASTERDAYRATIOS,DAYWEIGHTS):
+	SCORELIST=list()
+	NOW=date.today()
+	DAY=NOW.day
+	MISSES=0
+	for a in range(1,DAY):
+		try:
+			DAYSCORE=float(MASTERDAYRATIOS[a])-float(DAYRATIOS[a])
+		except IndexError:
+			DAYSCORE=1.0
+			SCORELIST.append(DAYSCORE)
+			break
+		try:
+			DAYSCORE=float(1/DAYSCORE)*DAYWEIGHTS[a]
+		except ZeroDivisionError:
+			DAYSCORE=1.0
+		SCORELIST.append(DAYSCORE)
+	return SCORELIST
 
 
+def scoreDaily(SCORELIST):
+	NOW=date.today()
+	DAY=NOW.day
+	SCORE=0
+	for a in range(1,DAY):
+		try:
+			SCORE+=math.fabs(SCORELIST[a])
+		except:
+			break
+	return SCORE
 
 def scoreHourly(SCORELIST):
 	score=0
@@ -69,6 +88,8 @@ def setWeight(RLIST,type):
 		nndb['settings'].update({'_id':'WikiHourlyWeights'},{'$set':{'Values':RLIST}},upsert=True)
 	elif type=='hourm1':
 		nndb['settings'].update({'_id':'WikiHourM1Weights'},{'$set':{'Values':RLIST}},upsert=True)
+	elif type=='daily':
+		nndb['settings'].update({'_id':'WikiDayWeights'},{'$set':{'Values':RLIST}},upsert=True)
 	return
 
 def findLowHour(REC,fromLowest):
@@ -98,11 +119,14 @@ def findLowHM1(REC,fromLowest):
 
 def findHighHour(REC,fromHighest):
 	HIGHEST=-1
-	HIGHHOUR=99
+	HIGHHOUR=0
 	for a in range(0,24):
-		if REC['HOURLY'][a]>HIGHEST and REC['HOURLY'][a]!=0 and REC['HOURLY'][a]!=1:
-			HIGHEST=REC['HOURLY'][a]
-			HIGHHOUR=a
+		try:
+			if REC['HOURLY'][a]>HIGHEST and REC['HOURLY'][a]!=0 and REC['HOURLY'][a]!=1:
+				HIGHEST=REC['HOURLY'][a]
+				HIGHHOUR=a
+		except IndexError:
+			break
 	return HIGHHOUR
 def findHighHM1(REC,fromHighest):
 	HIGHEST=-1
@@ -112,25 +136,44 @@ def findHighHM1(REC,fromHighest):
 			HIGHEST=REC['HM1'][a]
 			HIGHHOUR=a
 	return HIGHHOUR
+def findHighDay(REC,fromHighest):
+	HIGHEST=-1
+	HIGHDAY=0
+	for a in range(1,15):
+		try:
+			if REC['DAY'][a]>HIGHEST and REC['DAY'][a]!=0 and REC['DAY'][a]!=1:
+				HIGHEST=REC['DAY'][a]
+				HIGHDAY=a
+		except:
+			break
+	return HIGHDAY
 def bpnnRescoreWeights(RESULT,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS,ScoreRecord):
 	HITVAL=0.005
 	MISSVAL=-0.00001
 	if RESULT=='N' or RESULT=='n':
-		LOWHOUR=findLowHour(ScoreRecord,1)
-		LOWHM1=findLowHM1(ScoreRecord,1)
-		NewWeight=float(HOURWEIGHTS[LOWHOUR])+float(MISSVAL)
-		NewHM1W=float(HOURM1WEIGHTS[LOWHM1])+float(MISSVAL)
-		HOURWEIGHTS[LOWHOUR]=float(NewWeight)
-		HOURM1WEIGHTS[LOWHM1]=float(NewHM1W)
+		HIGHHOUR=findHighHour(ScoreRecord,1)
+		HIGHHM1=findHighHM1(ScoreRecord,1)
+		HIGHDAY=findHighDay(ScoreRecord,1)
+		NewDayWeight=float(DAYWEIGHTS[HIGHDAY])+MISSVAL
+		NewWeight=float(HOURWEIGHTS[HIGHHOUR])+MISSVAL
+		NewHM1W=float(HOURM1WEIGHTS[HIGHHM1])+MISSVAL
+		HOURWEIGHTS[HIGHHOUR]=float(NewWeight)
+		HOURM1WEIGHTS[HIGHHM1]=float(NewHM1W)
+		DAYWEIGHTS[HIGHDAY]=NewDayWeight
+		setWeight(DAYWEIGHTS,'daily')
 		setWeight(HOURWEIGHTS,'hourly')
 		setWeight(HOURM1WEIGHTS,'hourm1')
 	elif RESULT=='Y' or RESULT=='y':
+		HIGHDAY=findHighDay(ScoreRecord,1)
+		NewDayWeight=float(DAYWEIGHTS[HIGHDAY])+HITVAL
 		HIGHHOUR=findHighHour(ScoreRecord,1)
 		HIGHHM1=findHighHM1(ScoreRecord,1)
 		NewWeight=float(HOURWEIGHTS[HIGHHOUR])+float(HITVAL)
 		NewHM1W=float(HOURM1WEIGHTS[HIGHHM1])+float(HITVAL)
 		HOURWEIGHTS[HIGHHOUR]=float(NewWeight)
 		HOURM1WEIGHTS[HIGHHM1]=float(NewHM1W)
+		DAYWEIGHTS[HIGHDAY]=NewDayWeight
+		setWeight(DAYWEIGHTS,'daily')
 		setWeight(HOURWEIGHTS,'hourly')
 		setWeight(HOURM1WEIGHTS,'hourm1')
 	# if neither y or n, do nothing
@@ -139,7 +182,7 @@ def testRatioAllHours(IDREC):
 	#Compares one hour to it's next 
 	rsD=db['en_hitshourly'].find_one({'_id':IDREC})
 	MISSES=0
-	HOURLIST=list()
+	HOURRATIOS=list()
 	for a in range(0,24):
 		if a==23:
 			b=0
@@ -152,23 +195,37 @@ def testRatioAllHours(IDREC):
 		except:
 			MISSES+=1
 			HOURRATIO=1
-		HOURLIST.append(HOURRATIO)
-	return HOURLIST,MISSES
+		HOURRATIOS.append(HOURRATIO)
+	return HOURRATIOS,MISSES
+def ratioDaysCurMonth(IDREC):
+	#ratio hits compared to next day
+	rsD=db['en_hitsdaily'].find_one({'_id':IDREC})
+	MISSES=0
+	NOW=date.today()
+	MONTH=NOW.month
+	MONTHSTR="%02d" % (MONTH,)
+	DAY=NOW.day
+	DAYRATIOS=list()
+	for a in range(1,DAY):
+		NEXTDAY=a+1
+		DAYSR="%02d" %(a,)
+		NDAYSR="%02d" % (NEXTDAY,)
+		NDAYSTR="2013_"+MONTHSTR+"_"+NDAYSR
+		DAYSTR="2013_"+MONTHSTR+"_"+DAYSR
+		try:
+			DAYRATIO=float(rsD[DAYSTR])/rsD[NDAYSTR]
+		except:
+			MISSES+=1
+			DAYRATIO=1
+		DAYRATIOS.append(DAYRATIO)
+	return DAYRATIOS,MISSES
 def calcRatios(MASTERREC):
 	#Save time by doing these calcs only once
-	Misses=0
-	d5RAT=1
-	d6RAT=1
-	d4RAT=1.0
-	d3RAT=1.0
-	d2RAT=1.0
-	d1RAT=1.0
-	mTR=1.0
 	
-	HOURLIST,HOURMISSES=testRatioAllHours(MASTERREC)
+	HOURRATIOS,HOURMISSES=testRatioAllHours(MASTERREC)
+	DAYRATIOS,DAYMISSES=ratioDaysCurMonth(MASTERREC)
 
-	VLIST=(mTR,d1RAT,d2RAT,d3RAT,d4RAT,d5RAT,d6RAT)
-	return VLIST,HOURLIST,Misses,HOURMISSES
+	return DAYRATIOS,HOURRATIOS,DAYMISSES,HOURMISSES
 
 def getAllWeights():
 	DAYWEIGHTS=nndb['settings'].find_one({'_id':'WikiDayWeights'})
@@ -176,88 +233,35 @@ def getAllWeights():
 		DAYWEIGHTS=DAYWEIGHTS['Values']
 	except TypeError:
 		DAYWEIGHTS=[]
-		for a in range(0,367):
-			DAYWEIGHTS.append(float(1))
-		
+		for a in range(0,20):
+			DAYWEIGHTS.append(random.uniform(0.95,0.98))
 	HOURWEIGHTS=nndb['settings'].find_one({'_id':'WikiHourlyWeights'})
 	try:
 		HOURWEIGHTS=HOURWEIGHTS['Values']
 	except TypeError:
 		HOURWEIGHTS=[]
 		for a in range(0,24):
-			HOURWEIGHTS.append(float(1))
+			HOURWEIGHTS.append(random.uniform(0.95,0.98))
 	HOURM1WEIGHTS=nndb['settings'].find_one({'_id':'WikiHourM1Weights'})
 	try:
 		HOURM1WEIGHTS=HOURM1WEIGHTS['Values']
 	except TypeError:
 		HOURM1WEIGHTS=[]
 		for a in range(0,24):
-			HOURM1WEIGHTS.append(float(1))
+			HOURM1WEIGHTS.append(random.uniform(0.95,0.98))
 	return DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS
 	
-def clientOutputFunction(clirec,MASTERLIST,MASTERHOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS):
-	D1Weight=DAYWEIGHTS[1]
-	D2Weight=DAYWEIGHTS[2]
-	try:
-		D3Weight=DAYWEIGHTS[3]
-	except:
-		D3Weight=1
-	try:
-		D4Weight=DAYWEIGHTS[4]
-	except:
-		D4Weight=1
-	try:
-		D5Weight=DAYWEIGHTS[5]
-	except:
-		D5Weight=1
-	try:
-		D6Weight=ALLWEIGHTS[6]
-	except:
-		D6Weight=1
-	try:
-		T1SWeight=HOURM1WEIGHTS[1]
-	except:
-		T1SWeight=1
-	CLIST,HOURLIST,Misses,HOURMISSES=calcRatios(clirec['_id'])
-	SCORELIST=nHourEval(HOURLIST,MASTERHOURLIST,HOURWEIGHTS)
-	HM1SCORELIST=nHourMinus1Eval(HOURLIST,MASTERHOURLIST,HOURM1WEIGHTS)
-	OUTPUT=scoreHourly(SCORELIST)
+def clientOutputFunction(clirec,MASTERDAYRATIOS,MASTERHOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS):
+	DAYRATIOS,HOURRATIOS,DAYMISSES,HOURMISSES=calcRatios(clirec['_id'])
+	SCORELIST=nHourEval(HOURRATIOS,MASTERHOURRATIOS,HOURWEIGHTS)
+	HM1SCORELIST=nHourMinus1Eval(HOURRATIOS,MASTERHOURRATIOS,HOURM1WEIGHTS)
+	DAYSCORELIST=nDayEval(DAYRATIOS,MASTERDAYRATIOS,DAYWEIGHTS)
+
+	OUTPUT=scoreDaily(DAYSCORELIST)
+	OUTPUT+=scoreHourly(SCORELIST)
 	OUTPUT+=scoreHourly(HM1SCORELIST)
-#	try:
-#		T1S=(1/nTodayEval(CLIST[0],MASTERLIST[0]))*T1SWeight
-#	except ZeroDivisionError:
-#		T1S=1
-#	try:
-#		D1=(1/nDayEval(CLIST[1],MASTERLIST[1]))*D1Weight
-#	except ZeroDivisionError:
-#		D1=1
-#
-#	try:
-#		D2=(1/nDayEval(CLIST[2],MASTERLIST[2]))*D2Weight
-#	except ZeroDivisionError:
-#		D2=1
-#
-#	try:
-#		D3=(1/nDayEval(CLIST[3],MASTERLIST[3]))*D3Weight
-#	except ZeroDivisionError:
-#		D3=1
-#	try:
-#		D4=(1/nDayEval(CLIST[4],MASTERLIST[4]))*D4Weight
-#	except ZeroDivisionError:
-#		D4=1
-#
-#	try:
-#		D5=(1/nDayEval(CLIST[5],MASTERLIST[5]))*D5Weight
-#	except ZeroDivisionError:
-#		D5=1
-#	try:
-#		D6=(1/nDayEval(CLIST[6],MASTERLIST[6]))*D6Weight
-#	except ZeroDivisionError:
-#		D6=1
-#	print H1S,H2S,T1S,D1,D2,D3
-#	OUTPUT+=math.fabs(T1S)+math.fabs(D1)+math.fabs(D2)+math.fabs(D3)+math.fabs(D4)+math.fabs(D5)+math.fabs(D6)
-#	ScoreRecord={'T1S':T1S,'D1':D1,'D2':D2,'D3':D3,'D4':D4,'D5':D5,'D6':D6,'HOURLY':HOURLIST}
-	ScoreRecord={'HOURLY':SCORELIST,'HM1':HM1SCORELIST}
+ 	ScoreRecord={'HOURLY':SCORELIST,'HM1':HM1SCORELIST,'DAY':DAYSCORELIST}
+	Misses=DAYMISSES+HOURMISSES
 	return  OUTPUT,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS
 
 def main_InsertIntoDB():
@@ -268,7 +272,7 @@ def main_InsertIntoDB():
 	for mrec in MRS:
 		EJECTIONS=0
 		MASTERREC=mrec['id']
-		VLIST,HOURLIST,MMisses,HOURMISSES=calcRatios(MASTERREC)
+		DAYRATIOS,HOURRATIOS,MMisses,HOURMISSES=calcRatios(MASTERREC)
 		if MMisses>4:
 			SKIPS+=1
 			continue
@@ -277,7 +281,7 @@ def main_InsertIntoDB():
 		EJECTIONS=0
 		print '[main_InsertIntoDB] Producing similars for '+str(MASTERTITLE)
 		for clirec in RS:
-			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,DAYRATIOS,HOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 			if Misses <3:
 				insme=(TOTALSCORE,clirec['_id'],clirec['title'])
 				RL.append(insme)
@@ -311,7 +315,7 @@ def main_ProductionRun():
 	SKIPS=0
 	for mrec in MRS:
 		MASTERREC=mrec['id']
-		VLIST,HOURLIST,MMisses,HOURMISSES=calcRatios(MASTERREC)
+		DAYRATIOS,HOURRATIOS,MMisses,HOURMISSES=calcRatios(MASTERREC)
 		print 'master '+str(HOURMISSES)+' Hour misses and '+str(MMisses)+' other misses'
 		if MMisses>4:
 			print 'skipping, '+str(MMisses)+' misses!'
@@ -322,7 +326,7 @@ def main_ProductionRun():
 		EJECTIONS=0
 		print '[main_Production] Producing similars for '+str(MASTERTITLE)
 		for clirec in RS:
-			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,DAYRATIOS,HOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 			if Misses<20:
 				insme=(TOTALSCORE,clirec['_id'],clirec['title'])
 				RL.append(insme)
@@ -349,7 +353,7 @@ def main_ProcInput():
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	MASTERTITLE=raw_input("Please enter title of master page...")
 	MASTERREC=retMD5(MASTERTITLE)
-	VLIST,HOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
+	DAYRATIOS,HOURRATIOS,Misses,HOURMISSES=calcRatios(MASTERREC)
 	print "Now enter pages, either matching or nonmatching but not both..."
 	RECLIST=[]
  	while True:
@@ -363,7 +367,7 @@ def main_ProcInput():
 	print "Great! now processing ..."
 	RL=[]
 	for rec in RECLIST:
-		TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(rec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+		TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(rec,DAYRATIOS,HOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 		insme=(TOTALSCORE,rec['_id'],rec['title'])
 		RL.append(insme)
 		bpnnRescoreWeights(str(RESCHOICE),DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS,ScoreRecord)
@@ -375,21 +379,21 @@ def main_ProcInput():
 	
 				
 def main_TestRandomPages():
-	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
-	CHECKS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
+	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':1500}})
+	CHECKS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':1500}})
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	for c in range(0,25):
 		YESS=0
 		NOS=0
 		SEED=random.randint(0,CHECKS.count())
 		MASTERREC=CHECKS[SEED]['_id'] 
-		VLIST,MASTERHOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
+		DAYRATIOS,MASTERHOURRATIOS,Misses,HOURMISSES=calcRatios(MASTERREC)
 		MASTERTITLE=CHECKS[SEED]['title']
 		RL=[]
 		print "Looking for similars to : "+str(MASTERTITLE)
 		rsCOUNT=0
 		for clirec in RS:
-			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,VLIST,MASTERHOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+			TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,DAYRATIOS,MASTERHOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 			insme=(TOTALSCORE,clirec['_id'],clirec['title'])
 			RL.append(insme)
 			rsCOUNT+=1
@@ -400,10 +404,7 @@ def main_TestRandomPages():
 		#SL=sorted(RL)
 		C=0
 		for c in range(1,100):
-			if SL[-c][0]< 1 :
-				continue
-			print str(SL[-c][0])+" "+str(SL[-c][2])+"   \r"
-			uinput=raw_input("Master: "+str(MASTERTITLE)+". Is this a match?(Y/N)")
+			uinput=raw_input("Master: "+str(MASTERTITLE)+". Score "+str(SL[-C][0])+" for RECORD "+str(SL[-C][2]+". Is this a match?(Y/N)")
 			if uinput=='x':
 				break
 			if uinput=='c':
@@ -412,7 +413,7 @@ def main_TestRandomPages():
 				YESS+=1
 			if uinput=='n':
 				NOS+=1
-			bpnnRescoreWeights(str(uinput),DAYWEIGHTS,MASTERHOURLIST,HOURM1WEIGHTS,ScoreRecord)
+			bpnnRescoreWeights(str(uinput),DAYWEIGHTS,MASTERHOURRATIOS,HOURM1WEIGHTS,ScoreRecord)
 		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'YES':YESS}},upsert=True)
 		nndb['nncounts'].update({'_id':'WikiNN'},{'$inc':{'NO':NOS}},upsert=True)
 		RS.rewind()
@@ -424,7 +425,7 @@ def main_TestSinglePage():
 	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':100}})
 	MASTERREC=hashlib.sha1(MASTERTITLE).hexdigest() 
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
-	VLIST,HOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
+	DAYRATIOS,HOURRATIOS,Misses,HOURMISSES=calcRatios(MASTERREC)
 	RL=[]
 	print "Looking for similars to : "+str(MASTERTITLE)
 	rc=0
@@ -434,7 +435,7 @@ def main_TestSinglePage():
 			rc+=1
 		else:
 			rc+=1
-		TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+		TOTALSCORE,ScoreRecord,Misses,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=clientOutputFunction(clirec,DAYRATIOS,HOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 		insme=(TOTALSCORE,clirec['_id'],clirec['title'])
 		RL.append(insme)
 	print 'now sorting list of length '+str(len(RL))	
@@ -457,12 +458,12 @@ def main_SingleOFILE():
 	HASHSTRING='Green_Bay_Packers'
 	RS=db['en_hitsdaily'].find({'2013_10_13':{'$gt':500}})
 	MASTERREC=hashlib.sha1(HASHSTRING).hexdigest()
-	VLIST,HOURLIST,Misses,HOURMISSES=calcRatios(MASTERREC)
+	DAYRATIOS,HOURRATIOS,Misses,HOURMISSES=calcRatios(MASTERREC)
 	DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS=getAllWeights()
 	RL=[]
 	print "Scoring for similars to "+str(HASHSTRING)
 	for clirec in RS:
-		TOTALSCORE,ScoreRecord,Misses=clientOutputFunction(clirec,VLIST,HOURLIST,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
+		TOTALSCORE,ScoreRecord,Misses=clientOutputFunction(clirec,DAYRATIOS,HOURRATIOS,DAYWEIGHTS,HOURWEIGHTS,HOURM1WEIGHTS)
 		insme=(TOTALSCORE,clirec['title'])
 		RL.append(insme)
 	print "now sorting"
@@ -474,8 +475,8 @@ def main_SingleOFILE():
 	return
 
 #main_SingleOFILE()	
-main_TestSinglePage()
+#main_TestSinglePage()
 #main_ProductionRun()
-#main_TestRandomPages()
+main_TestRandomPages()
 #main_ProcInput()
 #main_InsertIntoDB()
