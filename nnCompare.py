@@ -17,7 +17,7 @@ def printHourlyDifferences():
 			print 'Hour: '+str(a)+' Diff Change: '+str(float(VALUES[a])-oldVALUES[a])+'   Total: '+str(float(VALUES[a])-initVALUES[a])
 	except TypeError:
 		print 'Old values do not exist. Transferring current values over. Please rerun after doing some more scoring'
-		NEWREC={'_id':'OldWikiHourlyWeights','Values':VALUES}
+		NEWREC={'_id':'InitWikiHourlyWeights','Values':VALUES}
 		db['init_settings'].insert(NEWREC)
 
 	NEWREC={'_id':'OldWikiHourlyWeights','Values':VALUES}

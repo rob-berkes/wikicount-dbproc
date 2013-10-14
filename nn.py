@@ -402,9 +402,8 @@ def main_TestRandomPages():
 		print 'now sorting list of length '+str(len(RL))	
 		SL=sorting.QuickSort(RL)
 		#SL=sorted(RL)
-		C=0
 		for c in range(1,100):
-			uinput=raw_input("Master: "+str(MASTERTITLE)+". Score "+str(SL[-C][0])+" for RECORD "+str(SL[-C][2]+". Is this a match?(Y/N)")
+			uinput=raw_input("Master: "+str(MASTERTITLE)+". Score "+str(SL[-c][0])+" for RECORD "+str(SL[-c][2])+". Is this a match?(Y/N)")
 			if uinput=='x':
 				break
 			if uinput=='c':
