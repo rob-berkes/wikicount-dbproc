@@ -45,8 +45,27 @@ def getAllHourWeights(IDREC):
 			W=1.0
 		WEIGHTLIST.append(W)
 	return WEIGHTLIST
-TODAY=getAllHourHits('a2976cc2ec4ddbd09e87da88f65b6df552d850eb')
-WEIGHTLIST=getAllHourWeights('a2976cc2ec4ddbd09e87da88f65b6df552d850eb')
 
-for hour in TODAY:
-	print str(hour.hour)+" : "+str(hour.hits)
+
+
+
+
+
+
+def main_CompareTo25():
+	SDATE='02'
+	MASTERREC='a2976cc2ec4ddbd09e87da88f65b6df552d850eb'
+	TODAY=getAllHourHits(MASTERREC)
+	WEIGHTLIST=getAllHourWeights(MASTERREC)
+
+	for hour in TODAY:
+		print str(hour.hour)+" : "+str(hour.hits)
+	
+	SQUERY={SDATE:{'$gt':300}}
+	RSET=db['en_hitshourly'].find(SQUERY)
+	print RSET.count()
+	return
+
+
+
+main_CompareTo25()
