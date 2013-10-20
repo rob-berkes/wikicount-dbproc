@@ -35,8 +35,18 @@ def getAllHourHits(IDREC):
 			a.hits=0
 		DAY.append(a)
 	return DAY
-
+def getAllHourWeights(IDREC):
+	WEIGHTLIST=[]
+	rs=db['en_similars_hour_weights'].find_one({'_id':IDREC})
+	for hour in range(0,24):
+		try:
+			W=rs[hour]
+		except TypeError:
+			W=1.0
+		WEIGHTLIST.append(W)
+	return WEIGHTLIST
 TODAY=getAllHourHits('a2976cc2ec4ddbd09e87da88f65b6df552d850eb')
+WEIGHTLIST=getAllHourWeights('a2976cc2ec4ddbd09e87da88f65b6df552d850eb')
 
 for hour in TODAY:
 	print str(hour.hour)+" : "+str(hour.hits)
