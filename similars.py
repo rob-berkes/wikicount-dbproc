@@ -1,5 +1,6 @@
 from pymongo import Connection
 from datetime import time
+from lib import sorting 
 
 class Hour:
 	hour=0
@@ -18,6 +19,9 @@ class Hour:
 		return float(hits/DIVISOR)
 	def calcscore(SCORE,DIVISOR):
 		return float(1/(SCORE-DIVISOR))
+class HourList:
+	id=''
+	HOURS=[]
 
 conn=Connection()
 db=conn.wc
@@ -63,7 +67,13 @@ def main_CompareTo25():
 	
 	SQUERY={SDATE:{'$gt':300}}
 	RSET=db['en_hitshourly'].find(SQUERY)
-	print RSET.count()
+	FULLHOURSET=[]
+	for rec in RSET:
+		HOURSET=HourList()
+		HOURSET.id=rec['_id']
+		HOURSET.HOURS=getAllHourHits(rec['_id'])
+		FULLHOURSET.append(HOURSET)
+
 	return
 
 
