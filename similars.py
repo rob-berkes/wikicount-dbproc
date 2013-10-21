@@ -2,6 +2,7 @@
 from pymongo import Connection
 from datetime import time
 from lib import sorting 
+import math
 conn=Connection()
 db=conn.wc
 
@@ -29,10 +30,10 @@ class Hour:
 	hits=0
 	hm1ratio=0
 	hp1ratio=0
-	h2nratio=0
+	hp1score=0
+	hm1score=0
 	def __init__(self):
 		hour=0
-		h2nratio=float(0)
 		return
 class HourList:
 	id=''
@@ -53,9 +54,10 @@ class HourList:
 			hour.hp1ratio=float(hour.hits)/self.HOURS[nexthour].hits
 		return
 	def calc_Scores(self,MASTER):
-		for hour,mhour in self.HOURS,MASTER.HOURS:
-			hour.hp1score=1/(math.fabs(hour.hp1ratio-mhour.hp1ratio))
-			hour.hm1socre=1/(math.fabs(hour.hm1ratio-mhour.hm1ratio))
+		for a in range(0,24):
+			self.HOURS[a].hp1score=1/(math.fabs(self.HOURS[a].hp1ratio-MASTER.HOURS[a].hp1ratio))
+			self.HOURS[a].hm1score=1/(math.fabs(self.HOURS[a].hm1ratio-MASTER.HOURS[a].hm1ratio))
+		return
 def getMastHourHits(IDREC):
 	DAY=[]
 	rs=db['en_hitshourly'].find_one({'_id':IDREC})
@@ -69,7 +71,14 @@ def getMastHourHits(IDREC):
 			a.hits=1
 		DAY.append(a)
 	return DAY
-		
+
+def dumpHourSet(FULLHOURSET):
+	for rec in FULLHOURSET:
+		print rec.id,rec.title
+		print "Hour Scores"
+		for hour in rec.HOURS:
+			print hour.hour,hour.hits,hour.hp1score,hour.hm1score
+	return
 def getAllHourWeights(IDREC):
 	WEIGHTLIST=[]
 	rs=db['en_similars_hour_weights'].find_one({'_id':IDREC})
@@ -95,7 +104,14 @@ def getAllHourHits(IDREC,MASTERHOURSET):
 		HOURLIST.append(HOUR)
 	return HOURLIST
 		
-
+def printGoodMatches(MASTER,FULL):
+	LEVEL=1000
+	for rec in FULL:
+		for hour in rec.HOURS:
+			if hour.hp1score  > LEVEL or hour.hm1score > LEVEL:
+				print MASTER.title,rec.title,hour.hour,hour.hp1score,hour.hm1score,hour.hits
+	return
+		
 def main_CompareTo25():
 	SDATE='12'
 	MASTERREC='a2976cc2ec4ddbd09e87da88f65b6df552d850eb'
@@ -107,7 +123,7 @@ def main_CompareTo25():
 		print str(hour.hour)+" : "+str(hour.hits)+', '+str(hour.hm1ratio)+", "+str(hour.hp1ratio)
 	
 	SQUERY={SDATE:{'$gt':300}}
-	RSET=db['en_hitshourly'].find(SQUERY).limit(25)
+	RSET=db['en_hitshourly'].find(SQUERY).limit(2500)
 	FULLHOURSET=[]
 	for rec in RSET:
 		rs=db['en_hitsdaily'].find_one({'_id':rec['_id']})
@@ -115,7 +131,11 @@ def main_CompareTo25():
 		HOURSET.id=rec['_id']
 		HOURSET.title=rs['title']
 		HOURSET.HOURS=getAllHourHits(rec['_id'],MASTERHOURSET)
+		HOURSET.calc_Ratios()
+		HOURSET.calc_Scores(MASTERHOURSET)
 		FULLHOURSET.append(HOURSET)
+	printGoodMatches(MASTERHOURSET,FULLHOURSET)
+		
 	return
 
 
