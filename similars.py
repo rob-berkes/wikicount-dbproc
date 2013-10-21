@@ -47,13 +47,13 @@ class HourList:
 			if hour.hour==0:
 				prevhour=23
 			else:
-				prevhour-=1
+				prevhour=hour.hour-1
 			if hour.hour==23:
 				nexthour=0
 			else:
-				nexthour+=1
-			hm1ratio=float(hits/self.HOURS[prevhour].hits)
-			hp1ratio=float(hits/self.HOURS[nexthour].hits)
+				nexthour=hour.hour+1
+			hour.hm1ratio=float(hour.hits)/self.HOURS[prevhour].hits
+			hour.hp1ratio=float(hour.hits)/self.HOURS[nexthour].hits
 		return
 
 def getMastHourHits(IDREC):
@@ -66,7 +66,7 @@ def getMastHourHits(IDREC):
 		try:
 			a.hits=rs[HOURSTR]
 		except KeyError:
-			a.hits=0
+			a.hits=1
 		DAY.append(a)
 	return DAY
 		
@@ -82,13 +82,16 @@ def getAllHourWeights(IDREC):
 	return WEIGHTLIST
 
 def getAllHourHits(IDREC,MASTERHOURSET):
-	rs=db['en_hitsdaily'].find_one({'_id':IDREC})
+	rs=db['en_hitshourly'].find_one({'_id':IDREC})
 	HOURLIST=[]
 	for a in range(0,24):
 		HOUR=Hour()
 		HOUR.hour=a
 		HOURSTR="%02d" % (a,)
-		HOUR.hits=rs[HOURSTR]
+		try:
+			HOUR.hits=rs[HOURSTR]
+		except KeyError:
+			HOUR.hits=1
 		HOURLIST.append(HOUR)
 	return HOURLIST
 		
@@ -98,7 +101,7 @@ def main_CompareTo25():
 	MASTERREC='a2976cc2ec4ddbd09e87da88f65b6df552d850eb'
 	MASTERHOURSET=HourList()
 	MASTERHOURSET.Weights=getAllHourWeights(MASTERREC)
-	MASTERHOURSET.Hours=getMastHourHits(MASTERREC)
+	MASTERHOURSET.HOURS=getMastHourHits(MASTERREC)
 	MASTERHOURSET.calc_Ratios()
 	for hour in MASTERHOURSET.HOURS:
 		print str(hour.hour)+" : "+str(hour.hits)+', '+str(hour.hm1ratio)+", "+str(hour.hp1ratio)
@@ -113,11 +116,6 @@ def main_CompareTo25():
 		HOURSET.title=rs['title']
 		HOURSET.HOURS=getAllHourHits(rec['_id'],MASTERHOURSET)
 		FULLHOURSET.append(HOURSET)
-	print len(FULLHOURSET)
-	for rec in FULLHOURSET:
-		print rec.title
-		for h in rec.HOURS:
-			print h.hour,h.hits
 	return
 
 
