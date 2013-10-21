@@ -1,3 +1,4 @@
+
 from pymongo import Connection
 from datetime import time
 from lib import sorting 
@@ -9,8 +10,6 @@ class Weights:
 	weight=0.0
 class Scores:
 	hratio=0
-	hm1ratio=0
-	hp1ratio=0
 	hourscore=0
 	hm1score=0
 	hp1score=0
@@ -28,6 +27,8 @@ class Scores:
 class Hour:
 	hour=0
 	hits=0
+	hm1ratio=0
+	hp1ratio=0
 	h2nratio=0
 	def __init__(self):
 		hour=0
@@ -35,20 +36,25 @@ class Hour:
 		hourscore=float(0)
 		hm1score=float(0)
 		hp1score=float(0)
-	def __init__(self,HITS,MASTERHOUR,HOUR):
-		hour=HOUR
-		hits=HITS
-		h2nratio=float(hits/MASTERHOUR.Hours[HOUR].hits)
-		SCORES=SCORES(hits,hour,h2nratio,MASTERHOUR)
-	def calcratio(DIVISOR):
-		return float(hits/DIVISOR)
-	def calcscore(SCORE,DIVISOR):
-		return float(1/(SCORE-DIVISOR))
+		return
 class HourList:
 	id=''
 	title=''
 	HOURS=[]
 	WEIGHTS=[]
+	def calc_Ratios(self):
+		for hour in self.HOURS:
+			if hour.hour==0:
+				prevhour=23
+			else:
+				prevhour-=1
+			if hour.hour==23:
+				nexthour=0
+			else:
+				nexthour+=1
+			hm1ratio=float(hits/self.HOURS[prevhour].hits)
+			hp1ratio=float(hits/self.HOURS[nexthour].hits)
+		return
 
 def getMastHourHits(IDREC):
 	DAY=[]
@@ -63,12 +69,6 @@ def getMastHourHits(IDREC):
 			a.hits=0
 		DAY.append(a)
 	return DAY
-def getAllHourHits(IDREC,MASTERHOURSET):
-	DAY=[]
-	rs=db['en_hitshourly'].find_one({'_id':IDREC})
-	for hour in range(0,24):
-		HOURSTR="%02d" % (hour,)
-		a=Hour(rs[HOURSTR],MASTERHOURSET.Hours[hour],hour)
 		
 def getAllHourWeights(IDREC):
 	WEIGHTLIST=[]
@@ -81,7 +81,17 @@ def getAllHourWeights(IDREC):
 		WEIGHTLIST.append(W)
 	return WEIGHTLIST
 
-
+def getAllHourHits(IDREC,MASTERHOURSET):
+	rs=db['en_hitsdaily'].find_one({'_id':IDREC})
+	HOURLIST=[]
+	for a in range(0,24):
+		HOUR=Hour()
+		HOUR.hour=a
+		HOURSTR="%02d" % (a,)
+		HOUR.hits=rs[HOURSTR]
+		HOURLIST.append(HOUR)
+	return HOURLIST
+		
 
 def main_CompareTo25():
 	SDATE='12'
@@ -89,8 +99,9 @@ def main_CompareTo25():
 	MASTERHOURSET=HourList()
 	MASTERHOURSET.Weights=getAllHourWeights(MASTERREC)
 	MASTERHOURSET.Hours=getMastHourHits(MASTERREC)
-	for hour in TODAY:
-		print str(hour.hour)+" : "+str(hour.hits)
+	MASTERHOURSET.calc_Ratios()
+	for hour in MASTERHOURSET.HOURS:
+		print str(hour.hour)+" : "+str(hour.hits)+', '+str(hour.hm1ratio)+", "+str(hour.hp1ratio)
 	
 	SQUERY={SDATE:{'$gt':300}}
 	RSET=db['en_hitshourly'].find(SQUERY).limit(25)
