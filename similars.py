@@ -32,6 +32,7 @@ class Hour:
 	hp1ratio=0
 	hp1score=0
 	hm1score=0
+	matches=0
 	def __init__(self):
 		hour=0
 		return
@@ -103,13 +104,34 @@ def getAllHourHits(IDREC,MASTERHOURSET):
 			HOUR.hits=1
 		HOURLIST.append(HOUR)
 	return HOURLIST
-		
+def makeSortingList(FULL):
+	NEWLIST=[]
+	for arec in FULL:
+		hourscore=0
+		for a in arec.HOURS:
+			hourscore+=a.hp1score
+		rec=(hourscore,arec.id,arec.title)
+		NEWLIST.append(rec)
+	return NEWLIST		
+def makeIHSortingList(FULL):
+	NEWLIST=[]
+	for arec in FULL:
+		for a in arec.HOURS:
+			if a.hp1score>1000 or a.hm1score > 1000:
+				rec=(a.hp1score,a.hm1score,arec.title,a.hits,a.hour)
+				NEWLIST.append(rec)
+	return NEWLIST
 def printGoodMatches(MASTER,FULL):
-	LEVEL=1000
+	LEVEL=100
 	for rec in FULL:
+		MATCH=0
 		for hour in rec.HOURS:
 			if hour.hp1score  > LEVEL or hour.hm1score > LEVEL:
+				hour.matches+=1
+		if hour.matches > 1:
+				print "Matches: "+str(hour.matches)
 				print MASTER.title,rec.title,hour.hour,hour.hp1score,hour.hm1score,hour.hits
+		
 	return
 		
 def main_CompareTo25():
@@ -134,6 +156,11 @@ def main_CompareTo25():
 		HOURSET.calc_Ratios()
 		HOURSET.calc_Scores(MASTERHOURSET)
 		FULLHOURSET.append(HOURSET)
+	UNSORTEDLIST=makeIHSortingList(FULLHOURSET)
+	SORTEDLIST=sorting.QuickSortListArray(UNSORTEDLIST)
+	for a in range(0,10):
+		print SORTEDLIST[-a][0],SORTEDLIST[-a][2],SORTEDLIST[-a][3],SORTEDLIST[-a][4]
+	
 	printGoodMatches(MASTERHOURSET,FULLHOURSET)
 		
 	return
