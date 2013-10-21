@@ -33,9 +33,6 @@ class Hour:
 	def __init__(self):
 		hour=0
 		h2nratio=float(0)
-		hourscore=float(0)
-		hm1score=float(0)
-		hp1score=float(0)
 		return
 class HourList:
 	id=''
@@ -55,7 +52,10 @@ class HourList:
 			hour.hm1ratio=float(hour.hits)/self.HOURS[prevhour].hits
 			hour.hp1ratio=float(hour.hits)/self.HOURS[nexthour].hits
 		return
-
+	def calc_Scores(self,MASTER):
+		for hour,mhour in self.HOURS,MASTER.HOURS:
+			hour.hp1score=1/(math.fabs(hour.hp1ratio-mhour.hp1ratio))
+			hour.hm1socre=1/(math.fabs(hour.hm1ratio-mhour.hm1ratio))
 def getMastHourHits(IDREC):
 	DAY=[]
 	rs=db['en_hitshourly'].find_one({'_id':IDREC})
