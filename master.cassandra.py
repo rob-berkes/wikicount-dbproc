@@ -13,7 +13,7 @@ from multiprocessing import Process
 import hashlib
 from time import time
 
-connection=ConnectionPool('wikitrends',['10.45.9.202','10.45.8.49'])
+connection=ConnectionPool('wikitrends',['10.10.0.199','10.10.0.170'])
 colfam_hourly=ColumnFamily(connection,'hourly') 
 colfam_daily=ColumnFamily(connection,'daily')
 colfam_hd=ColumnFamily(connection,'hourlydaily')    
