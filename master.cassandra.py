@@ -207,7 +207,7 @@ def UpdateHits(FILEPROC,HOUR,LANG,SERVERADDY):
             EXCEPTS+=1
             break
             #continue
-     print "updatehits done!"
+     print str(UPDATED)+" updates done!"
      syslog.syslog("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
 
 def p3_add():
@@ -221,11 +221,11 @@ def p3_add():
         ruFILE6="/tmp/"+str(lang)+"_action/q6_pagecounts.*"
 
         STARTTIME=wikicount.fnStartTimer()
-        t = Process(target=UpdateHits, args=(ruFILE1,HOUR,lang,'10.10.0.21'))
+        t = Process(target=UpdateHits, args=(ruFILE1,HOUR,lang,'127.0.0.1'))
         u = Process(target=UpdateHits, args=(ruFILE2,HOUR,lang,'10.10.0.21'))
         v = Process(target=UpdateHits, args=(ruFILE3,HOUR,lang,'10.10.0.102'))
         w = Process(target=UpdateHits, args=(ruFILE4,HOUR,lang,'10.10.0.254'))
-        x = Process(target=UpdateHits, args=(ruFILE5,HOUR,lang,'10.10.0.254'))
+        x = Process(target=UpdateHits, args=(ruFILE5,HOUR,lang,'127.0.0.1'))
         y = Process(target=UpdateHits, args=(ruFILE6,HOUR,lang,'10.10.0.102'))
 
         t.daemon=True
@@ -251,10 +251,10 @@ def p3_add():
         RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
     print "p3 done!"
 syslog.syslog("[master.py][main] Started")			
-#p0_dl()
-#p1_split()
-#p2_filter()
-#p2x_move_to_action()
+p0_dl()
+p1_split()
+p2_filter()
+p2x_move_to_action()
 syslog.syslog("p3_add] p3_add starting now")
 p3_add()
 
