@@ -189,9 +189,10 @@ def UpdateHits(FILEPROC,HOUR,LANG,SERVERADDY):
                     HASH=hashlib.sha1(line[1]).hexdigest()
                     irec={HOUR:str(line[2])}
                     I1="""
-                        INSERT INTO hourly (id,hour,hits) VALUES ('HASH',HOUR,HITS)
+                        INSERT INTO hourly (id,lang,hour,hits) VALUES ('HASH',LANG,HOUR,HITS)
                         ;"""
                     I1=I1.replace('HASH',str(HASH))
+		    I1=I1.replace('LANG',str(LANG))
                     I1=I1.replace('HOUR',str(HOUR))
                     I1=I1.replace('HITS',str(line[2]))
                     r=cursor.execute(I1)
