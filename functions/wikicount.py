@@ -13,8 +13,8 @@ import HTMLParser
 _htmlparser=HTMLParser.HTMLParser()
 unescape=_htmlparser.unescape 
 
-conn=Connection()
-db=conn.wc
+#conn=Connection()
+#db=conn.wc
 
 
 class logRecord():
@@ -59,7 +59,11 @@ def MapQuery_FindImageName(id):
         utitle=urllib2.unquote(t_title)
         return title, utitle
 def getLanguageList():
-	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af','simple','en.b','en.q','en.s','en.d','en.voy','fr.d','fr.b','sv','ja.b','it.b','de.b','commons.m','it.q','pl.q','ru.q','zh.q']
+	LList=['en','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar','la','sw','af','simple',
+           'en.b','en.q','en.s','en.d','en.voy','fr.d','fr.b','sv','ja.b','it.b','de.b','commons.m','it.q',
+           'pl.q','ru.q','zh.q']
+
+
 	return LList
 def getBadList(lang):
 	enBList=['Grażyna_Plebanek,','Amanda_O`neill,','Philip_C.','Ks._Marian',]

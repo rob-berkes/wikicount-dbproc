@@ -8,11 +8,11 @@ import time
 import subprocess 
 import syslog
 import random
-import Gnuplot, Gnuplot.funcutils
+#import Gnuplot, Gnuplot.funcutils
 import pdb 
 
-conn=Connection()
-db=conn.wc
+#conn=Connection()
+#db=conn.wc
 
 LLIST={ 'ru':'Russian Wikipedia',
         'en':'English Wikipedia',
