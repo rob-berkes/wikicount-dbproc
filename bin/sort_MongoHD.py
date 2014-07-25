@@ -1,15 +1,14 @@
-from lib import sorting 
-from functions import wikicount
-from multiprocessing import Process,Pipe,Queue
+from multiprocessing import Process,Pipe
 import syslog
-import random
 import sys
 import os
-import string 
+
+from lib import sorting, wikicount
+
 if __name__ == '__main__' :
-	STARTTIME=wikicount.fnStartTimer()
+	STARTTIME= wikicount.fnStartTimer()
 	syslog.syslog('sortMongoHD.csv: starting...')
-	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+	DAY,MONTH,YEAR,HOUR,expiretime= wikicount.fnReturnTimes()
 	wikicount.fnSetStatusMsg('sortMongoHD',0)
 	os.system("sed -i 1d /home/ec2-user/mongo.csv")
 	sys.setrecursionlimit(2000)
@@ -42,7 +41,7 @@ if __name__ == '__main__' :
 #	RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
 #	syslog.syslog('sortMongoHD.csv: runtime '+str(RUNTIME)+' seconds.')
 
-	LANGLIST=wikicount.getLanguageList()
+	LANGLIST= wikicount.getLanguageList()
 	for lang in LANGLIST:
 		IFILE=open("/home/ec2-user/"+str(lang)+"_mongo.csv","r")
 		SORTME=[]

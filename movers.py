@@ -1,12 +1,13 @@
 #!/usr/bin/python
 #coding: utf-8
-from functions import wikicount
 import syslog
+
 from pymongo import Connection
-from lib import sorting
+from lib import sorting, wikicount
+
 
 def p98_todaysmovers():
-	DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+	DAY,MONTH,YEAR,HOUR,expiretime= wikicount.fnReturnTimes()
 	YDAY=DAY
 	YMONTH=MONTH
 	if DAY==1:
@@ -14,13 +15,13 @@ def p98_todaysmovers():
 		YDAY=30
 	else:
 		YDAY-=1
-	STARTTIME=wikicount.fnStartTimer()
+	STARTTIME= wikicount.fnStartTimer()
 	STRINGDATE=str(YEAR)+"_"+"%02d" % (MONTH,)+"_"+"%02d" % (DAY,)
 	YSTRINGDATE=str(YEAR)+"_"+"%02d" % (YMONTH,)+"_"+"%02d" % (YDAY,)
 	print STRINGDATE, YSTRINGDATE
 	conn=Connection()
 	db=conn.wc
-	LANGUAGES=wikicount.getLanguageList()
+	LANGUAGES= wikicount.getLanguageList()
 	for lang in LANGUAGES:
 		RECEVALS=0
 		RECEXCEPTS=0

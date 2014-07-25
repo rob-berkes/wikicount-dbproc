@@ -1,16 +1,16 @@
 #/usr/bin/python
-from pymongo import Connection
-from datetime import date
-from functions import wikicount
 import syslog
-import time 
 
-STARTTIME=wikicount.fnStartTimer()
+from pymongo import Connection
+from lib import wikicount
+
+
+STARTTIME= wikicount.fnStartTimer()
 syslog.syslog('tophits.py:  starting...')
-DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
-DAY,MONTH,HOUR=wikicount.fnFormatTimes(DAY,MONTH,HOUR)
-MONTHNAME=wikicount.fnGetMonthName()
-HOUR=wikicount.minusHour(int(HOUR))
+DAY,MONTH,YEAR,HOUR,expiretime= wikicount.fnReturnTimes()
+DAY,MONTH,HOUR= wikicount.fnFormatTimes(DAY,MONTH,HOUR)
+MONTHNAME= wikicount.fnGetMonthName()
+HOUR= wikicount.minusHour(int(HOUR))
 conn=Connection()
 db=conn.wc
 RECCOUNT=1
@@ -19,7 +19,7 @@ PLACEMAP="hitsplacemap"
 
 wikicount.fnSetStatusMsg('tophits',0)
 
-LANGLIST=wikicount.getLanguageList()
+LANGLIST= wikicount.getLanguageList()
 for lang in LANGLIST:
 	PLACEMAP=str(lang)+"_mapPlace"
 	HITSMAP=str(lang)+"_mapHits"
@@ -44,7 +44,7 @@ for lang in LANGLIST:
         		break
 IFILE.close()
 
-RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+RUNTIME= wikicount.fnEndTimerCalcRuntime(STARTTIME)
 syslog.syslog('tophits.py: runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('tophits',3)
 wikicount.fnLaunchNextJob('tophits')
