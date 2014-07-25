@@ -1,9 +1,10 @@
-from pymongo import Connection
-from functions import wikilib
 from multiprocessing import Process, Pipe
-from lib import sorting
 import math
 import time
+
+from pymongo import Connection
+from lib import sorting
+
 
 #ID='d0f26dab5386f3b1bfd8d4387bf1b15ad423de92'
 conn=Connection()

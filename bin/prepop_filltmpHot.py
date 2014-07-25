@@ -1,9 +1,9 @@
 from pymongo import Connection
-from functions import wikicount
-import urllib2
+from lib import wikicount
+
 
 def FillTmpHot(RESULTSET):
-    yy,ym,yd=wikicount.PreviousDay(YEAR,MONTH,DAY)
+    yy,ym,yd= wikicount.PreviousDay(YEAR,MONTH,DAY)
     YESTCOLL='tophits'+str(yy)+'_'+str(ym)+'_'+str(yd)
     YHits=0
     for item in RESULTSET:
@@ -18,9 +18,9 @@ def FillTmpHot(RESULTSET):
         return
 
 
-STARTTIME=wikicount.fnStartTimer()
+STARTTIME= wikicount.fnStartTimer()
 wikicount.toSyslog('filltmpHot.py : starting...')
-DAY,MONTH,YEAR,HOUR,expiretime=wikicount.fnReturnTimes()
+DAY,MONTH,YEAR,HOUR,expiretime= wikicount.fnReturnTimes()
 DAYKEY=str(YEAR)+'_'+str(MONTH)+'_'+str(DAY)
 COLLECTIONNAME=str('tophits')+DAYKEY
 conn=Connection()
@@ -36,7 +36,7 @@ RESULT=db[COLLECTIONNAME].find()
 #RESULT3=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*2)
 #RESULT4=db[COLLECTIONNAME].find().limit(NUMRECS).skip(NUMRECS*3)
 FillTmpHot(RESULT)
-RUNTIME=wikicount.fnEndTimerCalcRuntime(STARTTIME)
+RUNTIME= wikicount.fnEndTimerCalcRuntime(STARTTIME)
 wikicount.toSyslog('prepop_filltmpHot.py:  runtime is '+str(RUNTIME)+' seconds.')
 wikicount.fnSetStatusMsg('fillTmpHot',3)
 wikicount.fnLaunchNextJob('fillTmpHot')

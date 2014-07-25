@@ -1,11 +1,11 @@
 #/usr/bin/python
-from pymongo import Connection
 from datetime import date
-import time 
+import time
 import string
 import urllib2
-import ads
-import text 
+
+from pymongo import Connection
+
 
 def HTMLHeader(FILE):
 	FILE.write("<!DOCTYPE html>")

@@ -1,8 +1,10 @@
-from pymongo import Connection
 import httplib
 import hashlib
-from functions import wikicount
-LANGUAGES=wikicount.getLanguageList()
+
+from pymongo import Connection
+from lib import wikicount
+
+LANGUAGES= wikicount.getLanguageList()
 conn=Connection()
 db=conn.wc
 for lang in LANGUAGES:

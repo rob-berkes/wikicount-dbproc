@@ -1,6 +1,8 @@
 import os
-from functions import wikicount
-LANG=wikicount.getLanguageList()
+
+from lib import wikicount
+
+LANG= wikicount.getLanguageList()
 FOLDERS=['action','category','image','ondeck','staging']
 for lang in LANG:
 	for folder in FOLDERS:
