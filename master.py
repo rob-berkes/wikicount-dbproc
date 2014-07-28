@@ -135,8 +135,11 @@ def p1_split():
             pass
 
 
+    try:
+    	os.remove(FILEBASE)
+    except OSError:
+	pass
 
-    os.remove(FILEBASE)
     b=time()
     c=b-a
     d=round(c,3)
@@ -247,9 +250,9 @@ def p2x_move_to_action():
             OFILE=open(OFILENAME,'w')
             for line in IFILE:
 			OFILE.write(line)
-			IFILE.close()
-			OFILE.close() 
-			os.remove(FILENAME)
+	    IFILE.close()
+	    OFILE.close() 
+	    os.remove(FILENAME)
 
 def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
     UPDATED=0
@@ -289,7 +292,7 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
             except UnicodeDecodeError:
               EXCEPTS+=1
               continue
-            IFILE2.close()
+        IFILE2.close()
         os.remove(FILENAME)
     except (NameError,IOError) as e:
      	EXCEPTS+=1
