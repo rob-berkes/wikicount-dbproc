@@ -1,9 +1,9 @@
+#!/usr/bin/python
+#coding: utf-8
 """The master.py file downloads the hourly log file from wikipedia,
     parses it, and adds the hourly hit data to a MongoDB server instance.
 
     """
-#!/usr/bin/python
-#coding: utf-8
 import urllib2
 import os
 import gzip
@@ -14,7 +14,7 @@ import string
 from multiprocessing import Process
 import hashlib
 from datetime import date
-
+import time
 from pymongo import Connection
 from lib import sorting, wikicount
 
@@ -98,7 +98,7 @@ def p0_dl():
 
 
 def p1_split():
-
+    a=time()
     IFILE=gzip.open(FILEBASE,"r")
 
     NUMBERLOGFILES=4
@@ -106,7 +106,7 @@ def p1_split():
     RECCOUNT=0
 
     for line in IFILE:
-            record=line.strip().split()
+        record=line.strip().split()
         record[0]=record[0].strip('.')
         RECCOUNT+=1
         try:
@@ -115,17 +115,17 @@ def p1_split():
                 fFILE=open(fName,"a")
                 fFILE.write(str(line))
                 fFILE.close()
-                elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 1:
+            elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 1:
                 fName='/tmp/'+str(record[0])+'_staging/q2_pagecounts.'+str(HOUR)
                 fFILE=open(fName,"a")
                 fFILE.write(str(line))
                 fFILE.close()
-                elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 2:
+            elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 2:
                 fName='/tmp/'+str(record[0])+'_staging/q3_pagecounts.'+str(HOUR)
                 fFILE=open(fName,"a")
                 fFILE.write(str(line))
                 fFILE.close()
-                elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 3:
+            elif record[0] in LANGLIST and int(record[2])>COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 3:
                 fName='/tmp/'+str(record[0])+'_staging/q4_pagecounts.'+str(HOUR)
                 fFILE=open(fName,"a")
                 fFILE.write(str(line))
@@ -163,7 +163,7 @@ def p2_filter():
                 os.makedirs(DIRNAME)
             print FILENAME
             IFILE=open(FILENAME,"r")
-                OUTFILENAME=string.replace(FILENAME,'staging','ondeck')
+            OUTFILENAME=string.replace(FILENAME,'staging','ondeck')
             IMGFILENAME=string.replace(FILENAME,'staging','image')
             CATFILENAME=string.replace(FILENAME,'staging','category')
             try:
@@ -246,7 +246,7 @@ def p2x_move_to_action():
             OFILENAME=string.replace(FILENAME,'ondeck','action')
             OFILE=open(OFILENAME,'w')
             for line in IFILE:
-				OFILE.write(line)
+			OFILE.write(line)
 			IFILE.close()
 			OFILE.close() 
 			os.remove(FILENAME)
@@ -262,14 +262,14 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
     db=connection.wc
     DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
     for FILENAME in glob.glob(FILEPROC):
-    print FILENAME
+    	print FILENAME
     try:
         IFILE2=open(FILENAME,'r')
         for line in IFILE2:
             try:
-                  line=line.strip().split()
-                  HASH=hashlib.sha1(line[1]).hexdigest()
-                  POSTFIND={'_id': HASH}
+              line=line.strip().split()
+              HASH=hashlib.sha1(line[1]).hexdigest()
+              POSTFIND={'_id': HASH}
               TITLESTRING=line[1].decode('utf-8')
 
                 #hitshourly never deleted
@@ -285,16 +285,15 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
                     }
                     ,upsert=True)
 
-                  UPDATED+=1
+              UPDATED+=1
             except UnicodeDecodeError:
               EXCEPTS+=1
               continue
             IFILE2.close()
         os.remove(FILENAME)
     except (NameError,IOError) as e:
-        EXCEPTS+=1
-        continue
-     syslog.syslog("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
+     	EXCEPTS+=1
+     	syslog.syslog("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
 
 def p3_add():
     conn=Connection()
@@ -302,7 +301,7 @@ def p3_add():
     InvertHour=returnInvertedHour(HOUR)
     for lang in LANGLIST:
         if WEEKDAY=='5':
-                STARTTIME= wikicount.fnStartTimer()
+            STARTTIME= wikicount.fnStartTimer()
             HOURDAYDB=str(lang)+'_hitshourlydaily'
             db[HOURDAYDB].update({str(InvertHour):{'$exists':True}},{'$set':{str(InvertHour):0}},False,{'multi':True})
             RUNTIME= wikicount.fnEndTimerCalcRuntime(STARTTIME)
@@ -344,7 +343,7 @@ def UpdateImages(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
      RECORDS=0
      DAYKEY=str(YEAR)+"_"+str(MONTH)+"_"+str(DAY)
      for FILENAME in glob.glob(FILEPROC):	
-    try:
+     	try:
 		IFILE2=open(FILENAME,'r')
 		for line in IFILE2:
 			try:
@@ -407,7 +406,7 @@ def p50_removeSpam():
             db[CNAMEHHD].remove({'_id':str(id)})
             db[CNAMEHD].remove({'_id':str(id)})
             COUNT+=1
-    syslog.syslog("[master.py][p50] "+str(COUNT)+" records removed.")
+    	syslog.syslog("[master.py][p50] "+str(COUNT)+" records removed.")
 def p70export():
     STARTTIME= wikicount.fnStartTimer()
     syslog.syslog('p70_export.py: starting...')
@@ -470,11 +469,11 @@ def p90_addTophits():
                     RESULT.append((line[0],line[1]))
                     RECCOUNT+=1
                     try:
-                    db[PLACEMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:RECCOUNT}},upsert=True)
-                    db[HITSMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:int(line[0])}},upsert=True)
-                except TypeError:
+                    	db[PLACEMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:RECCOUNT}},upsert=True)
+                    	db[HITSMAP].update({'_id':str(line[1])},{"$set":{DAYKEY:int(line[0])}},upsert=True)
+                    except TypeError:
                         pass
-            else:
+            	else:
                     break
     IFILE.close()
 

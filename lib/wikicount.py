@@ -13,8 +13,8 @@ import HTMLParser
 _htmlparser=HTMLParser.HTMLParser()
 unescape=_htmlparser.unescape 
 
-#conn=Connection()
-#db=conn.wc
+conn=Connection()
+db=conn.wc
 
 
 class logRecord():

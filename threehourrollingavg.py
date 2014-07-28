@@ -54,9 +54,9 @@ for lang in LANGUAGES:
 
                     rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
                     hourlies.append(rec)
-            except TypeError:
+        except TypeError:
                     TypeErrors+=1
-            except KeyError:
+        except KeyError:
                     KeyErrors+=1
     z=1
     db[outTABLE].remove()
