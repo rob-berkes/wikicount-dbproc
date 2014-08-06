@@ -93,7 +93,7 @@ def p0_dl():
         d=round(c,3)
         SYSFILE.write("[master.py][p0_dl] Successful download of "+str(URL)+" in "+str(d)+" seconds.")
     else:
-        SYSFILE.writei("[master.py][p0_dl] 404 not found error")
+        SYSFILE.write("[master.py][p0_dl] 404 not found error")
     SYSFILE.close()
 
 
@@ -101,7 +101,7 @@ def p0_dl():
 def p1_split():
     a=time()
     IFILE=gzip.open(FILEBASE,"r")
-    SYSFILE=open(SYSOUT,'w')
+    SYSFILE=open(SYSOUT,'a')
 
     NUMBERLOGFILES=4
     COUNTTHRESHOLD=2
@@ -246,7 +246,9 @@ def p2_filter():
         b=time()
         c=b-a
         d=round(c,3)
-        syslog.syslog("[master.py][p2_filter] Lang: "+str(lang)+" runtime: "+str(d)+" seconds. Recs written: "+str(RECS)+" Record errors: "+str(RECERRS))
+        SYSFILE=open(SYSOUT,'a')
+        SYSFILE.write("[master.py][p2_filter] Lang: "+str(lang)+" runtime: "+str(d)+" seconds. Recs written: "+str(RECS)+" Record errors: "+str(RECERRS))
+        SYSFILE.close()
 
 def p2x_move_to_action():
     for lang in LANGLIST:
@@ -262,6 +264,7 @@ def p2x_move_to_action():
 	    os.remove(FILENAME)
 
 def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
+    SYSFILE=open(SYSOUT,'a')
     UPDATED=0
     EXCEPTS=0
     HOURLYDB=str(LANG)+'_hitshourly'
@@ -303,7 +306,9 @@ def UpdateHits(FILEPROC,HOUR,DAY,MONTH,YEAR,LANG):
         os.remove(FILENAME)
     except (NameError,IOError) as e:
      	EXCEPTS+=1
-     	syslog.syslog("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
+     	SYSFILE.write("[master.py][UpdateHits] (thread) complete. Lang: "+str(LANG)+" Updated: "+str(UPDATED)+" Exceptions: "+str(EXCEPTS))
+	SYSFILE.close()
+
 
 def p3_add():
     conn=Connection()
@@ -401,6 +406,7 @@ def p3_addImages():
 	    s.join()
 	    RUNTIME= wikicount.fnEndTimerCalcRuntime(STARTTIME)
 def p50_removeSpam():
+        SYSFILE=open(SYSOUT,'a')
 	lang='en'
 	LANGUAGES= wikicount.getLanguageList()
 	conn=Connection()
@@ -416,7 +422,9 @@ def p50_removeSpam():
             db[CNAMEHHD].remove({'_id':str(id)})
             db[CNAMEHD].remove({'_id':str(id)})
             COUNT+=1
-    	syslog.syslog("[master.py][p50] "+str(COUNT)+" records removed.")
+    	SYSFILE.write("[master.py][p50] "+str(COUNT)+" records removed.")
+	SYSFILE.close()
+
 def p70export():
     STARTTIME= wikicount.fnStartTimer()
     syslog.syslog('p70_export.py: starting...')
