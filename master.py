@@ -28,7 +28,7 @@ LANGLIST = wikicount.getLanguageList()
 LANGUAGES = wikicount.getLanguageList()
 vTODAY = date.today()
 vDOW = vTODAY.weekday()
-
+SYSOUT='/tmp/sysout'
 TOTAL_RECORDS_UPDATED = 0
 
 WEEKDAY = time.strftime("%w")
@@ -54,7 +54,7 @@ def p0_dl():
     URLSUFFIX = "-"+str(HOUR)+"*.gz"
     URL += URLDATE
     URL += URLSUFFIX
-
+    SYSFILE=open(SYSOUT,'w')
     #Now with URL, download file
     a =time()
     missing = True
@@ -91,19 +91,23 @@ def p0_dl():
         b=time()
         c=b-a
         d=round(c,3)
-        syslog.syslog("[master.py][p0_dl] Successful download of "+str(URL)+" in "+str(d)+" seconds.")
+        SYSFILE.write("[master.py][p0_dl] Successful download of "+str(URL)+" in "+str(d)+" seconds.")
     else:
-        syslog.syslog("[master.py][p0_dl] 404 not found error")
+        SYSFILE.writei("[master.py][p0_dl] 404 not found error")
+    SYSFILE.close()
 
 
 
 def p1_split():
     a=time()
     IFILE=gzip.open(FILEBASE,"r")
+    SYSFILE=open(SYSOUT,'w')
 
     NUMBERLOGFILES=4
     COUNTTHRESHOLD=2
     RECCOUNT=0
+    SUCCESS=0
+    EXCEPTS=0
 
     for line in IFILE:
         record=line.strip().split()
@@ -130,8 +134,9 @@ def p1_split():
                 fFILE=open(fName,"a")
                 fFILE.write(str(line))
                 fFILE.close()
-
+	    SUCCESS+=1
         except ValueError:
+            EXCEPTS+=1
             pass
 
 
@@ -143,7 +148,9 @@ def p1_split():
     b=time()
     c=b-a
     d=round(c,3)
-    syslog.syslog("[master.py][p1_split] done in "+str(d)+" seconds. Successes: "+str(SUCCESS)+" Exceptions: "+str(EXCEPTS))
+    SYSFILE.write("[master.py][p1_split] done in "+str(d)+" seconds. Successes: "+str(SUCCESS)+" Exceptions: "+str(EXCEPTS))
+    SYSFILE.close()
+
 def isValidUrl(lang,artURL):
     BADLIST= wikicount.getBadList(lang)
     if artURL in BADLIST:
