@@ -30,11 +30,13 @@ for lang in LANGUAGES:
     hhdTABLE=str(lang)+"_hitshourlydaily"
     hdTABLE=str(lang)+"_hitsdaily"
     outTABLE=str(lang)+"_threehour"
+    lastTABLE=str(lang)+"_lastrollavg"
     RESULTS=db[hhdTABLE].find({str(HOUR):{'$exists':True}}).sort(str(HOUR),-1).limit(200)
     syslog.syslog(str(lang)+" : "+str(RESULTS.count()))
     for item in RESULTS:
         try:
                     QUERYtitle=db[hdTABLE].find_one({'_id':item['_id']})
+                    LASTQUERY=db[lastTABLE].find_one({'_id':item['_id']})
                     atitle=QUERYtitle['title']
                     title,utitle= wikicount.FormatName(atitle)
                     try:
@@ -51,9 +53,10 @@ for lang in LANGUAGES:
                             b3=0
 
                     rollingavg=mean(array([b1,b2,b3]))
-
-                    rec={'title':atitle,'rollavg':int(rollingavg),'id':item['_id']}
+		    lastrollavg=rollingavg-LASTQUERY['rollavg']		
+                    rec={'title':atitle,'rollavg':int(lastrollavg),'id':item['_id']}
                     hourlies.append(rec)
+		    db[lastTABLE].insert(rec)
         except TypeError:
                     TypeErrors+=1
         except KeyError:
@@ -66,6 +69,4 @@ for lang in LANGUAGES:
                     db[outTABLE].insert(rec)
                     z+=1
 
-    syslog.syslog("[3hrrollavg] - Lang: "+str(lang)+" TypeErrors: "+str(TypeErrors)+" KeyErrors: "+str(KeyErrors))
 
-#wikicount.fnLaunchNextJob('threehrrollingavg')
