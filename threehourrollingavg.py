@@ -70,5 +70,3 @@ for w in sorted(hourlies, key=itemgetter('rollavg'), reverse=True):
               'rollavg':w['rollavg'], 'id':w['id']}
         db[outTABLE].insert(rec)
         z += 1
-
-
