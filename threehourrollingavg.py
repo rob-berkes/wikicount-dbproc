@@ -35,6 +35,7 @@ for lang in LANGUAGES:
     syslog.syslog(str(lang)+" : "+str(RESULTS.count()))
     for item in RESULTS:
         try:
+<<<<<<< HEAD
             QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
             LASTQUERY = db[lastTABLE].find_one({'_id':item['_id']})
             atitle = QUERYtitle['title']
@@ -70,5 +71,3 @@ for w in sorted(hourlies, key=itemgetter('rollavg'), reverse=True):
               'rollavg':w['rollavg'], 'id':w['id']}
         db[outTABLE].insert(rec)
         z += 1
-
-
