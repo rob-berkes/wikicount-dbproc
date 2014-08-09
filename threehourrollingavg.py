@@ -36,7 +36,7 @@ for lang in LANGUAGES:
     for item in RESULTS:
         try:
             QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
-            LASTQUERY = db[lastTABLE].find_one({'_id':item['_id']})
+            LASTQUERY = db[lastTABLE].find_one({'_id':item['_id'],'hour':HOUR})
             atitle = QUERYtitle['title']
             title, utitle = wikicount.FormatName(atitle)
             try:
@@ -53,20 +53,21 @@ for lang in LANGUAGES:
                 b3 = 0
  
             rollingavg = mean(array([b1, b2, b3]))
-            lastrollavg = rollingavg-LASTQUERY['rollavg']		
-            rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
-            ltable = db[lastTABLE]
-            ltable.insert(rec)
+            rec = {'title':atitle, 'rollavg':int(rollingavg), 'id':item['_id']}
             hourlies.append(rec)
+            try:
+		LASTAVG = LASTQUERY['rollavg']
+	    except:
+                LASTAVG = 0
+            lastrollavg = rollingavg-LASTAVG		
+            nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
+            db[lastTABLE].insert(nrec)
         except TypeError:
-            TypeErrors += 1
-        except KeyError:
-            KeyErrors += 1
+	    print 'uhoh!'
     z = 1
     db[outTABLE].remove()
-for w in sorted(hourlies, key=itemgetter('rollavg'), reverse=True):
-    if z < 251:
-        rec = {'place':z, 'title':w['title'], 
-              'rollavg':w['rollavg'], 'id':w['id']}
-        db[outTABLE].insert(rec)
-        z += 1
+    for w in sorted(hourlies, key=itemgetter('rollavg'), reverse=True):
+        if z < 101:
+            rec = {'place':z, 'title':w['title'],'rollavg':w['rollavg'], 'id':w['id']}
+            db[outTABLE].insert(rec)
+            z += 1
