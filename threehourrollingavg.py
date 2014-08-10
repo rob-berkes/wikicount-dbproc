@@ -2,6 +2,7 @@
 '''
  This module uses the difference between three hour rolling averages taken and stored each hour in lang_lastrollavg
 '''
+import sys
 from operator import itemgetter
 import syslog
 from numpy import mean, array
@@ -61,11 +62,15 @@ for lang in LANGUAGES:
             rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
             hourlies.append(rec)
             nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
-            db[lastTABLE].update(nrec,upsert=True)
-        except TypeError:
+            db[lastTABLE].update({'id':item['_id'],'hour':HOUR},nrec,upsert=True)
+        except Exception as e:
+	    EXC_TYPE, EXC_OBJ, EXC_TB = sys.exc_info()
 	    try:
               OF=open('/tmp/zTypeError.log','a')
-              OF.write('Lang: '+str(lang)+' Hour: '+str(HOUR)+' , Title: '+str(atitle)+' rollavg: '+str(rollingavg)+'\n')
+              OF.write('Line: '+str(EXC_TB.tb_lineno)+' Type: '+str(EXC_TYPE)+
+                       ' Lang: '+str(lang)+' Hour: '+str(HOUR)+' , Title: '+
+                       str(atitle)+' rollavg: '+str(lastrollavg)+
+                       ' id: '+str(item['_id'])  +'\n')
 	      OF.close()
             except:
               pass
