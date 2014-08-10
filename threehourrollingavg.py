@@ -53,15 +53,15 @@ for lang in LANGUAGES:
                 b3 = 0
  
             rollingavg = mean(array([b1, b2, b3]))
-            rec = {'title':atitle, 'rollavg':int(rollingavg), 'id':item['_id']}
-            hourlies.append(rec)
             try:
 		LASTAVG = LASTQUERY['rollavg']
 	    except:
                 LASTAVG = 0
             lastrollavg = rollingavg-LASTAVG		
+            rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
+            hourlies.append(rec)
             nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
-            db[lastTABLE].insert(nrec)
+            db[lastTABLE].update(nrec,upsert=True)
         except TypeError:
 	    print 'uhoh!'
     z = 1
