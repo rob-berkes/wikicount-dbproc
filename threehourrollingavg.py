@@ -66,7 +66,7 @@ for lang in LANGUAGES:
         except Exception as e:
 	    EXC_TYPE, EXC_OBJ, EXC_TB = sys.exc_info()
 	    try:
-              OF=open('/tmp/zTypeError.log','a')
+              OF=open('/tmp/zException.log','a')
               OF.write('Line: '+str(EXC_TB.tb_lineno)+' Type: '+str(EXC_TYPE)+
                        ' Lang: '+str(lang)+' Hour: '+str(HOUR)+' , Title: '+
                        str(atitle)+' rollavg: '+str(lastrollavg)+
