@@ -21,8 +21,8 @@ HOUR2 = wikicount.fnStrFmtDate(HOUR2)
 HOUR3 = wikicount.fnStrFmtDate(HOUR3)
 SPAMLIST = []
 wikicount.fnSetStatusMsg('threehrrollingavg', 0)
-SPAMLIST = db['spam'].find()
-print SPAMLIST
+SPAMCURSOR = db['spam'].find()
+SPAMLIST = SPAMCURSOR.distinct('_id')
 hourlies = []
 TypeErrors = 0
 KeyErrors = 0
