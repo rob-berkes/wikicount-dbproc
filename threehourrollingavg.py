@@ -42,7 +42,7 @@ for lang in LANGUAGES:
         if item['_id'] not in SPAMLIST:
             try:
                 QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
-                LASTQUERY = db[lastTABLE].find_one({'_id':item['_id'],'hour':HOUR})
+                LASTQUERY = db[lastTABLE].find_one({'id':item['_id'],'hour':HOUR})
                 atitle = QUERYtitle['title']
                 title, utitle = wikicount.FormatName(atitle)
                 try:
@@ -65,7 +65,7 @@ for lang in LANGUAGES:
 		  LASTAVG = LASTQUERY['rollavg']
 	        except:
                   LASTAVG = 0
-                lastrollavg = rollingavg-LASTAVG		
+                lastrollavg = rollingavg-int(LASTAVG)		
                 rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
                 hourlies.append(rec)
                 nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
