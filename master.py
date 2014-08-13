@@ -6,7 +6,6 @@
 import urllib2
 import os
 import gzip
-import syslog
 import glob
 import re
 import string
@@ -318,19 +317,14 @@ def p3_add():
     InvertHour = returnInvertedHour(HOUR)
     for lang in LANGLIST:
         if WEEKDAY == '5':
-            STARTTIME = wikicount.fnStartTimer()
             HOURDAYDB = str(lang) + '_hitshourlydaily'
             db[HOURDAYDB].update({str(InvertHour): {'$exists': True}}, {'$set': {str(InvertHour): 0}}, False,
                                  {'multi': True})
-            RUNTIME = wikicount.fnEndTimerCalcRuntime(STARTTIME)
-            syslog.syslog('[master.py][p3_add] Old Hour ' + str(InvertHour) + ' records reset to zero in ' + str(
-                RUNTIME) + ' seconds. ')
         ruFILE1 = "/tmp/" + str(lang) + "_action/q1_pagecounts.*"
         ruFILE2 = "/tmp/" + str(lang) + "_action/q2_pagecounts.*"
         ruFILE3 = "/tmp/" + str(lang) + "_action/q3_pagecounts.*"
         ruFILE4 = "/tmp/" + str(lang) + "_action/q4_pagecounts.*"
 
-        STARTTIME = wikicount.fnStartTimer()
         t = Process(target=UpdateHits, args=(ruFILE1, HOUR, DAY, MONTH, YEAR, lang))
         u = Process(target=UpdateHits, args=(ruFILE2, HOUR, DAY, MONTH, YEAR, lang))
         v = Process(target=UpdateHits, args=(ruFILE3, HOUR, DAY, MONTH, YEAR, lang))
@@ -350,10 +344,8 @@ def p3_add():
         u.join()
         v.join()
         w.join()
-        RUNTIME = wikicount.fnEndTimerCalcRuntime(STARTTIME)
 
 
-syslog.syslog("[master.py][main] Started")
 cProfile.run('p0_dl()',SYSOUT)
 cProfile.run('p1_split()',SYSOUT)
 cProfile.run('p2_filter()',SYSOUT)
@@ -364,7 +356,6 @@ p = pstats.Stats(SYSOUT,stream=EMWFP)
 p.sort_stats('cumulative').print_stats(25)
 p.sort_stats('time').print_stats(20)
 EMWFP.close()
-syslog.syslog("[master.py][main] Master.py - All Functions complete!")
 
 EMFP = open(EMAILOUT,'rb')
 msg = MIMEText(EMFP.read())
