@@ -16,11 +16,14 @@ from datetime import date
 from pymongo import Connection
 from lib import wikicount
 import cProfile
+import pstats
 import smtplib
 from email.mime.text import MIMEText
+import time
 
-
+SYSOUT = "/tmp/zSYSOUT"
 EMAILOUT = "/tmp/zEMAIL"
+EMWFP = open(EMAILOUT,'w')
 FILEBASE = "/tmp/staging/pagecounts.tmp"
 DAY, MONTH, YEAR, HOUR, expiretime = wikicount.fnReturnTimes()
 HOUR = wikicount.minusHour(int(HOUR))
@@ -351,11 +354,16 @@ def p3_add():
 
 
 syslog.syslog("[master.py][main] Started")
-cProfile.run(p0_dl(),EMAILOUT)
-cProfile.run(p1_split(),EMAILOUT)
-p2_filter()
-p2x_move_to_action()
-p3_add()
+cProfile.run('p0_dl()',SYSOUT)
+cProfile.run('p1_split()',SYSOUT)
+cProfile.run('p2_filter()',SYSOUT)
+cProfile.run('p2x_move_to_action()',SYSOUT)
+cProfile.run('p3_add()',SYSOUT)
+
+p = pstats.Stats(SYSOUT,stream=EMWFP)
+p.sort_stats('cumulative').print_stats(25)
+p.sort_stats('time').print_stats(20)
+EMWFP.close()
 syslog.syslog("[master.py][main] Master.py - All Functions complete!")
 
 EMFP = open(EMAILOUT,'rb')
