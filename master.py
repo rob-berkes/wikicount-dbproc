@@ -353,8 +353,9 @@ cProfile.run('p2x_move_to_action()',SYSOUT)
 cProfile.run('p3_add()',SYSOUT)
 
 p = pstats.Stats(SYSOUT,stream=EMWFP)
-p.sort_stats('cumulative').print_stats(25)
+p.sort_stats('file').print_stats(25)
 p.sort_stats('time').print_stats(20)
+p.sort_stats('name').print_stats()
 EMWFP.close()
 
 EMFP = open(EMAILOUT,'rb')
