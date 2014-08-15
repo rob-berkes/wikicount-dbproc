@@ -74,7 +74,7 @@ def p0_dl():
         URL += URLSUFFIX
         MINUTESEARCH += 1
         try:
-            print URL
+            #print URL
             COUNTFILE = urllib2.urlopen(URL)
             if COUNTFILE.code == 200:
                 fetchURL = URL
