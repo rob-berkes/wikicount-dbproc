@@ -37,7 +37,7 @@ for lang in LANGUAGES:
     for item in RESULTS:
         try:
             QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
-            LASTQUERY = db[lastTABLE].find_one({'_id':item['_id'],'hour':HOUR})
+            LASTQUERY = db[lastTABLE].find_one({'id':item['_id'],'hour':HOUR})
             atitle = QUERYtitle['title']
             title, utitle = wikicount.FormatName(atitle)
             try:
