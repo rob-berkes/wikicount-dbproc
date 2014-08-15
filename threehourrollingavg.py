@@ -5,10 +5,11 @@
 import sys
 from operator import itemgetter
 import syslog
-from numpy import mean, array
+#from numpy import mean, array
 from pymongo import Connection
 from lib import wikicount
 
+EXCEPTIONFILE = '/tmp/zExecption.log'
 STARTTIME = wikicount.fnStartTimer()
 conn = Connection()
 db = conn.wc
@@ -18,7 +19,10 @@ HOUR, HOUR2, HOUR3 = wikicount.fnReturnLastThreeHours(HOUR)
 HOUR = wikicount.fnStrFmtDate(HOUR)
 HOUR2 = wikicount.fnStrFmtDate(HOUR2)
 HOUR3 = wikicount.fnStrFmtDate(HOUR3)
+SPAMLIST = []
 wikicount.fnSetStatusMsg('threehrrollingavg', 0)
+SPAMCURSOR = db['spam'].find()
+SPAMLIST = SPAMCURSOR.distinct('_id')
 hourlies = []
 TypeErrors = 0
 KeyErrors = 0
@@ -35,45 +39,52 @@ for lang in LANGUAGES:
     RESULTS = db[hhdTABLE].find({str(HOUR):{'$exists':True}}).sort(str(HOUR), -1).limit(2000)
     syslog.syslog(str(lang)+" : "+str(RESULTS.count()))
     for item in RESULTS:
-        try:
-            QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
-            LASTQUERY = db[lastTABLE].find_one({'id':item['_id'],'hour':HOUR})
-            atitle = QUERYtitle['title']
-            title, utitle = wikicount.FormatName(atitle)
+        if item['_id'] not in SPAMLIST:
             try:
-                b1 = item[HOUR]
-            except KeyError:
-                b1 = 0
-            try:
-                b2 = item[HOUR2]
-            except KeyError:
-                b2 = 0
-            try:
-                b3 = item[HOUR3]
-            except KeyError:
-                b3 = 0
+                QUERYtitle = db[hdTABLE].find_one({'_id':item['_id']})
+                LASTQUERY = db[lastTABLE].find_one({'id':item['_id'],'hour':HOUR})
+                atitle = QUERYtitle['title']
+                title, utitle = wikicount.FormatName(atitle)
+                try:
+                  b1 = item[HOUR]
+                except KeyError:
+                  b1 = 0
+                try:
+                  b2 = item[HOUR2]
+                except KeyError:
+                  b2 = 0
+                try:
+                  b3 = item[HOUR3]
+                except KeyError:
+                  b3 = 0
  
-            rollingavg = mean(array([b1, b2, b3]))
-            try:
-		LASTAVG = LASTQUERY['rollavg']
-	    except:
-                LASTAVG = 0
-            lastrollavg = rollingavg-LASTAVG		
-            rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
-            hourlies.append(rec)
-            nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
-            db[lastTABLE].update({'id':item['_id'],'hour':HOUR},nrec,upsert=True)
-        except Exception as e:
-	    EXC_TYPE, EXC_OBJ, EXC_TB = sys.exc_info()
-	    try:
-              OF=open('/tmp/zException.log','a')
-              OF.write('Line: '+str(EXC_TB.tb_lineno)+' Type: '+str(EXC_TYPE)+
-                       ' Lang: '+str(lang)+' Hour: '+str(HOUR)+' , Title: '+
-                       str(atitle)+' rollavg: '+str(lastrollavg)+
-                       ' id: '+str(item['_id'])  +'\n')
-	      OF.close()
-            except:
-              pass
+                #rollingavg = mean(array([b1, b2, b3]))
+                ''' to better support pypy '''
+                rollingavg = int((b1+b2+b3) / 3)
+                try:
+		  LASTAVG = LASTQUERY['rollavg']
+	        except:
+                  LASTAVG = 0
+                lastrollavg = rollingavg-int(LASTAVG)		
+                rec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id']}
+                hourlies.append(rec)
+                nrec = {'title':atitle, 'rollavg':int(lastrollavg), 'id':item['_id'], 'hour':HOUR}
+                db[lastTABLE].update({'id':item['_id'],'hour':HOUR},nrec,upsert=True)
+            except Exception as e:
+	        EXC_TYPE, EXC_OBJ, EXC_TB = sys.exc_info()
+	        try:
+                  OF=open(EXCEPTIONFILE,'a')
+                  OF.write('Line: '+str(EXC_TB.tb_lineno)+' Type: '+str(EXC_TYPE)+
+                           ' Lang: '+str(lang)+' Hour: '+str(HOUR)+' , Title: '+
+                           str(atitle)+' rollavg: '+str(lastrollavg)+
+                           ' id: '+str(item['_id'])  +'\n')
+	          OF.close()
+                except:
+                  pass
+        else:
+            OF = open(EXCEPTIONFILE,'a')
+    	    OF.write('Spam found! Lang: ' + str(lang) + ' id: ' +str(item['_id'])+'\n')
+            OF.close()
     z = 1
     db[outTABLE].remove()
     for w in sorted(hourlies, key=itemgetter('rollavg'), reverse=True):
