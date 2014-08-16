@@ -16,6 +16,7 @@ import pdb
 
 LLIST={ 'ru':'Russian Wikipedia',
         'en':'English Wikipedia',
+        'hy':'Armenian Wikipedia',
         'ja':'Japanese Wikipedia',
         'zh':'Chinese Wikipedia',
         'es':'Spanish Wikipedia',
