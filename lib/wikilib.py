@@ -167,18 +167,24 @@ def fnGetDate():
         YEAR=TODAY.year
         return DAY,MONTH,YEAR
 
-        
-def fnGetHour():
-        return time.strftime('%H')
 
-def fnGetHourString(hour):
+fnGetHour = lambda : time.strftime('%H')
+
+fnGetHourString = lambda hour : '%02d' %(hour,)
+
+def fn2GetHourString(hour):
         HOUR='%02d' % (hour,)
         return HOUR
-def fnGetMonthName():
+
+fnGetMonthName = lambda : datetime.datetime.now().strftime("%B")
+
+def fn2GetMonthName():
         MONTHNAME=datetime.datetime.now().strftime("%B")
         return MONTHNAME
 
-def fnLatestnews():
+fnLatestnews = lambda ARTICLELIMIT = 5 : db.news.find().sort('date',-1).limit(ARTICLELIMIT)
+
+def fn2Latestnews():
         ARTICLELIMIT=5
         latest_news_list = db.news.find().sort('date',-1).limit(ARTICLELIMIT)
         return latest_news_list
