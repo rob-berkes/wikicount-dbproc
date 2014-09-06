@@ -5,7 +5,6 @@
 import sys
 from operator import itemgetter
 import syslog
-#from numpy import mean, array
 from pymongo import Connection
 from lib import wikicount
 
@@ -27,7 +26,7 @@ hourlies = []
 TypeErrors = 0
 KeyErrors = 0
 z = 1
-LANGUAGES = wikicount.getLanguageList()
+LANGUAGES = wikicount.LList
 for lang in LANGUAGES:
     hourlies = []
     KeyErrors = 0

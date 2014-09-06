@@ -28,8 +28,7 @@ DAY, MONTH, YEAR, HOUR, expiretime = wikicount.fnReturnTimes()
 HOUR = wikicount.minusHour(int(HOUR))
 #HOUR = wikicount.minusHour(int(HOUR))
 DAY, MONTH, HOUR = wikicount.fnFormatTimes(DAY, MONTH, HOUR)
-LANGLIST = wikicount.getLanguageList()
-LANGUAGES = wikicount.getLanguageList()
+LANGLIST = wikicount.LList
 vTODAY = date.today()
 vDOW = vTODAY.weekday()
 SYSOUT = '/tmp/sysout'
@@ -107,40 +106,20 @@ def p1_split():
     SYSFILE = open(SYSOUT, 'a')
 
     NUMBERLOGFILES = 4
-    COUNTTHRESHOLD = 2
     RECCOUNT = 0
     SUCCESS = 0
     EXCEPTS = 0
-
     for line in IFILE:
         record = line.strip().split()
         record[0] = record[0].strip('.')
         RECCOUNT += 1
-        try:
-            if record[0] in LANGLIST and int(record[2]) > COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 0:
-                fName = '/tmp/' + str(record[0]) + '_staging/q1_pagecounts.' + str(HOUR)
-                fFILE = open(fName, "a")
-                fFILE.write(str(line))
-                fFILE.close()
-            elif record[0] in LANGLIST and int(record[2]) > COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 1:
-                fName = '/tmp/' + str(record[0]) + '_staging/q2_pagecounts.' + str(HOUR)
-                fFILE = open(fName, "a")
-                fFILE.write(str(line))
-                fFILE.close()
-            elif record[0] in LANGLIST and int(record[2]) > COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 2:
-                fName = '/tmp/' + str(record[0]) + '_staging/q3_pagecounts.' + str(HOUR)
-                fFILE = open(fName, "a")
-                fFILE.write(str(line))
-                fFILE.close()
-            elif record[0] in LANGLIST and int(record[2]) > COUNTTHRESHOLD and RECCOUNT % NUMBERLOGFILES == 3:
-                fName = '/tmp/' + str(record[0]) + '_staging/q4_pagecounts.' + str(HOUR)
-                fFILE = open(fName, "a")
-                fFILE.write(str(line))
-                fFILE.close()
-            SUCCESS += 1
-        except ValueError:
-            EXCEPTS += 1
-            pass
+        RECMOD = RECCOUNT % NUMBERLOGFILES
+        RECMODFSTR = str(RECMOD+1)
+        fName = '/tmp/' + str(record[0]) + '_staging/q'+ RECMODFSTR + '_pagecounts.' + str(HOUR)
+        fFILE = open(fName, "a")
+        fFILE.write(str(line))
+        fFILE.close()
+
 
     try:
         os.remove(FILEBASE)
@@ -156,21 +135,12 @@ def p1_split():
     SYSFILE.close()
 
 
-def isValidUrl(lang, artURL):
-    BADLIST = wikicount.getBadList(lang)
-    if artURL in BADLIST:
-        return False
-    else:
-        return True
-
 
 def p2_filter():
     for lang in LANGLIST:
         a = time()
         RECS = 0
         RECERRS = 0
-        VALIDS = 0
-        INVALIDS = 0
         for FILENAME in glob.glob('/tmp/' + str(lang) + '_staging/q*'):
             DIRNAME = '/tmp/' + str(lang) + '_staging/'
             if not os.path.exists(DIRNAME):
@@ -208,13 +178,6 @@ def p2_filter():
                 continue
             for line in IFILE:
                 record = line.strip().split()
-                if lang == 'en':
-                    if isValidUrl(lang, record[1]):
-                        VALIDS += 1
-                        pass
-                    else:
-                        INVALIDS += 1
-                        continue
                 ptnSpecial = re.search("Special:", record[1])
                 ptnTemplate = re.search("Template:", record[1])
                 ptnWTalk = re.search("Wikpedia_talk:", record[1])
