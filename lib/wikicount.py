@@ -21,7 +21,6 @@ LList=['en','hy','ru','ja','zh','es','fr','pl','pt','it','de','ro','eo','hr','ar
 fnStrFmtDate = lambda DVAR :'%02d' %(DVAR,)
 fnStartTimer = lambda : time.time
 fnEndTimerCalcRuntime = lambda a, b=time.time(): round(b-a,5)
-fnGetMonthName = lambda datetime.datetime.now().strftime("%B")
 fnFormatHour = lambda HOUR : '%02d' %(int(HOUR),)
 fnReturnTimeString = lambda DAY, MONTH, YEAR : str('%02d'%(int(DAY,)))+"_"+str('%02d'%(int(MONTH,)))+"_"+str('%02d'%(int(YEAR,)))
 
@@ -33,6 +32,7 @@ class logRecord():
         self.views=views
         self.bwidth=size
 
+fnGetMonthName = lambda : datetime.datetime.now().strftime("%B")
 
 def MapQuery_FindName(id):
         MAPQ=db.hitsdaily.find({'_id':id})
@@ -129,9 +129,9 @@ def fnFormatTimes(DAY,MONTH,HOUR):
 
 
 def FormatName(title):
-    s_title=string.replace(title,'_',' ')
-    t_title=s_title.encode('utf-8')
-    utitle=urllib2.unquote(t_title)
+        s_title=string.replace(title,'_',' ')
+        t_title=s_title.encode('utf-8')
+        utitle=urllib2.unquote(t_title)
 	try:
 		utitle=utitle.decode('utf-8')
 	except:

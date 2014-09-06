@@ -116,7 +116,8 @@ def p1_split():
         RECMOD = RECCOUNT % NUMBERLOGFILES
         RECMODFSTR = str(RECMOD+1)
         fName = '/tmp/' + str(record[0]) + '_staging/q'+ RECMODFSTR + '_pagecounts.' + str(HOUR)
-        fFILE = open(fName, "a")
+        fFILE = open(fName, "w")
+	  
         fFILE.write(str(line))
         fFILE.close()
 
