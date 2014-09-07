@@ -1,9 +1,10 @@
-import subprocess
+from subprocess import Popen
 import smtplib
 from email.mime.text import MIMEText
 
 OFILE=open('/tmp/mongostats.log','w')
-subprocess.Popen(['/usr/bin/mongostat','-n','120','5'],stdout=OFILE)
+mstat=Popen(['/usr/bin/mongostat','-n','120','5'],stdout=OFILE)
+Popen.wait(mstat)
 OFILE.close()
 
 EMFP = open('/tmp/mongostats.log','r')

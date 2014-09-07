@@ -111,15 +111,21 @@ def p1_split():
     EXCEPTS = 0
     for line in IFILE:
         record = line.strip().split()
-        record[0] = record[0].strip('.').lower()
+        LANGUAGEUSED = record[0].strip('.').lower()
         RECCOUNT += 1
         RECMOD = RECCOUNT % NUMBERLOGFILES
         RECMODFSTR = str(RECMOD+1)
-        fName = '/tmp/' + str(record[0]) + '_staging/q'+ RECMODFSTR + '_pagecounts.' + str(HOUR)
+	ffile = 'q'+RECMODFSTR+'_pagecounts.'+str(HOUR)
+        fdir = '/tmp/' + str(LANGUAGEUSED) + '_staging/'
+        fName = fdir+ffile
         try:
          fFILE = open(fName, "a")
 	except IOError:
-	 fFILE = open(fName, "w")
+	 try:
+	  fFILE = open(fName, "w")
+	 except IOError:
+	   # Some come thru invalid, reject
+	   continue
 	  
         fFILE.write(str(line))
         fFILE.close()
@@ -313,7 +319,7 @@ def p3_add():
         w.join()
 
 
-cProfile.run('p0_dl()',SYSOUT)
+p0_dl()
 cProfile.run('p1_split()',SYSOUT)
 cProfile.run('p2_filter()',SYSOUT)
 cProfile.run('p2x_move_to_action()',SYSOUT)
