@@ -313,7 +313,7 @@ def p3_add():
         w.join()
 
 
-#cProfile.run('p0_dl()',SYSOUT)
+cProfile.run('p0_dl()',SYSOUT)
 cProfile.run('p1_split()',SYSOUT)
 cProfile.run('p2_filter()',SYSOUT)
 cProfile.run('p2x_move_to_action()',SYSOUT)
