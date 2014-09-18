@@ -172,15 +172,7 @@ fnGetHour = lambda : time.strftime('%H')
 
 fnGetHourString = lambda hour : '%02d' %(hour,)
 
-def fn2GetHourString(hour):
-        HOUR='%02d' % (hour,)
-        return HOUR
-
 fnGetMonthName = lambda : datetime.datetime.now().strftime("%B")
-
-def fn2GetMonthName():
-        MONTHNAME=datetime.datetime.now().strftime("%B")
-        return MONTHNAME
 
 fnLatestnews = lambda ARTICLELIMIT = 5 : db.news.find().sort('date',-1).limit(ARTICLELIMIT)
 

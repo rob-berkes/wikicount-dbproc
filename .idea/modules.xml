@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/wikicount-dbproc.iml" filepath="$PROJECT_DIR$/.idea/wikicount-dbproc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wikicount-postgres/.idea/wikicount-postgres.iml" filepath="$PROJECT_DIR$/../wikicount-postgres/.idea/wikicount-postgres.iml" />
     </modules>
   </component>
 </project>

@@ -1,3 +1,0 @@
-15 * * * * /usr/bin/python /home/ec2-user/Python/master.py
-
-*/20 * * * * /usr/bin/python /home/ec2-user/Python/genPages/threehourrollingavg.py
