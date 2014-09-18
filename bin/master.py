@@ -3,6 +3,7 @@
 """The master.py file downloads the hourly log file from wikipedia,
     parses it, and adds the hourly hit data to a MongoDB server instance.
     """
+import sys
 import urllib2
 import os
 import gzip
@@ -13,13 +14,14 @@ from multiprocessing import Process
 import hashlib
 from datetime import date
 from pymongo import Connection
-from lib import wikicount
 import cProfile
 import pstats
 import smtplib
 from email.mime.text import MIMEText
 import time
 
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+from lib import wikicount
 SYSOUT = "/tmp/zSYSOUT"
 EMAILOUT = "/tmp/zEMAIL"
 EMWFP = open(EMAILOUT,'w')
