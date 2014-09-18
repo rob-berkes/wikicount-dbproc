@@ -1,11 +1,13 @@
 import os
 
-from lib import wikicount
+from lib import wikilib
 
-LANG= wikicount.getLanguageList()
-FOLDERS=['action','category','image','ondeck','staging']
-for lang in LANG:
-	for folder in FOLDERS:
-		NEWPATH="/tmp/"+str(lang)+"_"+str(folder)
-		if not os.path.exists(NEWPATH):
-			os.makedirs(NEWPATH)
+LANGS= wikilib.getLanguageList()
+PATHS=['action','staging','ondeck']
+for lang in LANGS:
+	for path in PATHS:
+		DIRMAKE="/tmp/"+str(lang)+"_"+str(path)
+		if not os.path.exists(DIRMAKE):
+			os.makedirs(DIRMAKE)
+
+os.makedirs('/tmp/staging/')

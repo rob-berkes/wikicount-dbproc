@@ -15,7 +15,7 @@ def nHourEval(cHOURRATIOS,mHOURRATIOS,HOURWEIGHTS):
 	MISSES=0
 	for a in range(0,24):
 		HOUR="%02d"%(a,)
-		:HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[a])
+		HOURSCORE=float(mHOURRATIOS[a])-float(cHOURRATIOS[a])
 		try:
 			HOURSCORE=(1/HOURSCORE)*(HOURWEIGHTS[a])
 		except ZeroDivisionError:
